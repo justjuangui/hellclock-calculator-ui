@@ -1,7 +1,9 @@
 {
 	"name": "hellclock-calculator-ui",
 	"compatibility_date": "2025-08-21",
+	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": {
-		"directory": "./.svelte-kit/cloudflare"
+		"binding": "assets",
+		"directory": ".svelte-kit/cloudflare"
 	}
 }
