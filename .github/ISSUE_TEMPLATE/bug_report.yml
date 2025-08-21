@@ -1,0 +1,37 @@
+name: Bug report
+description: File a bug/defect
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you saw and what you expected to happen.
+      placeholder: Clear steps to reproduce…
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps/code that show the problem
+      render: bash
+  - type: input
+    id: url
+    attributes:
+      label: Link (if public)
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Browsers
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console logs / stack traces
+      render: text
