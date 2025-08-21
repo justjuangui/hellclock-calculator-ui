@@ -3,8 +3,10 @@
 	import type { Engine } from "$lib/engine";
 	import type { GamePack, XNode } from "$lib/engine/types";
 	import XNodeTree from "$lib/ui/XNodeTree.svelte";
+	import { useEquipped } from "$lib/context/equipped.svelte";
 	const engine = getContext<Engine>("engine");
 	const gamepack = getContext<GamePack>("gamepack");
+	const { equipped } = useEquipped();
 
 	type PlayerSheet = {
 		displayedStats: Partial<
@@ -103,8 +105,53 @@
 				);
 			}
 
+			// TODO: Dont load always the build, that disabled the cache from Engine, do this in the EquippedAPI
+			const resActor = await engine.build(
+				gamepack["hellclock-actor"] as string,
+				{ timeoutMs: 5000 },
+			);
+
+			if (resActor) {
+				error = String((resActor as any)?.error);
+				return;
+			}
+
+			let set: Record<string, any> = {};
+			// build the contributions for items
+			Object.entries(equipped).forEach(([key, item]) => {
+				for (const mod of item.mods) {
+					let statName = mod.eStatDefinition;
+					let modifierType =
+						mod.modifierType.toLowerCase();
+					if (modifierType === "additive") {
+						statName = `${statName}.add`;
+					} else if (
+						modifierType ===
+						"multiplicativeadditive"
+					) {
+						statName = `${statName}.inc`;
+					} else if (
+						modifierType ===
+						"multiplicative"
+					) {
+						statName = `${statName}.more`;
+					}
+					if (!(statName in set)) {
+						set[statName] = [];
+					}
+					set[statName].push({
+						source: `Equipped ${item.name}`,
+						amount: mod.value,
+						meta: {
+							type: "Gear",
+							id: String(item.defId),
+							slot: key,
+						},
+					});
+				}
+			});
 			let payload: any = {
-				set: {},
+				set: set,
 				outputs: Object.values(
 					sheet?.displayedStats ?? {},
 				).flatMap((v): string[] =>
@@ -115,6 +162,8 @@
 							: [],
 				),
 			};
+
+			console.debug("Evaluating with payload:", payload);
 
 			evalResult = await engine.eval(payload, {
 				timeoutMs: 5000,

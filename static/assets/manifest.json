@@ -2,6 +2,9 @@
     "json": [
         "/assets/hellclock-pack.json",
         "/assets/hellclock-actor.json",
-        "/assets/Player Sheet.json"
+        "/assets/Player Sheet.json",
+        "/assets/Gear Slot.json",
+        "/assets/Gear Rarity.json",
+        "/assets/Gear.json"
     ]
 }

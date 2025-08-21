@@ -1,10 +1,13 @@
 <script lang="ts">
 	import "../app.css";
-	import { onMount, getContext, setContext } from "svelte";
+	import { onMount, setContext } from "svelte";
 	import AppNavbar from "$lib/ui/AppNavbar.svelte";
 	import { Engine } from "$lib/engine";
 	import type { GamePack } from "$lib/engine/types";
 	import { loadGamePack } from "$lib/engine/assets";
+	import { providedEquipped } from "$lib/context/equipped.svelte";
+
+	providedEquipped();
 
 	// runes state
 	let ready = $state(false);
@@ -44,12 +47,6 @@
 				error = `${(res as any).error}`;
 				return;
 			}
-
-			label = "Loading the actor default";
-			await engine.build(
-				pack["hellclock-actor"] as string,
-				{},
-			);
 
 			label = "Ready";
 			progress = 100;

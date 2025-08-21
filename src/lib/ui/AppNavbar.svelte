@@ -5,17 +5,15 @@
   const links: Link[] = [
     { href: "/", label: "Calcs" },
     { href: "/gears", label: "Gears" },
-    { href: "/relics", label: "Relics" },
-    { href: "/constellations", label: "Constellations" },
-    { href: "/bells", label: "Bells" },
-    { href: "/config", label: "Config" },
+    { href: "#", label: "Relics" },
+    { href: "#", label: "Constellations" },
+    { href: "#", label: "Bells" },
+    { href: "#", label: "Config" },
   ];
 
   // runes state
-  let currentPath = page.url.pathname;
-
   const isActive = (href: string) =>
-    currentPath === href || currentPath.startsWith(href + "/");
+    page.url.pathname === href || page.url.pathname.startsWith(href + "/");
 </script>
 
 <nav class="navbar bg-base-100 rounded-2xl shadow-md px-4">
