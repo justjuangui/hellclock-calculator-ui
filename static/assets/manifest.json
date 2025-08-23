@@ -5,6 +5,7 @@
         "/assets/Player Sheet.json",
         "/assets/Gear Slot.json",
         "/assets/Gear Rarity.json",
-        "/assets/Gear.json"
+        "/assets/Gear.json",
+        "/assets/Stats.json"
     ]
 }
