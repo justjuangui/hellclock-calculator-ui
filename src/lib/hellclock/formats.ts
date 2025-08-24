@@ -15,7 +15,7 @@ export function formatStatNumber(value: number, statFormat: StatFormat, singType
 	if (statFormat === "PERCENTAGE") {
 		return `${symbol}${(value * 100).toFixed(0)}%`;
 	}
-	return `${symbol}${value}`;
+	return `${symbol}${value.toFixed(0)}`;
 }
 
 export function normalizedValue(value: number, min: number, max: number) {
@@ -29,8 +29,7 @@ export function formatStatModNumber(value: number, statFormat: StatFormat, modif
 	if (modifier === "Additive") {
 		val *= normalize;
 	}
-	else 
-	{
+	else {
 		val = (val - 1) * normalize + 1;
 	}
 

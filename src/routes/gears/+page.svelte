@@ -2,18 +2,14 @@
 	import { useEquipped } from "$lib/context/equipped.svelte";
 	import type { StatsHelper } from "$lib/hellclock/stats";
 	import {
-		type GearDefinition,
+		GearsHelper,
 		type GearItem,
-		type GearRoot,
 		type GearSlot,
-		type GearSlotDB,
-		type GearSlotDefinition,
 		type StatMod,
 	} from "$lib/hellclock/gears";
-	import { translate} from "$lib/hellclock/lang";
-	import { type GamePack } from "$lib/engine/types";
+	import { translate } from "$lib/hellclock/lang";
 	import { getContext, onMount } from "svelte";
-    import { formatStatModNumber } from "$lib/hellclock/formats";
+	import { formatStatModNumber } from "$lib/hellclock/formats";
 
 	const {
 		equipped,
@@ -21,16 +17,24 @@
 		unset: unsetEquipped,
 	} = useEquipped();
 
-	const gamepack = getContext<GamePack>("gamepack");
 	const statsHelper = getContext<StatsHelper>("statsHelper");
+	const gearsHelper = getContext<GearsHelper>("gearsHelper");
 	const lang = getContext<string>("lang") || "en";
 
-	let slotDB = $state<GearSlotDB | null>(null);
 	let allSlots = $state<GearSlot[]>([]);
 	let slotLabel = $derived.by<Record<GearSlot, string>>(() => {
 		const labels: Partial<Record<GearSlot, string>> = {};
 		for (const s of allSlots) {
-			let slotNameKey = findSlotDef(s)?.slotNameKey;
+			let slotNameKey = gearsHelper.getGearSlotDefinition(
+				s,
+				true,
+			)?.slotNameKey;
+			if (!slotNameKey) {
+				console.warn(
+					`Missing slot definition for ${s}`,
+				);
+				continue;
+			}
 			let translatedName = translate(slotNameKey, lang);
 			labels[s] = translatedName || prettySlot(s);
 		}
@@ -47,7 +51,15 @@
 			map[s].sort(
 				(a, b) =>
 					b.tier - a.tier ||
-					a.name.localeCompare(b.name),
+					translate(
+						a.localizedName,
+						lang,
+					).localeCompare(
+						translate(
+							b.localizedName,
+							lang,
+						),
+					),
 			);
 		return map;
 	});
@@ -69,19 +81,6 @@
 
 	let selectedSlot = $state<GearSlot>("WEAPON");
 	let search = $state("");
-
-	function findSlotDB(gp: Record<string, unknown>): GearSlotDB | null {
-		return (gp["Gear Slot"] as GearSlotDB) ?? null;
-	}
-
-	function findSlotDef(s: GearSlot): GearSlotDefinition | undefined {
-		if (!slotDB) return;
-		const list = [
-			...(slotDB.blessedGearSlotDefinitions ?? []),
-			...(slotDB.regularGearSlotDefinitions ?? []),
-		];
-		return list.find((d) => d.slot === s);
-	}
 
 	function prettySlot(s: string): string {
 		return s
@@ -109,58 +108,10 @@
 	function tooltipText(item?: GearItem): string {
 		if (!item) return "Empty";
 		const lines = [
-			`${item.name} (T${item.tier})`,
+			`${translate(item.localizedName, lang)} (T${item.tier})`,
 			...item.mods.map(fmtValue),
 		];
 		return lines.join("\n");
-	}
-
-	function expandGear(
-		defs: GearDefinition[],
-		langCode: string,
-	): GearItem[] {
-		const out: GearItem[] = [];
-		for (const g of defs) {
-			const baseName = g.name;
-			if (!g.variants?.length) {
-				out.push({
-					defId: g.id,
-					slot: g.slot,
-					tier: g.tier,
-					baseName,
-					name: baseName,
-					sprite: undefined,
-					mods: [],
-					sellingValue: g.sellingValue,
-					gearShopCost: g.gearShopCost,
-					blessingPrice: g.blessingPrice,
-				});
-				continue;
-			}
-			for (const v of g.variants) {
-				const data = v.value;
-				out.push({
-					defId: g.id,
-					slot: g.slot,
-					tier: g.tier,
-					baseName,
-					name:
-						translate(
-							data.variantLocalizedName,
-							langCode,
-						) || baseName,
-					sprite: data.sprite,
-					mods: [
-						...(data.statModifiersDefinitions ??
-							[]),
-					],
-					sellingValue: g.sellingValue,
-					gearShopCost: g.gearShopCost,
-					blessingPrice: g.blessingPrice,
-				});
-			}
-		}
-		return out;
 	}
 
 	function equip(item: GearItem) {
@@ -175,21 +126,41 @@
 		if (!q) return true;
 		q = q.toLowerCase();
 		return (
-			i.name.toLowerCase().includes(q) ||
-			i.baseName.toLowerCase().includes(q) ||
-			i.mods.some((m) =>
-				m.eStatDefinition.toLowerCase().includes(q),
+			translate(i.localizedName, lang)
+				.toLowerCase()
+				.includes(q) ||
+			i.mods.some(
+				(m) =>
+					statsHelper
+						.getLabelForStat(
+							m.eStatDefinition,
+							lang,
+						)
+						.toLowerCase()
+						.includes(q) ||
+					m.eStatDefinition
+						.toLowerCase()
+						.includes(q),
 			)
 		);
 	}
 
-	onMount(() => {
-		slotDB = findSlotDB(gamepack);
-		const sdefs = [
-			...(slotDB?.blessedGearSlotDefinitions ?? []),
-			...(slotDB?.regularGearSlotDefinitions ?? []),
-		];
+	function parseRGBA01ToCss(rgbaStr: string | undefined): string {
+		if (!rgbaStr) return "rgba(0,0,0,1)";
+		const nums = rgbaStr
+			.replace(/rgba?\s*\(|\)/gi, "")
+			.split(",")
+			.map((s) => parseFloat(s.trim()));
 
+		let [r, g, b, a] = nums;
+		r = Math.round((r ?? 0) * 255);
+		g = Math.round((g ?? 0) * 255);
+		b = Math.round((b ?? 0) * 255);
+		return `rgba(${r},${g},${b},${a ?? 1})`;
+	}
+
+	onMount(() => {
+		const sdefs = gearsHelper.getGearSlotsDefinitions(true);
 		const unique = Array.from(
 			new Set(sdefs.map((s) => s.slot)),
 		) as GearSlot[];
@@ -199,8 +170,7 @@
 		);
 		if (!allSlots.length) allSlots = unique;
 
-		const gearRoot = gamepack["Gear"] as GearRoot;
-		gearItems = expandGear(gearRoot?.Gear ?? [], lang);
+		gearItems = gearsHelper.getGearItems(true);
 
 		const firstWithItems = allSlots.find(
 			(s) => (itemsBySlot[s]?.length ?? 0) > 0,
@@ -251,9 +221,13 @@
 										]
 											?.sprite,
 									)}
-									alt={equipped[
-										s
-									]?.name}
+									alt={translate(
+										equipped[
+											s
+										]
+											?.localizedName,
+										lang,
+									)}
 									class="h-12 w-12 object-contain drop-shadow"
 								/>
 							{:else}
@@ -323,32 +297,12 @@
 					>
 						{#each (itemsBySlot[selectedSlot] ?? []).filter( (i) => matches(i, search), ) as item}
 							<div
-								class="card bg-base-200 hover:bg-base-300 transition cursor-pointer"
-								tabindex="0"
-								onkeydown={(
-									e,
-								) => {
-									if (
-										e.key ===
-											"Enter" ||
-										e.key ===
-											" "
-									) {
-										equip(
-											item,
-										);
-										e.preventDefault();
-									}
-								}}
-								onclick={() =>
-									equip(
-										item,
-									)}
-								role="button"
-								aria-label={`Equip ${item.name}`}
+								class="card bg-base-200 hover:bg-base-300 transition border-2 border-[var(--color)]"
+								style={`--color: ${parseRGBA01ToCss(item.color)}`}
+								aria-label={`Equip ${translate(item.localizedName, lang)}`}
 							>
 								<div
-									class="card-body p-3 gap-2"
+									class="card-body p-3 gap-2 flex"
 								>
 									<div
 										class="flex items-center gap-2"
@@ -358,7 +312,10 @@
 												src={spriteUrl(
 													item.sprite,
 												)}
-												alt={item.name}
+												alt={translate(
+													item.localizedName,
+													lang,
+												)}
 												class="h-10 w-10 object-contain drop-shadow"
 											/>
 										{:else}
@@ -372,9 +329,13 @@
 											class="min-w-0"
 										>
 											<div
-												class="font-medium truncate"
+												class="font-medium truncate text-[var(--color)]"
+												style={parseRGBA01ToCss(item.color)}
 											>
-												{item.name}
+												{translate(
+													item.localizedName,
+													lang,
+												)}
 											</div>
 											<div
 												class="text-xs opacity-70"
@@ -390,11 +351,11 @@
 
 									<!-- stat lines -->
 									<ul
-										class="text-xs mt-1 space-y-1"
+										class="text-xs mt-1 space-y-1 flex flex-col grow"
 									>
 										{#each item.mods as m}
 											<li
-												class="badge badge-ghost"
+												class="badge badge-soft badge-accent truncate"
 											>
 												{fmtValue(
 													m,
@@ -440,6 +401,10 @@
 										class="mt-1"
 									>
 										<button
+											onclick={() =>
+												equip(
+													item,
+												)}
 											class="btn btn-primary btn-sm w-full"
 											>Equip</button
 										>

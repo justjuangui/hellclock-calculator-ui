@@ -7,6 +7,7 @@
 	import { loadGamePack } from "$lib/engine/assets";
 	import { providedEquipped } from "$lib/context/equipped.svelte";
 	import { StatsHelper, type StatsRoot } from "$lib/hellclock/stats";
+	import { GearsHelper, type GearRarityRoot, type GearRoot, type GearSlotDB } from "$lib/hellclock/gears";
 
 	providedEquipped();
 
@@ -18,12 +19,14 @@
 	let pack = $state<GamePack | null>(null);
 	let engine = $state<Engine | null>(null);
 	let statsHelper = $state<StatsHelper | null>(null);
+	let gearsHelper = $state<GearsHelper | null>(null);
 
 	$effect(() => {
 		setContext("gamepack", pack);
 		setContext("engine", engine);
 		setContext("statsHelper", statsHelper);
-		if (statsHelper && engine && pack) {
+		setContext("gearsHelper", gearsHelper);
+		if (statsHelper && engine && pack && gearsHelper) {
 			ready = true;
 		}
 	});
@@ -57,6 +60,13 @@
 			label = "Loading StatsHelper";
 			statsHelper = new StatsHelper(
 				pack["Stats"] as StatsRoot,
+			);
+
+			label = "Loaging GearsHelper";
+			gearsHelper = new GearsHelper(
+				pack["Gear Slot"] as GearSlotDB,
+				pack["Gear"] as GearRoot,
+				pack["Gear Rarity"] as GearRarityRoot,
 			);
 
 			label = "Ready";
