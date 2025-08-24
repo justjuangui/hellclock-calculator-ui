@@ -1,395 +1,329 @@
 <script lang="ts">
-	import { getContext, onMount } from "svelte";
-	import type { Engine } from "$lib/engine";
-	import type { GamePack, XNode } from "$lib/engine/types";
-	import XNodeTree from "$lib/ui/XNodeTree.svelte";
-	import { useEquipped } from "$lib/context/equipped.svelte";
-	import type { StatsHelper } from "$lib/hellclock/stats";
-    import { formatStatNumber } from "$lib/hellclock/formats";
-	const engine = getContext<Engine>("engine");
-	const gamepack = getContext<GamePack>("gamepack");
-	const statsHelper = getContext<StatsHelper>("statsHelper");
-	const { equipped } = useEquipped();
+  import { getContext, onMount } from "svelte";
+  import type { Engine } from "$lib/engine";
+  import type { GamePack, XNode } from "$lib/engine/types";
+  import XNodeTree from "$lib/ui/XNodeTree.svelte";
+  import { useEquipped } from "$lib/context/equipped.svelte";
+  import type { StatsHelper } from "$lib/hellclock/stats";
+  import { formatStatNumber } from "$lib/hellclock/formats";
+  import { translate } from "$lib/hellclock/lang";
+  const engine = getContext<Engine>("engine");
+  const gamepack = getContext<GamePack>("gamepack");
+  const statsHelper = getContext<StatsHelper>("statsHelper");
+  const { equipped } = useEquipped();
+  const lang = getContext<string>("lang") || "en";
 
-	type PlayerSheet = {
-		displayedStats: Partial<
-			Record<
-				| "DamageLabel"
-				| "DefenseLabel"
-				| "VitalityLabel"
-				| "OtherLabel",
-				string[]
-			>
-		>;
-	} & Record<string, unknown>;
+  type PlayerSheet = {
+    displayedStats: Partial<
+      Record<
+        "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel",
+        string[]
+      >
+    >;
+  } & Record<string, unknown>;
 
-	let selectedGroup = $state<
-		"DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel"
-	>("DamageLabel");
+  let selectedGroup = $state<
+    "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel"
+  >("DamageLabel");
 
-	const groupMeta: Array<{
-		key:
-			| "DamageLabel"
-			| "DefenseLabel"
-			| "VitalityLabel"
-			| "OtherLabel";
-		label: string;
-	}> = [
-		{ key: "DamageLabel", label: "Damage" },
-		{ key: "DefenseLabel", label: "Defense" },
-		{ key: "VitalityLabel", label: "Vitality" },
-		{ key: "OtherLabel", label: "Other" },
-	];
+  const groupMeta: Array<{
+    key: "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel";
+    label: string;
+  }> = [
+    { key: "DamageLabel", label: "Damage" },
+    { key: "DefenseLabel", label: "Defense" },
+    { key: "VitalityLabel", label: "Vitality" },
+    { key: "OtherLabel", label: "Other" },
+  ];
 
-	let actor = $state<Record<string, unknown> | null>(null);
-	let sheet = $state<PlayerSheet | null>(null);
-	let evalResult = $state<any>(null);
-	let error = $state<string | null>(null);
-	let loading = $state(true);
+  let actor = $state<Record<string, unknown> | null>(null);
+  let sheet = $state<PlayerSheet | null>(null);
+  let evalResult = $state<any>(null);
+  let error = $state<string | null>(null);
+  let loading = $state(true);
 
-	let showExplain = $state(false);
-	let explainLoading = $state(false);
-	let explainError = $state<string | null>(null);
-	let explainTitle = $state<string>("");
-	let explainNode = $state<XNode | null>(null);
+  let showExplain = $state(false);
+  let explainLoading = $state(false);
+  let explainError = $state<string | null>(null);
+  let explainTitle = $state<string>("");
+  let explainNode = $state<XNode | null>(null);
 
-	function hasGroup(key: typeof selectedGroup): boolean {
-		return !!sheet?.displayedStats?.[key]?.length;
-	}
+  function hasGroup(key: typeof selectedGroup): boolean {
+    return !!sheet?.displayedStats?.[key]?.length;
+  }
 
-	function getStatFromEval(res: any, name: string): number | null {
-		if (!res) return null;
-		return res.values[name];
-	}
+  function getStatFromEval(res: any, name: string): number | null {
+    if (!res) return null;
+    return res.values[name];
+  }
 
-	function fmt(v: number | null, stat: string): string {
-		if (v === null) return "-";
+  function fmt(v: number | null, stat: string): string {
+    if (v === null) return "-";
 
-		const statDef = statsHelper.getStatByName(stat);
-		if (!statDef) return String(v);
-		const clampvalue = statsHelper.getValueForStat(stat, v);
+    const statDef = statsHelper.getStatByName(stat);
+    if (!statDef) return String(v);
+    const clampvalue = statsHelper.getValueForStat(stat, v);
 
-		return formatStatNumber(clampvalue, statDef.eStatFormat);
-	}
+    return formatStatNumber(clampvalue, statDef.eStatFormat);
+  }
 
-	async function doEvaluate() {
-		error = null;
-		evalResult = null;
-		loading = true;
-		try {
-			if (!engine) throw new Error("Engine not initialized");
-			if (!actor || !sheet) {
-				throw new Error(
-					"Actor or PlayerSheet not loaded",
-				);
-			}
-			if (!statsHelper) {
-				throw new Error("StatsHelper not initialized");
-			}
+  async function doEvaluate() {
+    error = null;
+    evalResult = null;
+    loading = true;
+    try {
+      if (!engine) throw new Error("Engine not initialized");
+      if (!actor || !sheet) {
+        throw new Error("Actor or PlayerSheet not loaded");
+      }
+      if (!statsHelper) {
+        throw new Error("StatsHelper not initialized");
+      }
 
-			// TODO: Dont load always the build, that disabled the cache from Engine, do this in the EquippedAPI
-			const resActor = await engine.build(
-				gamepack["hellclock-actor"] as string,
-				{ timeoutMs: 5000 },
-			);
+      // TODO: Dont load always the build, that disabled the cache from Engine, do this in the EquippedAPI
+      const resActor = await engine.build(
+        gamepack["hellclock-actor"] as string,
+        { timeoutMs: 5000 },
+      );
 
-			if (resActor) {
-				error = String((resActor as any)?.error);
-				return;
-			}
+      if (resActor) {
+        error = String((resActor as any)?.error);
+        return;
+      }
 
-			let set: Record<string, any> = {};
-			// build the contributions for items
-			Object.entries(equipped).forEach(([key, item]) => {
-				for (const mod of item.mods) {
-					let statName = mod.eStatDefinition;
-					let modifierType =
-						mod.modifierType.toLowerCase();
-					if (modifierType === "additive") {
-						statName = `${statName}.add`;
-					} else if (
-						modifierType ===
-						"multiplicative"
-					) {
-						statName = `${statName}.mult`;
-					} else if (
-						modifierType ===
-						"multiplicativeadditive"
-					) {
-						statName = `${statName}.multadd`;
-					}
-					if (!(statName in set)) {
-						set[statName] = [];
-					}
-					set[statName].push({
-						source: `Equipped ${item.name}`,
-						amount: mod.value,
-						meta: {
-							type: "Gear",
-							id: String(item.defId),
-							slot: key,
-						},
-					});
-				}
-			});
-			let payload: any = {
-				set: set,
-				outputs: Object.values(
-					sheet?.displayedStats ?? {},
-				).flatMap((v): string[] =>
-					Array.isArray(v)
-						? v
-						: typeof v === "string"
-							? [v]
-							: [],
-				),
-			};
+      let set: Record<string, any> = {};
+      // build the contributions for items
+      Object.entries(equipped).forEach(([key, item]) => {
+        for (const mod of item.mods) {
+          let statName = mod.eStatDefinition;
+          let modifierType = mod.modifierType.toLowerCase();
+          if (modifierType === "additive") {
+            statName = `${statName}.add`;
+          } else if (modifierType === "multiplicative") {
+            statName = `${statName}.mult`;
+          } else if (modifierType === "multiplicativeadditive") {
+            statName = `${statName}.multadd`;
+          }
+          if (!(statName in set)) {
+            set[statName] = [];
+          }
+          set[statName].push({
+            source: `Equipped ${translate(item.localizedName, lang)}`,
+            amount: mod.value,
+            meta: {
+              type: "Gear",
+              id: String(item.defId),
+              slot: key,
+            },
+          });
+        }
+      });
+      let payload: any = {
+        set: set,
+        outputs: Object.values(sheet?.displayedStats ?? {}).flatMap(
+          (v): string[] =>
+            Array.isArray(v) ? v : typeof v === "string" ? [v] : [],
+        ),
+      };
 
-			console.debug("Evaluating with payload:", payload);
+      console.debug("Evaluating with payload:", payload);
 
-			evalResult = await engine.eval(payload, {
-				timeoutMs: 5000,
-			});
+      evalResult = await engine.eval(payload, {
+        timeoutMs: 5000,
+      });
 
-			if (evalResult?.error) {
-				error = String(evalResult.error);
-				return;
-			}
-		} catch (e: any) {
-			error = String(e?.message ?? e);
-		} finally {
-			loading = false;
-		}
-	}
+      if (evalResult?.error) {
+        error = String(evalResult.error);
+        return;
+      }
+    } catch (e: any) {
+      error = String(e?.message ?? e);
+    } finally {
+      loading = false;
+    }
+  }
 
-	async function openExplain(stat: string) {
-		explainTitle = stat;
-		explainLoading = true;
-		explainError = null;
-		explainNode = null;
-		showExplain = true;
+  async function openExplain(stat: string) {
+    explainTitle = stat;
+    explainLoading = true;
+    explainError = null;
+    explainNode = null;
+    showExplain = true;
 
-		try {
-			if (!engine) throw new Error("Engine not initialized");
-			const res = (await engine.explain(stat, {
-				timeoutMs: 5000,
-			})) as any;
+    try {
+      if (!engine) throw new Error("Engine not initialized");
+      const res = (await engine.explain(stat, {
+        timeoutMs: 5000,
+      })) as any;
 
-			console.debug("Explain result:", res);
+      console.debug("Explain result:", res);
 
-			if (res?.error) {
-				explainError = String(res.error);
-				return;
-			}
+      if (res?.error) {
+        explainError = String(res.error);
+        return;
+      }
 
-			explainNode = res as XNode;
-		} catch (e: any) {
-			explainError = String(e?.message ?? e);
-		} finally {
-			explainLoading = false;
-		}
-	}
+      explainNode = res as XNode;
+    } catch (e: any) {
+      explainError = String(e?.message ?? e);
+    } finally {
+      explainLoading = false;
+    }
+  }
 
-	onMount(async () => {
-		actor = gamepack["hellclock-actor"] as Record<
-			string,
-			unknown
-		> | null;
-		sheet = gamepack["Player Sheet"] as PlayerSheet | null;
+  onMount(async () => {
+    actor = gamepack["hellclock-actor"] as Record<string, unknown> | null;
+    sheet = gamepack["Player Sheet"] as PlayerSheet | null;
 
-		const firstWithItems = groupMeta.find(
-			(g) => sheet?.displayedStats?.[g.key]?.length,
-		);
-		if (firstWithItems) selectedGroup = firstWithItems.key;
-		await doEvaluate();
-	});
+    const firstWithItems = groupMeta.find(
+      (g) => sheet?.displayedStats?.[g.key]?.length,
+    );
+    if (firstWithItems) selectedGroup = firstWithItems.key;
+    await doEvaluate();
+  });
 </script>
 
 <div class="grid gap-4 lg:grid-cols-2">
-	<!-- Displayed Stats -->
-	<div class="card bg-base-100 shadow">
-		<div class="card-body">
-			<div class="flex items-center justify-between gap-3">
-				<h3 class="card-title">Displayed Stats</h3>
-				<div
-					role="tablist"
-					class="tabs tabs-boxed tabs-sm"
-				>
-					{#each groupMeta as g}
-						<button
-							role="tab"
-							class={`tab ${selectedGroup === g.key ? "tab-active" : ""} ${hasGroup(g.key) ? "" : "tab-disabled"}`}
-							onclick={() => {
-								if (
-									hasGroup(
-										g.key,
-									)
-								)
-									selectedGroup =
-										g.key;
-							}}
-							aria-selected={selectedGroup ===
-								g.key}
-							aria-disabled={!hasGroup(
-								g.key,
-							)}
-							title={g.label}
-						>
-							{g.label}
-						</button>
-					{/each}
-				</div>
-			</div>
-			{#if error}
-				<div class="alert alert-error mt-3">
-					<span>{error}</span>
-				</div>
-			{:else if loading}
-				<div class="skeleton h-6 w-1/2 mb-2"></div>
-				<div class="skeleton h-6 w-2/3 mb-2"></div>
-				<div class="skeleton h-6 w-1/3 mb-2"></div>
-			{:else if sheet?.displayedStats?.[selectedGroup]?.length}
-				<div class="overflow-x-auto mt-2">
-					<table class="table table-zebra">
-						<thead>
-							<tr>
-								<th
-									class="w-1/2"
-									>Stat</th
-								>
-								<th
-									class="text-right"
-									>Value</th
-								>
-								<th class="w-10">Explain</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each sheet.displayedStats[selectedGroup] ?? [] as stat}
-								<tr>
-									<td
-										class="font-medium"
-										>{statsHelper.getLabelForStat(
-											stat,
-										)}</td
-									>
-									<td class="text-right"
-										>{fmt(
-											getStatFromEval(
-												evalResult,
-												stat,
-											),
-											stat,
-										)}</td
-									>
-									<td
-										class="text-right"
-									>
-										<button
-											aria-label="Explain {stat}"
-											class="btn btn-ghost btn-xs"
-											onclick={() =>
-												openExplain(
-													stat,
-												)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												viewBox="0 0 24 24"
-												class="h-4 w-4"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="1.5"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
-												/>
-												<circle
-													cx="12"
-													cy="12"
-													r="3.25"
-												/>
-											</svg>
-										</button>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			{:else}
-				<p class="opacity-70">
-					No stats listed for this group.
-				</p>
-			{/if}
-		</div>
-	</div>
+  <!-- Displayed Stats -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="card-title">Displayed Stats</h3>
+        <div role="tablist" class="tabs tabs-boxed tabs-sm">
+          {#each groupMeta as g}
+            <button
+              role="tab"
+              class={`tab ${selectedGroup === g.key ? "tab-active" : ""} ${hasGroup(g.key) ? "" : "tab-disabled"}`}
+              onclick={() => {
+                if (hasGroup(g.key)) selectedGroup = g.key;
+              }}
+              aria-selected={selectedGroup === g.key}
+              aria-disabled={!hasGroup(g.key)}
+              title={g.label}
+            >
+              {g.label}
+            </button>
+          {/each}
+        </div>
+      </div>
+      {#if error}
+        <div class="alert alert-error mt-3">
+          <span>{error}</span>
+        </div>
+      {:else if loading}
+        <div class="skeleton h-6 w-1/2 mb-2"></div>
+        <div class="skeleton h-6 w-2/3 mb-2"></div>
+        <div class="skeleton h-6 w-1/3 mb-2"></div>
+      {:else if sheet?.displayedStats?.[selectedGroup]?.length}
+        <div class="overflow-x-auto mt-2">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th class="w-1/2">Stat</th>
+                <th class="text-right">Value</th>
+                <th class="w-10">Explain</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each sheet.displayedStats[selectedGroup] ?? [] as stat}
+                <tr>
+                  <td class="font-medium"
+                    >{statsHelper.getLabelForStat(stat)}</td
+                  >
+                  <td class="text-right"
+                    >{fmt(getStatFromEval(evalResult, stat), stat)}</td
+                  >
+                  <td class="text-right">
+                    <button
+                      aria-label="Explain {stat}"
+                      class="btn btn-ghost btn-xs"
+                      onclick={() => openExplain(stat)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
+                        />
+                        <circle cx="12" cy="12" r="3.25" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <p class="opacity-70">No stats listed for this group.</p>
+      {/if}
+    </div>
+  </div>
 
-	<!-- Raw Engine Output (useful while integrating) -->
-	<div class="card bg-base-100 shadow">
-		<div class="card-body">
-			<h3 class="card-title">Engine Output</h3>
-			{#if loading}
-				<div class="skeleton h-6 w-1/3 mb-2"></div>
-				<div class="skeleton h-40 w-full"></div>
-			{:else if evalResult}
-				<pre
-					class="bg-base-200 p-3 rounded-box text-xs overflow-x-auto">{JSON.stringify(
-						evalResult,
-						null,
-						2,
-					)}</pre>
-			{:else if error}
-				<p class="opacity-70">
-					No output due to error.
-				</p>
-			{:else}
-				<p class="opacity-70">No engine output yet.</p>
-			{/if}
-		</div>
-	</div>
+  <!-- Raw Engine Output (useful while integrating) -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h3 class="card-title">Engine Output</h3>
+      {#if loading}
+        <div class="skeleton h-6 w-1/3 mb-2"></div>
+        <div class="skeleton h-40 w-full"></div>
+      {:else if evalResult}
+        <pre
+          class="bg-base-200 p-3 rounded-box text-xs overflow-x-auto">{JSON.stringify(
+            evalResult,
+            null,
+            2,
+          )}</pre>
+      {:else if error}
+        <p class="opacity-70">No output due to error.</p>
+      {:else}
+        <p class="opacity-70">No engine output yet.</p>
+      {/if}
+    </div>
+  </div>
 </div>
 
 <dialog class="modal" open={showExplain}>
-	<div class="modal-box max-w-4xl">
-		<h3 class="font-bold text-lg flex items-center gap-2">
-			Explain: {explainTitle}
-		</h3>
+  <div class="modal-box max-w-4xl">
+    <h3 class="font-bold text-lg flex items-center gap-2">
+      Explain: {explainTitle}
+    </h3>
 
-		{#if explainLoading}
-			<div class="mt-4 space-y-2">
-				<div class="skeleton h-5 w-1/2"></div>
-				<div class="skeleton h-5 w-2/3"></div>
-				<div class="skeleton h-5 w-1/3"></div>
-			</div>
-		{:else if explainError}
-			<div class="alert alert-error mt-4">
-				<span>{explainError}</span>
-			</div>
-		{:else if explainNode}
-			<div class="mt-4 overflow-y-auto max-h-96">
-				<XNodeTree node={explainNode} />
-			</div>
-		{:else}
-			<p class="mt-4 opacity-70">No explanation returned.</p>
-		{/if}
+    {#if explainLoading}
+      <div class="mt-4 space-y-2">
+        <div class="skeleton h-5 w-1/2"></div>
+        <div class="skeleton h-5 w-2/3"></div>
+        <div class="skeleton h-5 w-1/3"></div>
+      </div>
+    {:else if explainError}
+      <div class="alert alert-error mt-4">
+        <span>{explainError}</span>
+      </div>
+    {:else if explainNode}
+      <div class="mt-4 overflow-y-auto max-h-96">
+        <XNodeTree node={explainNode} />
+      </div>
+    {:else}
+      <p class="mt-4 opacity-70">No explanation returned.</p>
+    {/if}
 
-		<div class="modal-action">
-			<form method="dialog">
-				<button
-					class="btn"
-					onclick={() => (showExplain = false)}
-					>Close</button
-				>
-			</form>
-		</div>
-	</div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn" onclick={() => (showExplain = false)}>Close</button>
+      </form>
+    </div>
+  </div>
 
-	<form method="dialog" class="modal-backdrop">
-		<button aria-label="Close" onclick={() => (showExplain = false)}
-			>close</button
-		>
-	</form>
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close" onclick={() => (showExplain = false)}
+      >close</button
+    >
+  </form>
 </dialog>
