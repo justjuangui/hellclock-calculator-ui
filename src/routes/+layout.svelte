@@ -6,6 +6,7 @@
 	import type { GamePack } from "$lib/engine/types";
 	import { loadGamePack } from "$lib/engine/assets";
 	import { providedEquipped } from "$lib/context/equipped.svelte";
+	import { StatsHelper, type StatsRoot } from "$lib/hellclock/stats";
 
 	providedEquipped();
 
@@ -16,10 +17,15 @@
 	let error = $state<string | null>(null);
 	let pack = $state<GamePack | null>(null);
 	let engine = $state<Engine | null>(null);
+	let statsHelper = $state<StatsHelper | null>(null);
 
 	$effect(() => {
 		setContext("gamepack", pack);
 		setContext("engine", engine);
+		setContext("statsHelper", statsHelper);
+		if (statsHelper && engine && pack) {
+			ready = true;
+		}
 	});
 
 	async function boot() {
@@ -48,9 +54,13 @@
 				return;
 			}
 
+			label = "Loading StatsHelper";
+			statsHelper = new StatsHelper(
+				pack["Stats"] as StatsRoot,
+			);
+
 			label = "Ready";
 			progress = 100;
-			ready = true;
 		} catch (e: any) {
 			error = `${String(e?.message ?? e)}`;
 		}
@@ -60,7 +70,7 @@
 	let { children } = $props();
 </script>
 
-<div data-theme="light" class="min-h-screen bg-base-200">
+<div data-theme="dark" class="min-h-screen bg-base-200">
 	{#if !ready || error}
 		<div class="min-h-screen flex items-center justify-center p-4">
 			<div class="card w-full max-w-md bg-base-100 shadow-xl">

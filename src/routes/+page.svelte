@@ -4,8 +4,11 @@
 	import type { GamePack, XNode } from "$lib/engine/types";
 	import XNodeTree from "$lib/ui/XNodeTree.svelte";
 	import { useEquipped } from "$lib/context/equipped.svelte";
+	import type { StatsHelper } from "$lib/hellclock/stats";
+    import { formatStatNumber } from "$lib/hellclock/formats";
 	const engine = getContext<Engine>("engine");
 	const gamepack = getContext<GamePack>("gamepack");
+	const statsHelper = getContext<StatsHelper>("statsHelper");
 	const { equipped } = useEquipped();
 
 	type PlayerSheet = {
@@ -56,41 +59,17 @@
 
 	function getStatFromEval(res: any, name: string): number | null {
 		if (!res) return null;
-		const candidates = [
-			["values", `${name}.final`],
-			["values", name],
-			[null, `${name}.final`],
-			[null, name],
-			["stats", name, "final"],
-			["stats", name, "value"],
-		];
-		for (const path of candidates) {
-			let cur = res;
-			for (const seg of path) {
-				if (seg === null) continue;
-				if (
-					cur &&
-					typeof cur === "object" &&
-					seg in cur
-				)
-					cur = cur[seg];
-				else {
-					cur = undefined;
-					break;
-				}
-			}
-			if (typeof cur === "number") return cur;
-		}
-		return null;
+		return res.values[name];
 	}
 
-	function fmt(v: number | null, stat?: string): string {
-		if (v === null) return "—";
-		if (/^ChanceTo/.test(stat ?? "") && v >= 0 && v <= 1)
-			return (v * 100).toFixed(1) + "%";
-		return Number.isInteger(v)
-			? String(v)
-			: v.toFixed(3).replace(/\.?0+$/, "");
+	function fmt(v: number | null, stat: string): string {
+		if (v === null) return "-";
+
+		const statDef = statsHelper.getStatByName(stat);
+		if (!statDef) return String(v);
+		const clampvalue = statsHelper.getValueForStat(stat, v);
+
+		return formatStatNumber(clampvalue, statDef.eStatFormat);
 	}
 
 	async function doEvaluate() {
@@ -103,6 +82,9 @@
 				throw new Error(
 					"Actor or PlayerSheet not loaded",
 				);
+			}
+			if (!statsHelper) {
+				throw new Error("StatsHelper not initialized");
 			}
 
 			// TODO: Dont load always the build, that disabled the cache from Engine, do this in the EquippedAPI
@@ -127,14 +109,14 @@
 						statName = `${statName}.add`;
 					} else if (
 						modifierType ===
-						"multiplicativeadditive"
-					) {
-						statName = `${statName}.inc`;
-					} else if (
-						modifierType ===
 						"multiplicative"
 					) {
-						statName = `${statName}.more`;
+						statName = `${statName}.mult`;
+					} else if (
+						modifierType ===
+						"multiplicativeadditive"
+					) {
+						statName = `${statName}.multadd`;
 					}
 					if (!(statName in set)) {
 						set[statName] = [];
@@ -275,11 +257,11 @@
 									class="w-1/2"
 									>Stat</th
 								>
-								<th>Value</th>
 								<th
-									class="w-10 text-right"
-									>Explain</th
+									class="text-right"
+									>Value</th
 								>
+								<th class="w-10">Explain</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -287,9 +269,11 @@
 								<tr>
 									<td
 										class="font-medium"
-										>{stat}</td
+										>{statsHelper.getLabelForStat(
+											stat,
+										)}</td
 									>
-									<td
+									<td class="text-right"
 										>{fmt(
 											getStatFromEval(
 												evalResult,

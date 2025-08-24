@@ -1,6 +1,7 @@
 import { getContext, setContext } from 'svelte';
-import { type EquippedMap, type GearItem, type GearSlot } from '$lib/engine/types';
+import { type GearItem, type GearSlot } from '$lib/hellclock/gears';
 
+export type EquippedMap = Partial<Record<GearSlot, GearItem>>;
 export type EquippedAPI = {
 	equipped: EquippedMap;
 	set: (slot: GearSlot, item: GearItem) => void;

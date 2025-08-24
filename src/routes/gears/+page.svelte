@@ -1,24 +1,28 @@
 <script lang="ts">
 	import { useEquipped } from "$lib/context/equipped.svelte";
+	import type { StatsHelper } from "$lib/hellclock/stats";
 	import {
-		type GamePack,
 		type GearDefinition,
 		type GearItem,
 		type GearRoot,
 		type GearSlot,
 		type GearSlotDB,
 		type GearSlotDefinition,
-		type LangText,
 		type StatMod,
-	} from "$lib/engine/types";
+	} from "$lib/hellclock/gears";
+	import { translate} from "$lib/hellclock/lang";
+	import { type GamePack } from "$lib/engine/types";
 	import { getContext, onMount } from "svelte";
+    import { formatStatModNumber } from "$lib/hellclock/formats";
 
 	const {
 		equipped,
 		set: setEquipped,
 		unset: unsetEquipped,
 	} = useEquipped();
+
 	const gamepack = getContext<GamePack>("gamepack");
+	const statsHelper = getContext<StatsHelper>("statsHelper");
 	const lang = getContext<string>("lang") || "en";
 
 	let slotDB = $state<GearSlotDB | null>(null);
@@ -27,10 +31,9 @@
 		const labels: Partial<Record<GearSlot, string>> = {};
 		for (const s of allSlots) {
 			let slotNameKey = findSlotDef(s)?.slotNameKey;
-			let translatedName = tr(slotNameKey, lang);
+			let translatedName = translate(slotNameKey, lang);
 			labels[s] = translatedName || prettySlot(s);
 		}
-		console.debug(labels);
 		return labels as Record<GearSlot, string>;
 	});
 
@@ -80,33 +83,6 @@
 		return list.find((d) => d.slot === s);
 	}
 
-	function tr(list?: LangText[], langCode?: string): string {
-		if (!list?.length) return "";
-		const lc = (langCode || "en").toLowerCase();
-		const m = new Map(
-			list.map((x) => [
-				x.langCode.toLowerCase(),
-				x.langTranslation,
-			]),
-		);
-		// try exact, then base language, then common canonicalizations, then en, then first
-		const candidates = [
-			lc,
-			lc.split("-")[0], // 'es-CO' -> 'es'
-			lc.replace("_", "-"),
-			lc === "pt-br" ? "pt-br" : lc, // keep pt-br
-			"en",
-		].filter(Boolean);
-
-		for (const k of candidates) {
-			if (m.has(k)) {
-				return m.get(k) as string;
-			}
-		}
-
-		return list[0].langTranslation;
-	}
-
 	function prettySlot(s: string): string {
 		return s
 			.replace(/_/g, " ")
@@ -122,25 +98,12 @@
 
 	function fmtValue(mod: StatMod): string {
 		const { value, eStatDefinition, modifierType } = mod;
-		// heuristic: values in [0,1] are likely percentages
-		const asPct =
-			value >= 0 &&
-			value <= 1 &&
-			!["Life", "Mana", "BaseDamage", "Damage"].includes(
-				eStatDefinition,
-			);
-		const v = asPct
-			? `${(value * 100).toFixed(1)}%`
-			: Number.isInteger(value)
-				? String(value)
-				: value.toFixed(2);
-		const symbol =
-			modifierType === "Additive"
-				? "+"
-				: modifierType === "Multiplicative"
-					? "×"
-					: "";
-		return `${symbol}${v} ${eStatDefinition}`;
+		const statDefinition =
+			statsHelper.getStatByName(eStatDefinition);
+		if (!statDefinition) {
+			return `${value} ${eStatDefinition}`;
+		}
+		return `${formatStatModNumber(value, statDefinition.eStatFormat, modifierType, 1, 0, 1)} ${statsHelper.getLabelForStat(eStatDefinition, lang)}`;
 	}
 
 	function tooltipText(item?: GearItem): string {
@@ -182,7 +145,7 @@
 					tier: g.tier,
 					baseName,
 					name:
-						tr(
+						translate(
 							data.variantLocalizedName,
 							langCode,
 						) || baseName,
