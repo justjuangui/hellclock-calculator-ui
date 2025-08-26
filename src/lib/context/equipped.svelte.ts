@@ -9,9 +9,18 @@ export type EquippedAPI = {
   clear: () => void;
 };
 
-const equippedKey = Symbol("equipped-gear");
+export enum ESlotsType {
+  BlessedGear,
+  TrinkedGear,
+}
 
-export function providedEquipped(initial?: EquippedMap): EquippedAPI {
+const equippedBlessedKey = Symbol("equipped-blessed-gear");
+const equippedTrinkedKey = Symbol("equipped-trinket-gear");
+
+export function providedEquipped(
+  slotsType: ESlotsType,
+  initial?: EquippedMap,
+): EquippedAPI {
   const equipped = $state<EquippedMap>(structuredClone(initial ?? {}));
   const api: EquippedAPI = {
     equipped,
@@ -27,12 +36,20 @@ export function providedEquipped(initial?: EquippedMap): EquippedAPI {
       }
     },
   };
-  setContext(equippedKey, api);
+  const contextKey =
+    slotsType === ESlotsType.BlessedGear
+      ? equippedBlessedKey
+      : equippedTrinkedKey;
+  setContext(contextKey, api);
   return api;
 }
 
-export function useEquipped(): EquippedAPI {
-  const ctx = getContext<EquippedAPI>(equippedKey);
+export function useEquipped(slotsType: ESlotsType): EquippedAPI {
+  const contextKey =
+    slotsType === ESlotsType.BlessedGear
+      ? equippedBlessedKey
+      : equippedTrinkedKey;
+  const ctx = getContext<EquippedAPI>(contextKey);
   if (!ctx) {
     throw new Error(
       "Equipped context not found. Did you call provideEquipped() in +layout.svelte?",

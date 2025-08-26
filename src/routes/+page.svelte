@@ -3,14 +3,27 @@
   import type { Engine } from "$lib/engine";
   import type { GamePack, XNode } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
-  import { useEquipped } from "$lib/context/equipped.svelte";
+  import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
   import type { StatsHelper } from "$lib/hellclock/stats";
-  import { formatStatNumber } from "$lib/hellclock/formats";
   import { translate } from "$lib/hellclock/lang";
+  import DisplayStats from "$lib/ui/DisplayStats.svelte";
+  import GearSlots from "$lib/ui/GearSlots.svelte";
+  import FilterGearSelector from "$lib/ui/FilterGearSelector.svelte";
+  import type {
+    GearItem,
+    GearsHelper,
+    GearSlot,
+    StatMod,
+  } from "$lib/hellclock/gears";
+  import { getValueFromMultiplier } from "$lib/hellclock/formats";
+  import { fmtValue } from "$lib/hellclock/utils";
+
   const engine = getContext<Engine>("engine");
   const gamepack = getContext<GamePack>("gamepack");
   const statsHelper = getContext<StatsHelper>("statsHelper");
-  const { equipped } = useEquipped();
+  const gearsHelper = getContext<GearsHelper>("gearsHelper");
+  const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
+  const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
   const lang = getContext<string>("lang") || "en";
 
   type PlayerSheet = {
@@ -21,20 +34,6 @@
       >
     >;
   } & Record<string, unknown>;
-
-  let selectedGroup = $state<
-    "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel"
-  >("DamageLabel");
-
-  const groupMeta: Array<{
-    key: "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel";
-    label: string;
-  }> = [
-    { key: "DamageLabel", label: "Damage" },
-    { key: "DefenseLabel", label: "Defense" },
-    { key: "VitalityLabel", label: "Vitality" },
-    { key: "OtherLabel", label: "Other" },
-  ];
 
   let actor = $state<Record<string, unknown> | null>(null);
   let sheet = $state<PlayerSheet | null>(null);
@@ -48,24 +47,11 @@
   let explainTitle = $state<string>("");
   let explainNode = $state<XNode | null>(null);
 
-  function hasGroup(key: typeof selectedGroup): boolean {
-    return !!sheet?.displayedStats?.[key]?.length;
-  }
-
-  function getStatFromEval(res: any, name: string): number | null {
-    if (!res) return null;
-    return res.values[name];
-  }
-
-  function fmt(v: number | null, stat: string): string {
-    if (v === null) return "-";
-
-    const statDef = statsHelper.getStatByName(stat);
-    if (!statDef) return String(v);
-    const clampvalue = statsHelper.getValueForStat(stat, v);
-
-    return formatStatNumber(clampvalue, statDef.eStatFormat);
-  }
+  let showGearSelector = $state(false);
+  let gearSelectorIsBlessed = $state(true);
+  let gearSelectorSlot = $state<GearSlot>("WEAPON");
+  let gearSelectorItems = $state<GearItem[]>([]);
+  let gearSelectorTitle = $state<string>("Select Gear");
 
   async function doEvaluate() {
     error = null;
@@ -92,32 +78,65 @@
       }
 
       let set: Record<string, any> = {};
-      // build the contributions for items
-      Object.entries(equipped).forEach(([key, item]) => {
+
+      function mapModForEval(mod: StatMod): string {
+        let statName = mod.eStatDefinition;
+        let modifierType = mod.modifierType.toLowerCase();
+        if (modifierType === "additive") {
+          statName = `${statName}.add`;
+        } else if (modifierType === "multiplicative") {
+          statName = `${statName}.mult`;
+        } else if (modifierType === "multiplicativeadditive") {
+          statName = `${statName}.multadd`;
+        }
+        return statName;
+      }
+
+      function mapModSource(
+        item: GearItem,
+        sourceType: string,
+        slot: GearSlot,
+      ) {
         for (const mod of item.mods) {
-          let statName = mod.eStatDefinition;
-          let modifierType = mod.modifierType.toLowerCase();
-          if (modifierType === "additive") {
-            statName = `${statName}.add`;
-          } else if (modifierType === "multiplicative") {
-            statName = `${statName}.mult`;
-          } else if (modifierType === "multiplicativeadditive") {
-            statName = `${statName}.multadd`;
-          }
+          let statName = mapModForEval(mod);
           if (!(statName in set)) {
             set[statName] = [];
           }
           set[statName].push({
-            source: `Equipped ${translate(item.localizedName, lang)}`,
-            amount: mod.value,
+            source: `Equipped ${translate(item.prefixLocalizedName, lang)} ${translate(item.localizedName, lang)}`,
+            amount: getValueFromMultiplier(
+              mod.value,
+              mod.modifierType,
+              mod.selectedValue!,
+              item.multiplierRange[0],
+              item.multiplierRange[1],
+            ),
             meta: {
-              type: "Gear",
+              type: sourceType,
               id: String(item.defId),
-              slot: key,
+              slot: slot,
+              value: fmtValue(
+                mod,
+                lang,
+                statsHelper,
+                item.multiplierRange[0],
+                item.multiplierRange[1],
+              ),
             },
           });
         }
-      });
+      }
+
+      let blessedGearEquipped = Object.entries(blessedSlotsApi.equipped);
+      let trinketGearEquipped = Object.entries(trinketSlotsApi.equipped);
+
+      blessedGearEquipped.forEach(([key, item]) =>
+        mapModSource(item, "Blessed Gear", key as GearSlot),
+      );
+      trinketGearEquipped.forEach(([key, item]) =>
+        mapModSource(item, "Trinket Gear", key as GearSlot),
+      );
+
       let payload: any = {
         set: set,
         outputs: Object.values(sheet?.displayedStats ?? {}).flatMap(
@@ -171,122 +190,80 @@
     }
   }
 
+  function onSlotClicked(blessedGear: boolean, s: GearSlot, remove = false) {
+    if (remove) {
+      if (blessedGear) {
+        blessedSlotsApi.unset(s);
+      } else {
+        trinketSlotsApi.unset(s);
+      }
+      doEvaluate();
+      return;
+    }
+
+    let titleSlot = translate(
+      gearsHelper.getGearSlotDefinition(s, blessedGear)?.slotNameKey,
+      lang,
+    );
+
+    gearSelectorItems = gearsHelper
+      .getGearItems(blessedGear, s)
+      ?.sort(
+        (a, b) =>
+          b.tier - a.tier ||
+          translate(a.localizedName, lang).localeCompare(
+            translate(b.localizedName, lang),
+          ),
+      );
+    gearSelectorIsBlessed = blessedGear;
+    gearSelectorSlot = s;
+    gearSelectorTitle = `Select ${titleSlot}(${s})`;
+    showGearSelector = true;
+  }
+
   onMount(async () => {
     actor = gamepack["hellclock-actor"] as Record<string, unknown> | null;
     sheet = gamepack["Player Sheet"] as PlayerSheet | null;
 
-    const firstWithItems = groupMeta.find(
-      (g) => sheet?.displayedStats?.[g.key]?.length,
-    );
-    if (firstWithItems) selectedGroup = firstWithItems.key;
     await doEvaluate();
   });
 </script>
 
-<div class="grid gap-4 lg:grid-cols-2">
-  <!-- Displayed Stats -->
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <div class="flex items-center justify-between gap-3">
-        <h3 class="card-title">Displayed Stats</h3>
-        <div role="tablist" class="tabs tabs-boxed tabs-sm">
-          {#each groupMeta as g}
-            <button
-              role="tab"
-              class={`tab ${selectedGroup === g.key ? "tab-active" : ""} ${hasGroup(g.key) ? "" : "tab-disabled"}`}
-              onclick={() => {
-                if (hasGroup(g.key)) selectedGroup = g.key;
-              }}
-              aria-selected={selectedGroup === g.key}
-              aria-disabled={!hasGroup(g.key)}
-              title={g.label}
-            >
-              {g.label}
-            </button>
-          {/each}
+<div class="grid gap-4 lg:grid-cols-6">
+  <div class="flex flex-col gap-4 col-span-2">
+    <div class="card card-xs shadow-sm bg-base-100">
+      <div class="card-body">
+        <div role="tablist" class="tabs tabs-box tabs-sm">
+          <button role="tab" class="tab tab-active" aria-selected="true">
+            Stats
+          </button>
+          <button
+            role="tab"
+            class="indicator tab tab-disabled"
+            aria-disabled="true"
+            >Calculations
+            <span class="indicator-item badge badge-secondary">Soon</span>
+          </button>
         </div>
       </div>
-      {#if error}
-        <div class="alert alert-error mt-3">
-          <span>{error}</span>
-        </div>
-      {:else if loading}
-        <div class="skeleton h-6 w-1/2 mb-2"></div>
-        <div class="skeleton h-6 w-2/3 mb-2"></div>
-        <div class="skeleton h-6 w-1/3 mb-2"></div>
-      {:else if sheet?.displayedStats?.[selectedGroup]?.length}
-        <div class="overflow-x-auto mt-2">
-          <table class="table table-zebra">
-            <thead>
-              <tr>
-                <th class="w-1/2">Stat</th>
-                <th class="text-right">Value</th>
-                <th class="w-10">Explain</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each sheet.displayedStats[selectedGroup] ?? [] as stat}
-                <tr>
-                  <td class="font-medium"
-                    >{statsHelper.getLabelForStat(stat)}</td
-                  >
-                  <td class="text-right"
-                    >{fmt(getStatFromEval(evalResult, stat), stat)}</td
-                  >
-                  <td class="text-right">
-                    <button
-                      aria-label="Explain {stat}"
-                      class="btn btn-ghost btn-xs"
-                      onclick={() => openExplain(stat)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        class="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
-                        />
-                        <circle cx="12" cy="12" r="3.25" />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-        </div>
-      {:else}
-        <p class="opacity-70">No stats listed for this group.</p>
-      {/if}
     </div>
+    <DisplayStats {evalResult} {loading} {error} {sheet} {openExplain} />
   </div>
-
-  <!-- Raw Engine Output (useful while integrating) -->
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h3 class="card-title">Engine Output</h3>
-      {#if loading}
-        <div class="skeleton h-6 w-1/3 mb-2"></div>
-        <div class="skeleton h-40 w-full"></div>
-      {:else if evalResult}
-        <pre
-          class="bg-base-200 p-3 rounded-box text-xs overflow-x-auto">{JSON.stringify(
-            evalResult,
-            null,
-            2,
-          )}</pre>
-      {:else if error}
-        <p class="opacity-70">No output due to error.</p>
-      {:else}
-        <p class="opacity-70">No engine output yet.</p>
-      {/if}
-    </div>
+  <div class="col-span-2">
+    <GearSlots
+      blessedGear={true}
+      title="Gear"
+      equipped={blessedSlotsApi.equipped}
+      {onSlotClicked}
+    />
+  </div>
+  <div class="col-span-2">
+    <GearSlots
+      blessedGear={false}
+      title="Trinket"
+      equipped={trinketSlotsApi.equipped}
+      {onSlotClicked}
+    />
   </div>
 </div>
 
@@ -323,6 +300,41 @@
 
   <form method="dialog" class="modal-backdrop">
     <button aria-label="Close" onclick={() => (showExplain = false)}
+      >close</button
+    >
+  </form>
+</dialog>
+<dialog class="modal" open={showGearSelector}>
+  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+    <div class="grow overflow-y-hidden">
+      {#if showGearSelector}
+        <FilterGearSelector
+          items={gearSelectorItems}
+          onEquip={(item) => {
+            if (gearSelectorIsBlessed) {
+              blessedSlotsApi.set(gearSelectorSlot, item);
+            } else {
+              trinketSlotsApi.set(gearSelectorSlot, item);
+            }
+            showGearSelector = false;
+            doEvaluate();
+          }}
+          title={gearSelectorTitle}
+        />
+      {/if}
+    </div>
+    <div class="divider my-0 px-6 pt-2"></div>
+    <div class="modal-action px-6 my-6 shrink">
+      <form method="dialog">
+        <button class="btn" onclick={() => (showGearSelector = false)}
+          >Close</button
+        >
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close" onclick={() => (showGearSelector = false)}
       >close</button
     >
   </form>

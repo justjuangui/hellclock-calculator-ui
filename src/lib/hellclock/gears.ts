@@ -48,6 +48,7 @@ export type StatMod = {
   eStatDefinition: string;
   modifierType: StatModifierType;
   value: number;
+  selectedValue?: number;
 };
 
 export type GearVariant = {
@@ -67,6 +68,7 @@ export type GearDefinition = {
   slot: GearSlot;
   tier: number;
   visualTier?: number;
+  power?: number;
   variants?: GearVariant[];
   nameKey?: LangText[];
   sellingValue?: number;
@@ -100,7 +102,11 @@ export type GearRarityDefinition = {
   localizedName?: LangText[];
 };
 
+export type GearDropRarityConfigDefinition = {
+  value: GearRarityDefinition;
+};
 export type GearRarityRoot = {
+  gearDropRarityConfigs: GearDropRarityConfigDefinition[];
   blessedGearRarity: GearRarityDefinition;
 };
 
@@ -143,34 +149,100 @@ export class GearsHelper {
       : (this.slotDatabase.regularGearSlotDefinitions ?? []);
   }
 
-  getGearItems(blessed: boolean): GearItem[] {
-    let items: GearItem[] = [];
+  getSpriteRegularGearBySlot(slot: GearSlot) {
+    switch (slot) {
+      case "WEAPON":
+        return "IconTrinket_WeaponT1";
+      case "HELMET":
+        return "IconTrinket_Placeholder";
+      case "SHOULDERS":
+        return "IconTrinket_Placeholder";
+      case "ARMOR":
+        return "IconTrinket_ArmorT1";
+      case "BRACERS":
+        return "IconTrinket_BracersT1";
+      case "PANTS":
+        return "IconTrinket_PantsT1";
+      case "BOOTS":
+        return "IconTrinket_BootsT1";
+      case "RING_LEFT":
+        return "IconTrinket_RingT1";
+      case "RING_RIGHT":
+        return "IconTrinket_RingT1";
+      case "CAPE":
+        return "IconTrinket_CapeT1";
+      case "TRINKET":
+        return "IconTrinket_TrinketT1";
+      case "ACCESSORY":
+        return "IconTrinket_AccessoryT1";
+      default:
+        return undefined;
+    }
+  }
 
+  getGearItems(blessed: boolean, slotFilter?: GearSlot): GearItem[] {
+    let items: GearItem[] = [];
     this.gearDefinitions
       .filter(
         (gd) =>
           (blessed && gd.blessingPrice) || (!blessed && !gd.blessingPrice),
       )
+      .filter((gd) => (slotFilter ? gd.slot === slotFilter : true))
       .forEach((gd) => {
         if (!gd.variants || gd.variants.length === 0) {
-          items.push({
-            defId: gd.id,
-            slot: gd.slot,
-            tier: gd.tier,
-            visualTier: gd.visualTier ?? gd.tier,
-            localizedName: gd.nameKey,
-            multiplierRange: [0, 1],
-            mods: [],
-            sellingValue: gd.sellingValue,
-            gearShopCost: gd.gearShopCost,
-            blessingPrice: gd.blessingPrice,
-          });
+          const groupRarity = !blessed
+            ? this.gearRarity.gearDropRarityConfigs
+            : [];
+
+          for (let rarityConfig of groupRarity) {
+            let slot = this.slotDatabase.regularGearSlotDefinitions?.find(
+              (sd) => sd.slot === gd.slot,
+            );
+            if (!slot) {
+              console.warn(
+                `No slot definition found for slot ${gd.slot} in gear definition ID ${gd.id}`,
+              );
+              continue;
+            }
+            // If the gear definition has no variants, we create a default item with no mods
+            items.push({
+              defId: gd.id,
+              slot: gd.slot,
+              tier: gd.tier,
+              visualTier: gd.visualTier ?? gd.tier,
+              localizedName: gd.nameKey,
+              prefixLocalizedName: rarityConfig.value.localizedName,
+              color: rarityConfig.value.color,
+              multiplierRange: rarityConfig.value.multiplierRange,
+              mods: [
+                {
+                  eStatDefinition: slot.statDefinition,
+                  modifierType: slot.eStatModifierType as StatModifierType,
+                  type: "StatModifierDefinition",
+                  value: gd.power ?? 0,
+                  selectedValue: rarityConfig.value.multiplierRange[1],
+                },
+              ],
+              sprite: this.getSpriteRegularGearBySlot(gd.slot),
+              sellingValue: Math.floor(
+                (gd.sellingValue ?? 0) *
+                  rarityConfig.value.sellingValueMultiplier,
+              ),
+              gearShopCost: gd.gearShopCost,
+              blessingPrice: gd.blessingPrice,
+            });
+          }
           return;
         }
         gd.variants.forEach((variant) => {
           const rarity = blessed
             ? this.gearRarity.blessedGearRarity
             : undefined;
+
+          let mods = [...(variant.value.statModifiersDefinitions?.map(s => ({...s})) ?? [])];
+          mods.forEach((m) => {
+            m.selectedValue = rarity?.multiplierRange[1] ?? 1;
+          });
           items.push({
             defId: gd.id,
             slot: gd.slot,
@@ -181,7 +253,7 @@ export class GearsHelper {
             color: rarity?.color,
             multiplierRange: rarity?.multiplierRange ?? [0, 1],
             sprite: variant.value.sprite,
-            mods: variant.value.statModifiersDefinitions ?? [],
+            mods: mods,
             sellingValue:
               gd.sellingValue && rarity
                 ? Math.floor(gd.sellingValue * rarity.sellingValueMultiplier)

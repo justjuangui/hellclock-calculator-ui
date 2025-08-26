@@ -22,14 +22,57 @@ export function formatStatNumber(
   }
   let symbol = singType == ESingType.Always ? (value >= 0 ? "+" : "") : "";
   if (statFormat === "PERCENTAGE") {
-    return `${symbol}${(value * 100).toFixed(0)}%`;
+    if (Math.abs(value) < 0.08) {
+      return `${symbol}${Math.floor(csQuantize(value) * 100).toFixed(0)}%`;
+    }
+    return `${symbol}${Math.floor(value * 100).toFixed(0)}%`;
   }
-  return `${symbol}${value.toFixed(0)}`;
+  return `${symbol}${Math.round(value).toFixed(0)}`;
 }
 
-export function normalizedValue(value: number, min: number, max: number) {
-  if (max === min) return 0;
-  return (value - min) / (max - min);
+export function normalizedValue(from: number, fromMin = 0.0, fromMax = 1.0) {
+  return Math.min(Math.max(from, fromMin), fromMax);
+}
+
+export function roundHalfToEven(x: number, digits = 0): number {
+  const f = 10 ** digits;
+  const y = x * f;
+  const i = Math.floor(y);
+  const frac = y - i;
+
+  let n: number;
+  if (frac > 0.5) {
+    n = i + 1;
+  } else if (frac < 0.5) {
+    n = i;
+  } else {
+    n = i % 2 === 0 ? i : i + 1;
+  }
+  return n / f;
+}
+
+export function csQuantize(num: number): number {
+  const r = roundHalfToEven(num, 4);
+  const scaled = r * 400;
+  const adjusted = scaled + (scaled >= 0 ? Number.EPSILON : -Number.EPSILON);
+  return Math.floor(adjusted) / 400;
+}
+
+export function getValueFromMultiplier(
+  baseValue: number,
+  modifier: StatModifierType,
+  multiplier: number,
+  minMultiplier: number,
+  maxMultiplier: number,
+) {
+  let val = baseValue;
+  let normalize = normalizedValue(multiplier, minMultiplier, maxMultiplier);
+  if (modifier === "Additive") {
+    val *= normalize;
+  } else {
+    val = (val - 1) * normalize + 1;
+  }
+  return val;
 }
 
 export function formatStatModNumber(
@@ -40,13 +83,13 @@ export function formatStatModNumber(
   minMultiplier: number,
   maxMultiplier: number,
 ) {
-  let val = value;
-  let normalize = normalizedValue(multiplier, minMultiplier, maxMultiplier);
-  if (modifier === "Additive") {
-    val *= normalize;
-  } else {
-    val = (val - 1) * normalize + 1;
-  }
+  let val = getValueFromMultiplier(
+    value,
+    modifier,
+    multiplier,
+    minMultiplier,
+    maxMultiplier,
+  );
 
   if (modifier == "Additive") {
     return formatStatNumber(

@@ -5,7 +5,7 @@
   import { Engine } from "$lib/engine";
   import type { GamePack } from "$lib/engine/types";
   import { loadGamePack } from "$lib/engine/assets";
-  import { providedEquipped } from "$lib/context/equipped.svelte";
+  import { ESlotsType, providedEquipped } from "$lib/context/equipped.svelte";
   import { StatsHelper, type StatsRoot } from "$lib/hellclock/stats";
   import {
     GearsHelper,
@@ -14,7 +14,8 @@
     type GearSlotDB,
   } from "$lib/hellclock/gears";
 
-  providedEquipped();
+  providedEquipped(ESlotsType.BlessedGear);
+  providedEquipped(ESlotsType.TrinkedGear);
 
   // runes state
   let ready = $state(false);
