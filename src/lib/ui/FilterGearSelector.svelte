@@ -62,7 +62,7 @@
     {#if (items.length ?? 0) === 0}
       <p class="mt-4 opacity-70">No items available for this slot.</p>
     {:else}
-      <div class="mt-4 grid gap-3 grid-cols-2 pr-4">
+      <div class="mt-4 grid gap-3 lg:grid-cols-2 pr-4">
         {#each (items ?? []).filter((i) => matches(i, search)) as item}
           <div
             class="card bg-base-200 hover:bg-base-300 transition border-2 border-[var(--color)]"

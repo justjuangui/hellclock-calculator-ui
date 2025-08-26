@@ -35,6 +35,21 @@
     >;
   } & Record<string, unknown>;
 
+  const leftOptions = [
+    { name: "Stats", soon: false },
+    { name: "Calculations", soon: true },
+  ];
+  const rightOptions = [
+    { name: "Gear", soon: false },
+    { name: "Skills", soon: true },
+    { name: "Relics", soon: true },
+    { name: "Constellation", soon: true },
+    { name: "Bell", soon: true },
+  ];
+
+  let selectedLeft = $state(leftOptions[0]);
+  let selectedRight = $state(rightOptions[0]);
+
   let actor = $state<Record<string, unknown> | null>(null);
   let sheet = $state<PlayerSheet | null>(null);
   let evalResult = $state<any>(null);
@@ -230,23 +245,53 @@
 </script>
 
 <div class="grid gap-4 lg:grid-cols-6">
-  <div class="flex flex-col gap-4 col-span-2">
-    <div class="card card-xs shadow-sm bg-base-100">
-      <div class="card-body">
-        <div role="tablist" class="tabs tabs-box tabs-sm">
-          <button role="tab" class="tab tab-active" aria-selected="true">
-            Stats
-          </button>
+  <div class="card card-xs shadow-sm bg-base-100 col-span-2">
+    <div class="card-body">
+      <div role="tablist" class="tabs tabs-box tabs-sm">
+        {#each leftOptions as opt}
           <button
             role="tab"
-            class="indicator tab tab-disabled"
-            aria-disabled="true"
-            >Calculations
-            <span class="indicator-item badge badge-secondary">Soon</span>
+            class={` indicator tab ${selectedLeft.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
+            onclick={() => {
+              if (!opt.soon) selectedLeft = opt;
+            }}
+            aria-selected={selectedLeft.name === opt.name}
+            aria-disabled={opt.soon}
+            title={opt.soon ? "Coming soon" : opt.name}
+          >
+            {opt.name}
+            {#if opt.soon}
+              <span class="indicator-item status status-error"></span>
+            {/if}
           </button>
-        </div>
+        {/each}
       </div>
     </div>
+  </div>
+  <div class="card card-xs shadow-sm bg-base-100 col-span-4">
+    <div class="card-body">
+      <div role="tablist" class="tabs tabs-box tabs-sm">
+        {#each rightOptions as opt}
+          <button
+            role="tab"
+            class={`indicator tab ${selectedRight.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
+            onclick={() => {
+              if (!opt.soon) selectedRight = opt;
+            }}
+            aria-selected={selectedRight.name === opt.name}
+            aria-disabled={opt.soon}
+            title={opt.soon ? "Coming soon" : opt.name}
+          >
+            {opt.name}
+            {#if opt.soon}
+              <span class="indicator-item status status-error"></span>
+            {/if}
+          </button>
+        {/each}
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col gap-4 col-span-2">
     <DisplayStats {evalResult} {loading} {error} {sheet} {openExplain} />
   </div>
   <div class="col-span-2">
