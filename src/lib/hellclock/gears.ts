@@ -1,4 +1,6 @@
 import { type LangText } from "$lib/hellclock/lang";
+import type { StatMod, StatModifierType } from "$lib/hellclock/stats";
+
 export type GearSlot =
   | "WEAPON"
   | "HELMET"
@@ -26,29 +28,6 @@ export type GearSlotDB = {
   type: "GearSlotDatabase";
   regularGearSlotDefinitions?: GearSlotDefinition[];
   blessedGearSlotDefinitions?: GearSlotDefinition[];
-};
-
-export type StatModifierType =
-  | "Additive"
-  | "Multiplicative"
-  | "MultiplicativeAdditive";
-export enum EComplementType {
-  None,
-  Complement,
-  Decrement,
-}
-export enum ESingType {
-  Default,
-  Always,
-  Never,
-}
-
-export type StatMod = {
-  type: "StatModifierDefinition";
-  eStatDefinition: string;
-  modifierType: StatModifierType;
-  value: number;
-  selectedValue?: number;
 };
 
 export type GearVariant = {
