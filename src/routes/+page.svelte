@@ -17,13 +17,24 @@
   } from "$lib/hellclock/gears";
   import { getValueFromMultiplier } from "$lib/hellclock/formats";
   import { fmtValue } from "$lib/hellclock/utils";
+  import SkillSlots from "$lib/ui/SkillSlots.svelte";
+  import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
+  import type {
+    SkillSelected,
+    SkillsHelper,
+    SkillSlotDefinition,
+  } from "$lib/hellclock/skills";
+  import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
 
   const engine = getContext<Engine>("engine");
   const gamepack = getContext<GamePack>("gamepack");
   const statsHelper = getContext<StatsHelper>("statsHelper");
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
+  const skillsHelper = getContext<SkillsHelper>("skillsHelper");
+
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
   const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
+  const skillSlotsApi = useSkillEquipped();
   const lang = getContext<string>("lang") || "en";
 
   type PlayerSheet = {
@@ -67,6 +78,10 @@
   let gearSelectorSlot = $state<GearSlot>("WEAPON");
   let gearSelectorItems = $state<GearItem[]>([]);
   let gearSelectorTitle = $state<string>("Select Gear");
+
+  let showSkillSelector = $state(false);
+  let skillSelectorSlot = $state<SkillSlotDefinition>("SKILL_SLOT_1");
+  let skillSelectorItems = $state<SkillSelected[]>([]);
 
   async function doEvaluate() {
     error = null;
@@ -236,6 +251,31 @@
     showGearSelector = true;
   }
 
+  function onSkillSlotClicked(s: SkillSlotDefinition, remove = false) {
+    if (remove) {
+      skillSlotsApi.unset(s);
+      doEvaluate();
+      return;
+    }
+    let skillsSetted = Object.values(skillSlotsApi.skillsEquipped)
+      .filter((sk) => sk)
+      .map((sk) => sk!.skill.id);
+    skillSelectorSlot = s;
+    skillSelectorItems = skillsHelper
+      .getAllSkillDefinitions()
+      .filter((sk) => !skillsSetted.includes(sk.id))
+      .map((sk) => {
+        return { skill: { ...sk }, selectedLevel: 7 } as SkillSelected;
+      });
+    showSkillSelector = true;
+  }
+
+  function onSkillSelected(skill: SkillSelected) {
+    skillSlotsApi.set(skillSelectorSlot, skill);
+    showSkillSelector = false;
+    doEvaluate();
+  }
+
   onMount(async () => {
     actor = gamepack["hellclock-actor"] as Record<string, unknown> | null;
     sheet = gamepack["Player Sheet"] as PlayerSheet | null;
@@ -294,21 +334,31 @@
   <div class="flex flex-col gap-4 col-span-2">
     <DisplayStats {evalResult} {loading} {error} {sheet} {openExplain} />
   </div>
-  <div class="col-span-2">
-    <GearSlots
-      blessedGear={true}
-      title="Gear"
-      equipped={blessedSlotsApi.equipped}
-      {onSlotClicked}
-    />
-  </div>
-  <div class="col-span-2">
-    <GearSlots
-      blessedGear={false}
-      title="Trinket"
-      equipped={trinketSlotsApi.equipped}
-      {onSlotClicked}
-    />
+  <div class="col-span-4">
+    <div class="grid gap-4 lg:grid-cols-6">
+      <div class="col-span-6">
+        <SkillSlots
+          equipped={skillSlotsApi.skillsEquipped}
+          {onSkillSlotClicked}
+        />
+      </div>
+      <div class="col-span-2">
+        <GearSlots
+          blessedGear={true}
+          title="Gear"
+          equipped={blessedSlotsApi.equipped}
+          {onSlotClicked}
+        />
+      </div>
+      <div class="col-span-2">
+        <GearSlots
+          blessedGear={false}
+          title="Trinket"
+          equipped={trinketSlotsApi.equipped}
+          {onSlotClicked}
+        />
+      </div>
+    </div>
   </div>
 </div>
 
@@ -380,6 +430,29 @@
 
   <form method="dialog" class="modal-backdrop">
     <button aria-label="Close" onclick={() => (showGearSelector = false)}
+      >close</button
+    >
+  </form>
+</dialog>
+<dialog class="modal" open={showSkillSelector}>
+  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+    <div class="grow overflow-y-hidden">
+      {#if showSkillSelector}
+        <FilterSkillSelector skills={skillSelectorItems} {onSkillSelected} />
+      {/if}
+    </div>
+    <div class="divider my-0 px-6 pt-2"></div>
+    <div class="modal-action px-6 my-6 shrink">
+      <form method="dialog">
+        <button class="btn" onclick={() => (showSkillSelector = false)}
+          >Close</button
+        >
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close" onclick={() => (showSkillSelector = false)}
       >close</button
     >
   </form>

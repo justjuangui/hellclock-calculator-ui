@@ -1,5 +1,18 @@
 import { translate, type LangText } from "$lib/hellclock/lang";
 
+export type StatModifierType =
+  | "Additive"
+  | "Multiplicative"
+  | "MultiplicativeAdditive";
+
+export type StatMod = {
+  type: "StatModifierDefinition";
+  eStatDefinition: string;
+  modifierType: StatModifierType;
+  value: number;
+  selectedValue?: number;
+};
+
 export type StatFormat = "DEFAULT" | "PERCENTAGE";
 
 export type StatDefinition = {

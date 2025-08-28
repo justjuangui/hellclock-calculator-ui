@@ -1,15 +1,26 @@
 import type { StatFormat } from "$lib/hellclock/stats";
-import {
-  EComplementType,
-  ESingType,
-  type StatModifierType,
-} from "$lib/hellclock/gears";
+import { type StatModifierType } from "$lib/hellclock/stats";
+
+export enum EComplementType {
+  None,
+  Complement,
+  Decrement,
+}
+
+export enum ESingType {
+  Default,
+  Always,
+  Never,
+}
+
+const instanceFormat: Record<string, Intl.NumberFormat> = {};
 
 export function formatStatNumber(
   value: number,
   statFormat: StatFormat,
   singType: ESingType = ESingType.Always,
   complement: EComplementType = EComplementType.None,
+  lang = "en",
 ) {
   if (complement == EComplementType.Complement) {
     value = 1.0 - value;
@@ -22,10 +33,17 @@ export function formatStatNumber(
   }
   let symbol = singType == ESingType.Always ? (value >= 0 ? "+" : "") : "";
   if (statFormat === "PERCENTAGE") {
-    if (Math.abs(value) < 0.08) {
-      return `${symbol}${Math.floor(csQuantize(value) * 100).toFixed(0)}%`;
+    if (instanceFormat[lang] === undefined) {
+      instanceFormat[lang] = new Intl.NumberFormat(lang, {
+        style: "percent",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
     }
-    return `${symbol}${Math.floor(value * 100).toFixed(0)}%`;
+    if (Math.abs(value) < 0.08) {
+      return `${symbol}${instanceFormat[lang].format(csQuantize(value))}`;
+    }
+    return `${symbol}${instanceFormat[lang].format(Math.floor(value * 100) / 100)}`;
   }
   return `${symbol}${Math.round(value).toFixed(0)}`;
 }

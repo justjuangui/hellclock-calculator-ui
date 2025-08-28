@@ -13,9 +13,12 @@
     type GearRoot,
     type GearSlotDB,
   } from "$lib/hellclock/gears";
+  import { SkillsHelper, type SkillsRoot } from "$lib/hellclock/skills";
+  import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
+  provideSkillEquipped();
 
   // runes state
   let ready = $state(false);
@@ -26,13 +29,15 @@
   let engine = $state<Engine | null>(null);
   let statsHelper = $state<StatsHelper | null>(null);
   let gearsHelper = $state<GearsHelper | null>(null);
+  let skillsHelper = $state<SkillsHelper | null>(null);
 
   $effect(() => {
     setContext("gamepack", pack);
     setContext("engine", engine);
     setContext("statsHelper", statsHelper);
     setContext("gearsHelper", gearsHelper);
-    if (statsHelper && engine && pack && gearsHelper) {
+    setContext("skillsHelper", skillsHelper);
+    if (statsHelper && engine && pack && gearsHelper && skillsHelper) {
       ready = true;
     }
   });
@@ -64,12 +69,15 @@
       label = "Loading StatsHelper";
       statsHelper = new StatsHelper(pack["Stats"] as StatsRoot);
 
-      label = "Loaging GearsHelper";
+      label = "Loading GearsHelper";
       gearsHelper = new GearsHelper(
         pack["Gear Slot"] as GearSlotDB,
         pack["Gear"] as GearRoot,
         pack["Gear Rarity"] as GearRarityRoot,
       );
+
+      label = "Loading SkillsHelper";
+      skillsHelper = new SkillsHelper(pack["Skills"] as SkillsRoot);
 
       label = "Ready";
       progress = 100;

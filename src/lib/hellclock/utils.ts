@@ -1,7 +1,7 @@
-import type { GearItem, StatMod } from "$lib/hellclock/gears";
+import type { GearItem } from "$lib/hellclock/gears";
 import { translate } from "$lib/hellclock/lang";
 import { formatStatModNumber } from "$lib/hellclock/formats";
-import type { StatsHelper } from "$lib/hellclock/stats";
+import type { StatMod, StatsHelper } from "$lib/hellclock/stats";
 
 export function parseRGBA01ToCss(rgbaStr: string | undefined): string {
   if (!rgbaStr) return "rgba(0,0,0,1)";
