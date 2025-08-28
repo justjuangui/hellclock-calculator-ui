@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte";
-  import { formatStatNumber } from "$lib/hellclock/formats";
-  import { ESingType } from "$lib/hellclock/gears";
+  import { ESingType, formatStatNumber } from "$lib/hellclock/formats";
+  import type { StatsHelper } from "$lib/hellclock/stats";
 
   const statsHelper = getContext<StatsHelper>("statsHelper");
   let { evalResult, loading, error, sheet, openExplain } = $props();
