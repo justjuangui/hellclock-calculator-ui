@@ -26,7 +26,7 @@
       Click a slot to browse and equip skills, to remove just click once again.
       Hover to see details.
     </p>
-    <div class="mt-4 flex flex-row gap-4">
+    <div class="flex flex-row gap-2">
       {#each skillSlots as s}
         <div class="tooltip tooltip-bottom">
           <div class="tooltip-content">

@@ -61,9 +61,9 @@
   <div class="card-body">
     <h3 class="card-title">{title}</h3>
     <p class="text-sm opacity-70">
-      Click a slot to browse and equip items. Hover to see details.
+      Click a slot to browse and equip items, to remove just click once again. Hover to see details.
     </p>
-    <div class="mt-4 grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-3 gap-2">
       {#each allSlots as s}
         <div
           role="button"
@@ -73,11 +73,12 @@
           style={`--color: ${equipped[s]?.color ? parseRGBA01ToCss(equipped[s]!.color) : "transparent"}`}
           onkeydown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
-              onSlotClicked(blessedGear, s);
+              onSlotClicked(blessedGear, s, equipped[s] ? true : false);
               e.preventDefault();
             }
           }}
-          onclick={() => onSlotClicked(blessedGear, s)}
+          onclick={() =>
+            onSlotClicked(blessedGear, s, equipped[s] ? true : false)}
         >
           {#if equipped[s]?.sprite}
             <img
@@ -102,31 +103,6 @@
               class="badge border-[var(--color)] badge-sm absolute -top-1 -right-1"
               >T{equipped[s]!.tier}</span
             >
-            <button
-              class="btn btn-circle absolute text-[var(--color)] bottom-1 right-1"
-              onclick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onSlotClicked(blessedGear, s, true);
-              }}
-            >
-              <!-- Trash icon (inline SVG) -->
-              <svg
-                class="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M3 6h18" />
-                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                <path d="M10 11v6M14 11v6" />
-              </svg>
-            </button>
           {/if}
         </div>
       {/each}

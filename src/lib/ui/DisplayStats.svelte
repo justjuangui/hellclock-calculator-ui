@@ -76,7 +76,7 @@
       <div class="skeleton h-6 w-1/3 mb-2"></div>
     {:else if sheet?.displayedStats?.[selectedGroup]?.length}
       <div class="overflow-x-auto mt-2">
-        <table class="table table-zebra">
+        <table class="table table-zebra table-md">
           <thead>
             <tr>
               <th class="w-1/2">Stat</th>

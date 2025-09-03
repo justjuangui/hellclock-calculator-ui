@@ -13,7 +13,7 @@
     type GearRoot,
     type GearSlotDB,
   } from "$lib/hellclock/gears";
-  import { SkillsHelper, type SkillsRoot } from "$lib/hellclock/skills";
+  import { SkillsHelper, type SkillsCalculatorRoot, type SkillsRoot } from "$lib/hellclock/skills";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -77,7 +77,7 @@
       );
 
       label = "Loading SkillsHelper";
-      skillsHelper = new SkillsHelper(pack["Skills"] as SkillsRoot);
+      skillsHelper = new SkillsHelper(pack["Skills"] as SkillsRoot, pack["skill-calculations"] as SkillsCalculatorRoot);
 
       label = "Ready";
       progress = 100;
@@ -123,7 +123,7 @@
   {:else}
     <div class="container mx-auto p-4">
       <AppNavbar />
-      <div class="mt-4">
+      <div class="mt-2">
         {@render children?.()}
       </div>
     </div>

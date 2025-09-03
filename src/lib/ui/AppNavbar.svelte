@@ -2,7 +2,7 @@
   let githubUrl = "https://github.com/justjuangui/hellclock-calculator-ui";
 </script>
 
-<nav class="navbar bg-base-100 rounded-2xl shadow-md px-4">
+<nav class="navbar bg-base-100 rounded-2xl shadow-md px-2">
   <div class="flex-1">
     <a href="/" class="btn btn-ghost text-xl">Hell Clock Planner</a>
   </div>

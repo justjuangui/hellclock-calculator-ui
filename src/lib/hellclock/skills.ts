@@ -281,12 +281,40 @@ export type SkillSlotDefinition =
 export type SkillSelected = {
   skill: Skill;
   selectedLevel: number;
-}
+};
+
+export type SkillValueMod = {
+  id: string;
+  displayName: string;
+};
+
+export type SkillBaseValueMod = {
+  id: string;
+  value: string;
+};
+
+export type SkillValueGroup = {
+  id: string;
+  displayName: string;
+  displayValueMods: SkillValueMod[];
+};
+
+export type SkillCalculatorDinition = {
+  id: string;
+  displayGroups: SkillValueGroup[];
+  baseModsMapping: SkillBaseValueMod[];
+};
+
+export type SkillsCalculatorRoot = {
+  skills: SkillCalculatorDinition[];
+};
 
 export class SkillsHelper {
   private skillsRoot: SkillsRoot;
-  constructor(skillsRoot: SkillsRoot) {
+  private skillsCalculator: SkillsCalculatorRoot;
+  constructor(skillsRoot: SkillsRoot, skillsCalculator: SkillsCalculatorRoot) {
     this.skillsRoot = skillsRoot;
+    this.skillsCalculator = skillsCalculator;
   }
 
   getSkillById(id: number): Skill | undefined {
@@ -305,6 +333,19 @@ export class SkillsHelper {
       "SKILL_SLOT_4",
       "SKILL_SLOT_5",
     ];
+  }
+
+  getSkillDisplayValueModsById(id: string): SkillValueGroup[] {
+    return (
+      this.skillsCalculator.skills.find((s) => s.id === id)?.displayGroups || []
+    );
+  }
+
+  getSkillBaseValueModsById(id: string): SkillBaseValueMod[] {
+    return (
+      this.skillsCalculator.skills.find((s) => s.id === id)?.baseModsMapping ||
+      []
+    );
   }
 
   getAllSkillDefinitions(): Skill[] {

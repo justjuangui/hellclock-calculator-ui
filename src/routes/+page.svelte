@@ -4,17 +4,12 @@
   import type { GamePack, XNode } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
   import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
-  import type { StatsHelper } from "$lib/hellclock/stats";
+  import type { StatMod, StatsHelper } from "$lib/hellclock/stats";
   import { translate } from "$lib/hellclock/lang";
   import DisplayStats from "$lib/ui/DisplayStats.svelte";
   import GearSlots from "$lib/ui/GearSlots.svelte";
   import FilterGearSelector from "$lib/ui/FilterGearSelector.svelte";
-  import type {
-    GearItem,
-    GearsHelper,
-    GearSlot,
-    StatMod,
-  } from "$lib/hellclock/gears";
+  import type { GearItem, GearsHelper, GearSlot } from "$lib/hellclock/gears";
   import { getValueFromMultiplier } from "$lib/hellclock/formats";
   import { fmtValue } from "$lib/hellclock/utils";
   import SkillSlots from "$lib/ui/SkillSlots.svelte";
@@ -23,8 +18,10 @@
     SkillSelected,
     SkillsHelper,
     SkillSlotDefinition,
+    SkillUpgradeModifier,
   } from "$lib/hellclock/skills";
   import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
+  import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
 
   const engine = getContext<Engine>("engine");
   const gamepack = getContext<GamePack>("gamepack");
@@ -52,7 +49,7 @@
   ];
   const rightOptions = [
     { name: "Gear", soon: false },
-    { name: "Skills", soon: true },
+    { name: "Skills", soon: false },
     { name: "Relics", soon: true },
     { name: "Constellation", soon: true },
     { name: "Bell", soon: true },
@@ -121,6 +118,18 @@
         }
         return statName;
       }
+      function mapSkillModForEval(mod: SkillUpgradeModifier): string {
+        let statName = mod.skillValueModifierKey.replaceAll(" ", "");
+        let modifierType = mod.modifierType.toLowerCase();
+        if (modifierType === "additive") {
+          statName = `${statName}.add`;
+        } else if (modifierType === "multiplicative") {
+          statName = `${statName}.mult`;
+        } else if (modifierType === "multiplicativeadditive") {
+          statName = `${statName}.multadd`;
+        }
+        return statName;
+      }
 
       function mapModSource(
         item: GearItem,
@@ -166,6 +175,75 @@
       trinketGearEquipped.forEach(([key, item]) =>
         mapModSource(item, "Trinket Gear", key as GearSlot),
       );
+
+      // Maps Skills Selected
+      Object.entries(skillSlotsApi.skillsEquipped).forEach(([slot, skill]) => {
+        if (!skill) {
+          return;
+        }
+
+        let baseValMods = skillsHelper.getSkillBaseValueModsById(
+          skill.skill.name,
+        );
+
+        if (!baseValMods?.length) {
+          error = `baseValMods not found for skill ${skill.skill.name}`;
+          return;
+        }
+
+        for (let baseValMod of baseValMods) {
+          let skillGroup = `skill.${skill.skill.name}.${baseValMod.id}.base`;
+          if (!(skillGroup in set)) {
+            set[skillGroup] = [];
+          }
+
+          let amount = (skill.skill as any)[baseValMod.value] || 0;
+          set[skillGroup].push({
+            source: `Skill ${translate(skill.skill.localizedName, lang)}`,
+            amount: amount,
+            meta: {
+              type: "skill",
+              id: String(skill.skill.id),
+              slot: slot,
+              base: baseValMod.value,
+              value: String(amount),
+            },
+          });
+        }
+
+        // Add ValueModifiers by level
+        let valueModByLevel = skill.skill.modifiersPerLevel[skill.selectedLevel];
+        if (!valueModByLevel) {
+          console.warn(
+            `ValueModifiers not found for skill ${skill.skill.name} at level ${skill.selectedLevel}, using level 7`,
+          );
+          valueModByLevel = skill.skill.modifiersPerLevel[7];
+        }
+
+        for (let modifier of valueModByLevel) {
+          let statName = `skill.${skill.skill.name}.${mapSkillModForEval(modifier)}`;
+          if (!(statName in set)) {
+            set[statName] = [];
+          }
+          set[statName].push({
+            source: `Skill ${translate(skill.skill.localizedName, lang)} Level ${skill.selectedLevel}`,
+            amount: getValueFromMultiplier(
+              modifier.value,
+              modifier.modifierType,
+              1,
+              1, 
+              1
+            ),
+            meta: {
+              type: "skill",
+              id: String(skill.skill.id),
+              slot: slot,
+              level: String(skill.selectedLevel),
+              // value: fmtValue(modifier, lang, statsHelper, 1, 1),
+            },
+          });
+        }
+      });
 
       let payload: any = {
         set: set,
@@ -284,7 +362,7 @@
   });
 </script>
 
-<div class="grid gap-4 lg:grid-cols-6">
+<div class="grid gap-2 lg:grid-cols-6">
   <div class="card card-xs shadow-sm bg-base-100 col-span-2">
     <div class="card-body">
       <div role="tablist" class="tabs tabs-box tabs-sm">
@@ -331,33 +409,45 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col gap-4 col-span-2">
+  <div class="flex flex-col gap-2 col-span-2">
     <DisplayStats {evalResult} {loading} {error} {sheet} {openExplain} />
   </div>
   <div class="col-span-4">
-    <div class="grid gap-4 lg:grid-cols-6">
-      <div class="col-span-6">
-        <SkillSlots
-          equipped={skillSlotsApi.skillsEquipped}
-          {onSkillSlotClicked}
-        />
-      </div>
-      <div class="col-span-2">
-        <GearSlots
-          blessedGear={true}
-          title="Gear"
-          equipped={blessedSlotsApi.equipped}
-          {onSlotClicked}
-        />
-      </div>
-      <div class="col-span-2">
-        <GearSlots
-          blessedGear={false}
-          title="Trinket"
-          equipped={trinketSlotsApi.equipped}
-          {onSlotClicked}
-        />
-      </div>
+    <div class="grid gap-2 lg:grid-cols-6">
+      {#if ["Gear", "Skills"].includes(selectedRight.name)}
+        <div class="col-span-6">
+          <SkillSlots
+            equipped={skillSlotsApi.skillsEquipped}
+            {onSkillSlotClicked}
+          />
+        </div>
+      {/if}
+      {#if selectedRight.name == "Skills"}
+        <div class="col-span-6">
+          <DisplaySkills
+            equipped={skillSlotsApi.skillsEquipped}
+            {openExplain}
+          />
+        </div>
+      {/if}
+      {#if selectedRight.name == "Gear"}
+        <div class="col-span-2">
+          <GearSlots
+            blessedGear={true}
+            title="Gear"
+            equipped={blessedSlotsApi.equipped}
+            {onSlotClicked}
+          />
+        </div>
+        <div class="col-span-2">
+          <GearSlots
+            blessedGear={false}
+            title="Trinket"
+            equipped={trinketSlotsApi.equipped}
+            {onSlotClicked}
+          />
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -375,7 +465,7 @@
         <div class="skeleton h-5 w-1/3"></div>
       </div>
     {:else if explainError}
-      <div class="alert alert-error mt-4">
+      <div class="alert alert-soft alert-error mt-4">
         <span>{explainError}</span>
       </div>
     {:else if explainNode}
