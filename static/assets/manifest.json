@@ -7,6 +7,7 @@
         "/assets/Gear Rarity.json",
         "/assets/Gear.json",
         "/assets/Stats.json",
-        "/assets/Skills.json"
+        "/assets/Skills.json",
+        "/assets/skill-calculations.json"
     ]
 }
