@@ -2,9 +2,17 @@
   import { getContext, onMount } from "svelte";
   import { ESingType, formatStatNumber } from "$lib/hellclock/formats";
   import type { StatsHelper } from "$lib/hellclock/stats";
+  import { useEvaluationManager } from "$lib/context/evaluation.svelte";
+  import type { GamePack } from "$lib/engine/types";
 
+  interface Props {
+    openExplain: (stat: string) => void;
+  }
+  const { openExplain }: Props = $props();
+  
   const statsHelper = getContext<StatsHelper>("statsHelper");
-  let { evalResult, loading, error, sheet, openExplain } = $props();
+  const gamepack = getContext<GamePack>("gamepack");
+  const evaluationManager = useEvaluationManager();
   let selectedGroup = $state<
     "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel"
   >("DamageLabel");
@@ -18,6 +26,16 @@
     { key: "VitalityLabel", label: "Vitality" },
     { key: "OtherLabel", label: "Other" },
   ];
+  
+  // Get sheet from gamepack with proper typing
+  const sheet = $derived(gamepack?.["Player Sheet"] as any);
+  
+  // Get current evaluation state
+  const statEvaluation = $derived(evaluationManager.statEvaluation);
+  const evalResult = $derived(statEvaluation.result);
+  const loading = $derived(statEvaluation.loading);
+  const error = $derived(statEvaluation.error);
+  
   function hasGroup(key: typeof selectedGroup): boolean {
     return !!sheet?.displayedStats?.[key]?.length;
   }

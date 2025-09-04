@@ -22,6 +22,7 @@
   } from "$lib/hellclock/skills";
   import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
   import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
+  import { useEvaluationManager } from "$lib/context/evaluation.svelte";
 
   const engine = getContext<Engine>("engine");
   const gamepack = getContext<GamePack>("gamepack");
@@ -32,16 +33,8 @@
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
   const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
   const skillSlotsApi = useSkillEquipped();
+  const evaluationManager = useEvaluationManager();
   const lang = getContext<string>("lang") || "en";
-
-  type PlayerSheet = {
-    displayedStats: Partial<
-      Record<
-        "DamageLabel" | "DefenseLabel" | "VitalityLabel" | "OtherLabel",
-        string[]
-      >
-    >;
-  } & Record<string, unknown>;
 
   const leftOptions = [
     { name: "Stats", soon: false },
@@ -58,11 +51,19 @@
   let selectedLeft = $state(leftOptions[0]);
   let selectedRight = $state(rightOptions[0]);
 
-  let actor = $state<Record<string, unknown> | null>(null);
-  let sheet = $state<PlayerSheet | null>(null);
-  let evalResult = $state<any>(null);
-  let error = $state<string | null>(null);
-  let loading = $state(true);
+  // Check if any skills are equipped to control Skills tab availability
+  const hasSkills = $derived(skillSlotsApi.activeSkills.length > 0);
+
+  // Auto-switch from Skills tab to Gear tab when all skills are removed
+  $effect(() => {
+    if (selectedRight.name === "Skills" && !hasSkills) {
+      // Find Gear tab and switch to it
+      const gearTab = rightOptions.find(opt => opt.name === "Gear");
+      if (gearTab) {
+        selectedRight = gearTab;
+      }
+    }
+  });
 
   let showExplain = $state(false);
   let explainLoading = $state(false);
@@ -80,195 +81,8 @@
   let skillSelectorSlot = $state<SkillSlotDefinition>("SKILL_SLOT_1");
   let skillSelectorItems = $state<SkillSelected[]>([]);
 
-  async function doEvaluate() {
-    error = null;
-    evalResult = null;
-    loading = true;
-    try {
-      if (!engine) throw new Error("Engine not initialized");
-      if (!actor || !sheet) {
-        throw new Error("Actor or PlayerSheet not loaded");
-      }
-      if (!statsHelper) {
-        throw new Error("StatsHelper not initialized");
-      }
-
-      // TODO: Dont load always the build, that disabled the cache from Engine, do this in the EquippedAPI
-      const resActor = await engine.build(
-        gamepack["hellclock-actor"] as string,
-        { timeoutMs: 5000 },
-      );
-
-      if (resActor) {
-        error = String((resActor as any)?.error);
-        return;
-      }
-
-      let set: Record<string, any> = {};
-
-      function mapModForEval(mod: StatMod): string {
-        let statName = mod.eStatDefinition;
-        let modifierType = mod.modifierType.toLowerCase();
-        if (modifierType === "additive") {
-          statName = `${statName}.add`;
-        } else if (modifierType === "multiplicative") {
-          statName = `${statName}.mult`;
-        } else if (modifierType === "multiplicativeadditive") {
-          statName = `${statName}.multadd`;
-        }
-        return statName;
-      }
-      function mapSkillModForEval(mod: SkillUpgradeModifier): string {
-        let statName = mod.skillValueModifierKey.replaceAll(" ", "");
-        let modifierType = mod.modifierType.toLowerCase();
-        if (modifierType === "additive") {
-          statName = `${statName}.add`;
-        } else if (modifierType === "multiplicative") {
-          statName = `${statName}.mult`;
-        } else if (modifierType === "multiplicativeadditive") {
-          statName = `${statName}.multadd`;
-        }
-        return statName;
-      }
-
-      function mapModSource(
-        item: GearItem,
-        sourceType: string,
-        slot: GearSlot,
-      ) {
-        for (const mod of item.mods) {
-          let statName = mapModForEval(mod);
-          if (!(statName in set)) {
-            set[statName] = [];
-          }
-          set[statName].push({
-            source: `Equipped ${translate(item.prefixLocalizedName, lang)} ${translate(item.localizedName, lang)}`,
-            amount: getValueFromMultiplier(
-              mod.value,
-              mod.modifierType,
-              mod.selectedValue!,
-              item.multiplierRange[0],
-              item.multiplierRange[1],
-            ),
-            meta: {
-              type: sourceType,
-              id: String(item.defId),
-              slot: slot,
-              value: fmtValue(
-                mod,
-                lang,
-                statsHelper,
-                item.multiplierRange[0],
-                item.multiplierRange[1],
-              ),
-            },
-          });
-        }
-      }
-
-      let blessedGearEquipped = Object.entries(blessedSlotsApi.equipped);
-      let trinketGearEquipped = Object.entries(trinketSlotsApi.equipped);
-
-      blessedGearEquipped.forEach(([key, item]) =>
-        mapModSource(item, "Blessed Gear", key as GearSlot),
-      );
-      trinketGearEquipped.forEach(([key, item]) =>
-        mapModSource(item, "Trinket Gear", key as GearSlot),
-      );
-
-      // Maps Skills Selected
-      Object.entries(skillSlotsApi.skillsEquipped).forEach(([slot, skill]) => {
-        if (!skill) {
-          return;
-        }
-
-        let baseValMods = skillsHelper.getSkillBaseValueModsById(
-          skill.skill.name,
-        );
-
-        if (!baseValMods?.length) {
-          error = `baseValMods not found for skill ${skill.skill.name}`;
-          return;
-        }
-
-        for (let baseValMod of baseValMods) {
-          let skillGroup = `skill.${skill.skill.name}.${baseValMod.id}.base`;
-          if (!(skillGroup in set)) {
-            set[skillGroup] = [];
-          }
-
-          let amount = (skill.skill as any)[baseValMod.value] || 0;
-          set[skillGroup].push({
-            source: `Skill ${translate(skill.skill.localizedName, lang)}`,
-            amount: amount,
-            meta: {
-              type: "skill",
-              id: String(skill.skill.id),
-              slot: slot,
-              base: baseValMod.value,
-              value: String(amount),
-            },
-          });
-        }
-
-        // Add ValueModifiers by level
-        let valueModByLevel = skill.skill.modifiersPerLevel[skill.selectedLevel];
-        if (!valueModByLevel) {
-          console.warn(
-            `ValueModifiers not found for skill ${skill.skill.name} at level ${skill.selectedLevel}, using level 7`,
-          );
-          valueModByLevel = skill.skill.modifiersPerLevel[7];
-        }
-
-        for (let modifier of valueModByLevel) {
-          let statName = `skill.${skill.skill.name}.${mapSkillModForEval(modifier)}`;
-          if (!(statName in set)) {
-            set[statName] = [];
-          }
-          set[statName].push({
-            source: `Skill ${translate(skill.skill.localizedName, lang)} Level ${skill.selectedLevel}`,
-            amount: getValueFromMultiplier(
-              modifier.value,
-              modifier.modifierType,
-              1,
-              1, 
-              1
-            ),
-            meta: {
-              type: "skill",
-              id: String(skill.skill.id),
-              slot: slot,
-              level: String(skill.selectedLevel),
-              // value: fmtValue(modifier, lang, statsHelper, 1, 1),
-            },
-          });
-        }
-      });
-
-      let payload: any = {
-        set: set,
-        outputs: Object.values(sheet?.displayedStats ?? {}).flatMap(
-          (v): string[] =>
-            Array.isArray(v) ? v : typeof v === "string" ? [v] : [],
-        ),
-      };
-
-      console.debug("Evaluating with payload:", payload);
-
-      evalResult = await engine.eval(payload, {
-        timeoutMs: 5000,
-      });
-
-      if (evalResult?.error) {
-        error = String(evalResult.error);
-        return;
-      }
-    } catch (e: any) {
-      error = String(e?.message ?? e);
-    } finally {
-      loading = false;
-    }
-  }
+  // The doEvaluate function has been replaced by the EvaluationManager context
+  // All evaluation is now handled automatically when equipment changes
 
   async function openExplain(stat: string) {
     explainTitle = stat;
@@ -278,19 +92,7 @@
     showExplain = true;
 
     try {
-      if (!engine) throw new Error("Engine not initialized");
-      const res = (await engine.explain(stat, {
-        timeoutMs: 5000,
-      })) as any;
-
-      console.debug("Explain result:", res);
-
-      if (res?.error) {
-        explainError = String(res.error);
-        return;
-      }
-
-      explainNode = res as XNode;
+      explainNode = await evaluationManager.explain(stat);
     } catch (e: any) {
       explainError = String(e?.message ?? e);
     } finally {
@@ -305,7 +107,7 @@
       } else {
         trinketSlotsApi.unset(s);
       }
-      doEvaluate();
+      // Evaluation will happen automatically via EvaluationManager context
       return;
     }
 
@@ -332,7 +134,7 @@
   function onSkillSlotClicked(s: SkillSlotDefinition, remove = false) {
     if (remove) {
       skillSlotsApi.unset(s);
-      doEvaluate();
+      // Evaluation will happen automatically via EvaluationManager context
       return;
     }
     let skillsSetted = Object.values(skillSlotsApi.skillsEquipped)
@@ -351,14 +153,12 @@
   function onSkillSelected(skill: SkillSelected) {
     skillSlotsApi.set(skillSelectorSlot, skill);
     showSkillSelector = false;
-    doEvaluate();
+    // Evaluation will happen automatically via EvaluationManager context
   }
 
   onMount(async () => {
-    actor = gamepack["hellclock-actor"] as Record<string, unknown> | null;
-    sheet = gamepack["Player Sheet"] as PlayerSheet | null;
-
-    await doEvaluate();
+    // Initialization is now handled by the EvaluationManager context
+    // No manual evaluation needed as it's automatic when equipment is loaded
   });
 </script>
 
@@ -392,13 +192,15 @@
         {#each rightOptions as opt}
           <button
             role="tab"
-            class={`indicator tab ${selectedRight.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
+            class={`indicator tab ${selectedRight.name === opt.name ? "tab-active" : ""} ${opt.soon || (opt.name === "Skills" && !hasSkills) ? "tab-disabled" : ""}`}
             onclick={() => {
-              if (!opt.soon) selectedRight = opt;
+              if (!opt.soon && !(opt.name === "Skills" && !hasSkills)) {
+                selectedRight = opt;
+              }
             }}
             aria-selected={selectedRight.name === opt.name}
-            aria-disabled={opt.soon}
-            title={opt.soon ? "Coming soon" : opt.name}
+            aria-disabled={opt.soon || (opt.name === "Skills" && !hasSkills)}
+            title={opt.soon ? "Coming soon" : (opt.name === "Skills" && !hasSkills) ? "No skills equipped" : opt.name}
           >
             {opt.name}
             {#if opt.soon}
@@ -410,7 +212,7 @@
     </div>
   </div>
   <div class="flex flex-col gap-2 col-span-2">
-    <DisplayStats {evalResult} {loading} {error} {sheet} {openExplain} />
+    <DisplayStats {openExplain} />
   </div>
   <div class="col-span-4">
     <div class="grid gap-2 lg:grid-cols-6">
@@ -424,10 +226,7 @@
       {/if}
       {#if selectedRight.name == "Skills"}
         <div class="col-span-6">
-          <DisplaySkills
-            equipped={skillSlotsApi.skillsEquipped}
-            {openExplain}
-          />
+          <DisplaySkills {openExplain} />
         </div>
       {/if}
       {#if selectedRight.name == "Gear"}
@@ -502,7 +301,7 @@
               trinketSlotsApi.set(gearSelectorSlot, item);
             }
             showGearSelector = false;
-            doEvaluate();
+            // Evaluation will happen automatically via EvaluationManager context
           }}
           title={gearSelectorTitle}
         />

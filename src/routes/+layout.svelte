@@ -15,10 +15,36 @@
   } from "$lib/hellclock/gears";
   import { SkillsHelper, type SkillsCalculatorRoot, type SkillsRoot } from "$lib/hellclock/skills";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
+  import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
+  import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
+  import { provideSkillEvaluation } from "$lib/context/skillevaluation.svelte";
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
-  provideSkillEquipped();
+  
+  // Initialize contexts with dependencies once they're available
+  let skillContext: ReturnType<typeof provideSkillEquipped> | null = null;
+  let gearEvaluationContext: ReturnType<typeof provideGearEvaluation> | null = null;
+  let skillEvaluationContext: ReturnType<typeof provideSkillEvaluation> | null = null;
+  let evaluationManagerContext: ReturnType<typeof provideEvaluationManager> | null = null;
+  
+  $effect(() => {
+    if (skillsHelper && !skillContext) {
+      skillContext = provideSkillEquipped(undefined, skillsHelper);
+    }
+    
+    if (gearsHelper && statsHelper && !gearEvaluationContext) {
+      gearEvaluationContext = provideGearEvaluation(gearsHelper, statsHelper, "en");
+    }
+    
+    if (skillsHelper && !skillEvaluationContext) {
+      skillEvaluationContext = provideSkillEvaluation(skillsHelper, "en");
+    }
+    
+    if (engine && pack && statsHelper && gearsHelper && skillsHelper && !evaluationManagerContext) {
+      evaluationManagerContext = provideEvaluationManager(engine, pack, statsHelper, gearsHelper, skillsHelper);
+    }
+  });
 
   // runes state
   let ready = $state(false);
