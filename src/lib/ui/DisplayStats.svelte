@@ -42,7 +42,7 @@
 
   function getStatFromEval(res: any, name: string): number | null {
     if (!res) return null;
-    return res.values[name];
+    return res[name];
   }
 
   function fmt(v: number | null, stat: string): string {

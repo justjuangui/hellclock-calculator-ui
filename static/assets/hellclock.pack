@@ -1,0 +1,567 @@
+pack "hellclock" {
+  group_templates {
+    common {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult")
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    BulletCountModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    RadiusModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    RangeModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    KnivesCountModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    SpawnerAreaRadiusModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    ProjectileAmountModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+  }
+  stats {
+    BaseDamage: BaseDamage.DEFAULT using common
+    CriticalChance: CriticalChance.PERCENTAGE using common
+    CriticalDamage: CriticalDamage.PERCENTAGE using common
+    Life: Life.DEFAULT using common
+    PhysicalResistance: PhysicalResistance.PERCENTAGE using common
+    MagicResistance: MagicResistance.PERCENTAGE using common
+    MovementSpeed: MovementSpeed.PERCENTAGE using common
+    AttackSpeed: AttackSpeed.PERCENTAGE using common
+    CooldownSpeed: CooldownSpeed.PERCENTAGE using common
+    ExperienceGain: ExperienceGain.PERCENTAGE using common
+    Mana: Mana.DEFAULT using common
+    ItemFind: ItemFind.PERCENTAGE using common
+    Damage: Damage.PERCENTAGE using common
+    MagicDamage: MagicDamage.PERCENTAGE using common
+    AdditionalPhysicalDamage: AdditionalPhysicalDamage.DEFAULT using common
+    PhysicalDamage: PhysicalDamage.PERCENTAGE using common
+    AdditionalFireDamage: AdditionalFireDamage.DEFAULT using common
+    FireDamage: FireDamage.PERCENTAGE using common
+    AdditionalPlagueDamage: AdditionalPlagueDamage.DEFAULT using common
+    PlagueDamage: PlagueDamage.PERCENTAGE using common
+    AdditionalLightningDamage: AdditionalLightningDamage.DEFAULT using common
+    LightningDamage: LightningDamage.PERCENTAGE using common
+    SoulStoneGain: SoulStoneGain.PERCENTAGE using common
+    BlessedGearDropChanceBonus: BlessedGearDropChanceBonus.PERCENTAGE using common
+    BonusRelicDropsFromBoss: BonusRelicDropsFromBoss.DEFAULT using common
+    FireResistance: FireResistance.PERCENTAGE using common
+    LightningResistance: LightningResistance.PERCENTAGE using common
+    PlagueResistance: PlagueResistance.PERCENTAGE using common
+    LifeRegen: LifeRegen.PERCENTAGE using common
+    ManaRegen: ManaRegen.PERCENTAGE using common
+    ChanceToApplyBleed: ChanceToApplyBleed.PERCENTAGE using common
+    ChanceToApplyIgnite: ChanceToApplyIgnite.PERCENTAGE using common
+    ChanceToApplyShock: ChanceToApplyShock.PERCENTAGE using common
+    ChanceToApplyBlight: ChanceToApplyBlight.PERCENTAGE using common
+    AdditionalChanceToReceiveCritical: AdditionalChanceToReceiveCritical.PERCENTAGE using common
+    DamageOverTimeResistance: DamageOverTimeResistance.PERCENTAGE using common
+    StunResistance: StunResistance.PERCENTAGE using common
+    CrowdControlResistance: CrowdControlResistance.PERCENTAGE using common
+    DamageLifeRegen: DamageLifeRegen.PERCENTAGE using common
+    DamageManaRegen: DamageManaRegen.PERCENTAGE using common
+    GoldGain: GoldGain.PERCENTAGE using common
+    ManaSpentBarrierRegen: ManaSpentBarrierRegen.PERCENTAGE using common
+    BarrierGeneration: BarrierGeneration.PERCENTAGE using common
+    BarrierDecayThreshold: BarrierDecayThreshold.DEFAULT using common
+    BarrierGain: BarrierGain.PERCENTAGE using common
+    BarrierDecayResilience: BarrierDecayResilience.PERCENTAGE using common
+    ChanceToFindPotion: ChanceToFindPotion.PERCENTAGE using common
+    PotionCapacity: PotionCapacity.DEFAULT using common
+    PotionLifePercentageRegen: PotionLifePercentageRegen.PERCENTAGE using common
+    PotionLifeFlatRegen: PotionLifeFlatRegen.DEFAULT using common
+    PotionEfficiency: PotionEfficiency.PERCENTAGE using common
+    TrinketDropChanceBonus: TrinketDropChanceBonus.PERCENTAGE using common
+    RelicDropChanceBonus: RelicDropChanceBonus.PERCENTAGE using common
+    SummonLifePercentage: SummonLifePercentage.PERCENTAGE using common
+    SummonDamagePercentage: SummonDamagePercentage.PERCENTAGE using common
+    SkillManaCost: SkillManaCost.PERCENTAGE using common
+    AilmentDuration: AilmentDuration.PERCENTAGE using common
+    BleedDuration: BleedDuration.DEFAULT using common
+    IgniteDuration: IgniteDuration.DEFAULT using common
+    ShockDuration: ShockDuration.DEFAULT using common
+    BlightDuration: BlightDuration.DEFAULT using common
+    WitherDuration: WitherDuration.DEFAULT using common
+    StunDuration: StunDuration.DEFAULT using common
+    AilmentDamage: AilmentDamage.PERCENTAGE using common
+    IgniteDamage: IgniteDamage.PERCENTAGE using common
+    ShockIntensity: ShockIntensity.PERCENTAGE using common
+    BlightIntensity: BlightIntensity.PERCENTAGE using common
+    WitherBuildupRate: WitherBuildupRate.PERCENTAGE using common
+    StunBuildupRate: StunBuildupRate.PERCENTAGE using common
+    AilmentResistance: AilmentResistance.PERCENTAGE using common
+    BleedDamage: BleedDamage.PERCENTAGE using common
+    WitherResistance: WitherResistance.PERCENTAGE using common
+    Evasion: Evasion.PERCENTAGE using common
+    SkillAreaOfEffect: SkillAreaOfEffect.PERCENTAGE using common
+    ManaShield: ManaShield.PERCENTAGE using common
+    DamageResistance: DamageResistance.PERCENTAGE using common
+    Endurance: Endurance.PERCENTAGE using common
+    AntiMagic: AntiMagic.PERCENTAGE using common
+    ChanceToMiss: ChanceToMiss.PERCENTAGE using common
+    AilmentApplication: AilmentApplication.PERCENTAGE using common
+    SkillProjectileAmount: SkillProjectileAmount.PERCENTAGE using common
+    SkillMeleeDamage: SkillMeleeDamage.PERCENTAGE using common
+    ElementalAilmentDuration: ElementalAilmentDuration.PERCENTAGE using common
+    SkillSpellDamage: SkillSpellDamage.PERCENTAGE using common
+    LifeGain: LifeGain.PERCENTAGE using common
+    ManaGain: ManaGain.PERCENTAGE using common
+    ImmuneToPhysicalDamage: ImmuneToPhysicalDamage.PERCENTAGE using common
+    ImmuneToFireDamage: ImmuneToFireDamage.PERCENTAGE using common
+    ImmuneToPlagueDamage: ImmuneToPlagueDamage.PERCENTAGE using common
+    ImmuneToLightningDamage: ImmuneToLightningDamage.PERCENTAGE using common
+    BuffDuration: BuffDuration.PERCENTAGE using common
+    StartingBarrierLifePercentage: StartingBarrierLifePercentage.PERCENTAGE using common
+    SkillMarksmanDamage: SkillMarksmanDamage.PERCENTAGE using common
+    SkillMeleeLifeSteal: SkillMeleeLifeSteal.PERCENTAGE using common
+    PlagueDamageTakenAsPhysical: PlagueDamageTakenAsPhysical.PERCENTAGE using common
+    PlagueDamageTakenAsLightning: PlagueDamageTakenAsLightning.PERCENTAGE using common
+    PlagueDamageTakenAsFire: PlagueDamageTakenAsFire.PERCENTAGE using common
+    PhysicalDamageTakenAsPlague: PhysicalDamageTakenAsPlague.PERCENTAGE using common
+    PhysicalDamageTakenAsLightning: PhysicalDamageTakenAsLightning.PERCENTAGE using common
+    PhysicalDamageTakenAsFire: PhysicalDamageTakenAsFire.PERCENTAGE using common
+    LightningDamageTakenAsPlague: LightningDamageTakenAsPlague.PERCENTAGE using common
+    LightningDamageTakenAsPhysical: LightningDamageTakenAsPhysical.PERCENTAGE using common
+    FireDamageTakenAsLightning: FireDamageTakenAsLightning.PERCENTAGE using common
+    FireDamageTakenAsPhysical: FireDamageTakenAsPhysical.PERCENTAGE using common
+    LightningDamageTakenAsFire: LightningDamageTakenAsFire.PERCENTAGE using common
+    FireDamageTakenAsPlague: FireDamageTakenAsPlague.PERCENTAGE using common
+    LootPickupRange: LootPickupRange.DEFAULT using common
+    skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using common
+    skill_BasicAttackDefinition_SkillSpeedModifier: skill_BasicAttackDefinition_SkillSpeedModifier.skill using common
+    skill_BasicAttackDefinition_CooldownModifier: skill_BasicAttackDefinition_CooldownModifier.skill using common
+    skill_BasicAttackDefinition_ChargesModifier: skill_BasicAttackDefinition_ChargesModifier.skill using common
+    skill_BasicAttackDefinition_PhysicalDamageConversionModifier: skill_BasicAttackDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_BasicAttackDefinition_FireDamageConversionModifier: skill_BasicAttackDefinition_FireDamageConversionModifier.skill using common
+    skill_BasicAttackDefinition_LightningDamageConversionModifier: skill_BasicAttackDefinition_LightningDamageConversionModifier.skill using common
+    skill_BasicAttackDefinition_PlagueDamageConversionModifier: skill_BasicAttackDefinition_PlagueDamageConversionModifier.skill using common
+    skill_BasicAttackDefinition_AdditionalPhysicalDamageModifier: skill_BasicAttackDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_BasicAttackDefinition_AdditionalFireDamageModifier: skill_BasicAttackDefinition_AdditionalFireDamageModifier.skill using common
+    skill_BasicAttackDefinition_AdditionalLightningDamageModifier: skill_BasicAttackDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_BasicAttackDefinition_AdditionalPlagueDamageModifier: skill_BasicAttackDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_BasicAttackDefinition_RangeModifier: skill_BasicAttackDefinition_RangeModifier.skill using common
+    skill_BasicAttackDefinition_ManaCostModifier: skill_BasicAttackDefinition_ManaCostModifier.skill using common
+    skill_BasicAttackDefinition_LifeCostModifier: skill_BasicAttackDefinition_LifeCostModifier.skill using common
+    skill_BasicAttackDefinition_CanUseNegativeManaModifier: skill_BasicAttackDefinition_CanUseNegativeManaModifier.skill using common
+    skill_BasicAttackDefinition_CanPierceModifier: skill_BasicAttackDefinition_CanPierceModifier.skill using common
+    skill_BasicAttackDefinition_PierceDamageModifier: skill_BasicAttackDefinition_PierceDamageModifier.skill using common
+    skill_BasicAttackDefinition_BulletCountModifier: skill_BasicAttackDefinition_BulletCountModifier.skill using BulletCountModifier
+    skill_BasicAttackDefinition_BounceAmountModifier: skill_BasicAttackDefinition_BounceAmountModifier.skill using common
+    skill_SplitshotDefinition_DamageModifier: skill_SplitshotDefinition_DamageModifier.skill using common
+    skill_SplitshotDefinition_SkillSpeedModifier: skill_SplitshotDefinition_SkillSpeedModifier.skill using common
+    skill_SplitshotDefinition_CooldownModifier: skill_SplitshotDefinition_CooldownModifier.skill using common
+    skill_SplitshotDefinition_ChargesModifier: skill_SplitshotDefinition_ChargesModifier.skill using common
+    skill_SplitshotDefinition_PhysicalDamageConversionModifier: skill_SplitshotDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_SplitshotDefinition_FireDamageConversionModifier: skill_SplitshotDefinition_FireDamageConversionModifier.skill using common
+    skill_SplitshotDefinition_LightningDamageConversionModifier: skill_SplitshotDefinition_LightningDamageConversionModifier.skill using common
+    skill_SplitshotDefinition_PlagueDamageConversionModifier: skill_SplitshotDefinition_PlagueDamageConversionModifier.skill using common
+    skill_SplitshotDefinition_AdditionalPhysicalDamageModifier: skill_SplitshotDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_SplitshotDefinition_AdditionalFireDamageModifier: skill_SplitshotDefinition_AdditionalFireDamageModifier.skill using common
+    skill_SplitshotDefinition_AdditionalLightningDamageModifier: skill_SplitshotDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_SplitshotDefinition_AdditionalPlagueDamageModifier: skill_SplitshotDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_SplitshotDefinition_RangeModifier: skill_SplitshotDefinition_RangeModifier.skill using common
+    skill_SplitshotDefinition_ManaCostModifier: skill_SplitshotDefinition_ManaCostModifier.skill using common
+    skill_SplitshotDefinition_LifeCostModifier: skill_SplitshotDefinition_LifeCostModifier.skill using common
+    skill_SplitshotDefinition_CanUseNegativeManaModifier: skill_SplitshotDefinition_CanUseNegativeManaModifier.skill using common
+    skill_SplitshotDefinition_CanPierceModifier: skill_SplitshotDefinition_CanPierceModifier.skill using common
+    skill_SplitshotDefinition_PierceDamageModifier: skill_SplitshotDefinition_PierceDamageModifier.skill using common
+    skill_SplitshotDefinition_BulletCountModifier: skill_SplitshotDefinition_BulletCountModifier.skill using BulletCountModifier
+    skill_SplitshotDefinition_BounceAmountModifier: skill_SplitshotDefinition_BounceAmountModifier.skill using common
+    skill_SplitshotDefinition_SameTargetShotBonusDamageModifier: skill_SplitshotDefinition_SameTargetShotBonusDamageModifier.skill using common
+    skill_SplitshotDefinition_ProjectileWidthModifier: skill_SplitshotDefinition_ProjectileWidthModifier.skill using common
+    skill_SplitshotDefinition_ChargedShotEnabledModifier: skill_SplitshotDefinition_ChargedShotEnabledModifier.skill using common
+    skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier: skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier.skill using common
+    skill_ShadowDashDefinition_DamageModifier: skill_ShadowDashDefinition_DamageModifier.skill using common
+    skill_ShadowDashDefinition_SkillSpeedModifier: skill_ShadowDashDefinition_SkillSpeedModifier.skill using common
+    skill_ShadowDashDefinition_CooldownModifier: skill_ShadowDashDefinition_CooldownModifier.skill using common
+    skill_ShadowDashDefinition_ChargesModifier: skill_ShadowDashDefinition_ChargesModifier.skill using common
+    skill_ShadowDashDefinition_PhysicalDamageConversionModifier: skill_ShadowDashDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_ShadowDashDefinition_FireDamageConversionModifier: skill_ShadowDashDefinition_FireDamageConversionModifier.skill using common
+    skill_ShadowDashDefinition_LightningDamageConversionModifier: skill_ShadowDashDefinition_LightningDamageConversionModifier.skill using common
+    skill_ShadowDashDefinition_PlagueDamageConversionModifier: skill_ShadowDashDefinition_PlagueDamageConversionModifier.skill using common
+    skill_ShadowDashDefinition_AdditionalPhysicalDamageModifier: skill_ShadowDashDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_ShadowDashDefinition_AdditionalFireDamageModifier: skill_ShadowDashDefinition_AdditionalFireDamageModifier.skill using common
+    skill_ShadowDashDefinition_AdditionalLightningDamageModifier: skill_ShadowDashDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_ShadowDashDefinition_AdditionalPlagueDamageModifier: skill_ShadowDashDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_ShadowDashDefinition_RangeModifier: skill_ShadowDashDefinition_RangeModifier.skill using common
+    skill_ShadowDashDefinition_ManaCostModifier: skill_ShadowDashDefinition_ManaCostModifier.skill using common
+    skill_ShadowDashDefinition_LifeCostModifier: skill_ShadowDashDefinition_LifeCostModifier.skill using common
+    skill_ShadowDashDefinition_CanUseNegativeManaModifier: skill_ShadowDashDefinition_CanUseNegativeManaModifier.skill using common
+    skill_ShadowDashDefinition_DistanceModifier: skill_ShadowDashDefinition_DistanceModifier.skill using common
+    skill_ShadowDashDefinition_RadiusModifier: skill_ShadowDashDefinition_RadiusModifier.skill using RadiusModifier
+    skill_ShadowDashDefinition_DashSpeedModifier: skill_ShadowDashDefinition_DashSpeedModifier.skill using common
+    skill_RepeaterDefinition_DamageModifier: skill_RepeaterDefinition_DamageModifier.skill using common
+    skill_RepeaterDefinition_SkillSpeedModifier: skill_RepeaterDefinition_SkillSpeedModifier.skill using common
+    skill_RepeaterDefinition_CooldownModifier: skill_RepeaterDefinition_CooldownModifier.skill using common
+    skill_RepeaterDefinition_ChargesModifier: skill_RepeaterDefinition_ChargesModifier.skill using common
+    skill_RepeaterDefinition_PhysicalDamageConversionModifier: skill_RepeaterDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_RepeaterDefinition_FireDamageConversionModifier: skill_RepeaterDefinition_FireDamageConversionModifier.skill using common
+    skill_RepeaterDefinition_LightningDamageConversionModifier: skill_RepeaterDefinition_LightningDamageConversionModifier.skill using common
+    skill_RepeaterDefinition_PlagueDamageConversionModifier: skill_RepeaterDefinition_PlagueDamageConversionModifier.skill using common
+    skill_RepeaterDefinition_AdditionalPhysicalDamageModifier: skill_RepeaterDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_RepeaterDefinition_AdditionalFireDamageModifier: skill_RepeaterDefinition_AdditionalFireDamageModifier.skill using common
+    skill_RepeaterDefinition_AdditionalLightningDamageModifier: skill_RepeaterDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_RepeaterDefinition_AdditionalPlagueDamageModifier: skill_RepeaterDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_RepeaterDefinition_RangeModifier: skill_RepeaterDefinition_RangeModifier.skill using common
+    skill_RepeaterDefinition_ManaCostModifier: skill_RepeaterDefinition_ManaCostModifier.skill using common
+    skill_RepeaterDefinition_LifeCostModifier: skill_RepeaterDefinition_LifeCostModifier.skill using common
+    skill_RepeaterDefinition_CanUseNegativeManaModifier: skill_RepeaterDefinition_CanUseNegativeManaModifier.skill using common
+    skill_RepeaterDefinition_ProjectileWidthModifier: skill_RepeaterDefinition_ProjectileWidthModifier.skill using common
+    skill_RepeaterDefinition_BulletCountModifier: skill_RepeaterDefinition_BulletCountModifier.skill using BulletCountModifier
+    skill_RepeaterDefinition_CanPierceModifier: skill_RepeaterDefinition_CanPierceModifier.skill using common
+    skill_RepeaterDefinition_PierceDamageModifier: skill_RepeaterDefinition_PierceDamageModifier.skill using common
+    skill_RepeaterDefinition_BounceAmountModifier: skill_RepeaterDefinition_BounceAmountModifier.skill using common
+    skill_ReflexesDefinition_DamageModifier: skill_ReflexesDefinition_DamageModifier.skill using common
+    skill_ReflexesDefinition_SkillSpeedModifier: skill_ReflexesDefinition_SkillSpeedModifier.skill using common
+    skill_ReflexesDefinition_CooldownModifier: skill_ReflexesDefinition_CooldownModifier.skill using common
+    skill_ReflexesDefinition_ChargesModifier: skill_ReflexesDefinition_ChargesModifier.skill using common
+    skill_ReflexesDefinition_PhysicalDamageConversionModifier: skill_ReflexesDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_ReflexesDefinition_FireDamageConversionModifier: skill_ReflexesDefinition_FireDamageConversionModifier.skill using common
+    skill_ReflexesDefinition_LightningDamageConversionModifier: skill_ReflexesDefinition_LightningDamageConversionModifier.skill using common
+    skill_ReflexesDefinition_PlagueDamageConversionModifier: skill_ReflexesDefinition_PlagueDamageConversionModifier.skill using common
+    skill_ReflexesDefinition_AdditionalPhysicalDamageModifier: skill_ReflexesDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_ReflexesDefinition_AdditionalFireDamageModifier: skill_ReflexesDefinition_AdditionalFireDamageModifier.skill using common
+    skill_ReflexesDefinition_AdditionalLightningDamageModifier: skill_ReflexesDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_ReflexesDefinition_AdditionalPlagueDamageModifier: skill_ReflexesDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_ReflexesDefinition_RangeModifier: skill_ReflexesDefinition_RangeModifier.skill using RangeModifier
+    skill_ReflexesDefinition_ManaCostModifier: skill_ReflexesDefinition_ManaCostModifier.skill using common
+    skill_ReflexesDefinition_LifeCostModifier: skill_ReflexesDefinition_LifeCostModifier.skill using common
+    skill_ReflexesDefinition_CanUseNegativeManaModifier: skill_ReflexesDefinition_CanUseNegativeManaModifier.skill using common
+    skill_ReflexesDefinition_CanUseSameTargetModifier: skill_ReflexesDefinition_CanUseSameTargetModifier.skill using common
+    skill_ReflexesDefinition_DamageMultiplierPerTargetDebuffModifier: skill_ReflexesDefinition_DamageMultiplierPerTargetDebuffModifier.skill using common
+    skill_ReflexesDefinition_ChanceToPierceModifier: skill_ReflexesDefinition_ChanceToPierceModifier.skill using common
+    skill_ReflexesDefinition_PierceDamageModifier: skill_ReflexesDefinition_PierceDamageModifier.skill using common
+    skill_ReflexesDefinition_KnivesRegenTimeModifier: skill_ReflexesDefinition_KnivesRegenTimeModifier.skill using common
+    skill_ReflexesDefinition_KnivesThrowIntervalTimeModifier: skill_ReflexesDefinition_KnivesThrowIntervalTimeModifier.skill using common
+    skill_ReflexesDefinition_KnivesCountModifier: skill_ReflexesDefinition_KnivesCountModifier.skill using KnivesCountModifier
+    skill_ReflexesDefinition_IncreaseDurationModifier: skill_ReflexesDefinition_IncreaseDurationModifier.skill using common
+    skill_ReflexesDefinition_RegenKnifeOnKillTargetModifier: skill_ReflexesDefinition_RegenKnifeOnKillTargetModifier.skill using common
+    skill_ReflexesDefinition_BounceToAnotherTargetModifier: skill_ReflexesDefinition_BounceToAnotherTargetModifier.skill using common
+    skill_ReflexesDefinition_BounceAmountModifier: skill_ReflexesDefinition_BounceAmountModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_DamageModifier: skill_PrayerOfHealthSkillDefinition_DamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier: skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_CooldownModifier: skill_PrayerOfHealthSkillDefinition_CooldownModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_ChargesModifier: skill_PrayerOfHealthSkillDefinition_ChargesModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_PhysicalDamageConversionModifier: skill_PrayerOfHealthSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_FireDamageConversionModifier: skill_PrayerOfHealthSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_LightningDamageConversionModifier: skill_PrayerOfHealthSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_PlagueDamageConversionModifier: skill_PrayerOfHealthSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_AdditionalPhysicalDamageModifier: skill_PrayerOfHealthSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_AdditionalFireDamageModifier: skill_PrayerOfHealthSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_AdditionalLightningDamageModifier: skill_PrayerOfHealthSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_AdditionalPlagueDamageModifier: skill_PrayerOfHealthSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_RangeModifier: skill_PrayerOfHealthSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_PrayerOfVengeanceSkillDefinition_DamageModifier: skill_PrayerOfVengeanceSkillDefinition_DamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier: skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_CooldownModifier: skill_PrayerOfVengeanceSkillDefinition_CooldownModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_ChargesModifier: skill_PrayerOfVengeanceSkillDefinition_ChargesModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_PhysicalDamageConversionModifier: skill_PrayerOfVengeanceSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_FireDamageConversionModifier: skill_PrayerOfVengeanceSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_LightningDamageConversionModifier: skill_PrayerOfVengeanceSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_PlagueDamageConversionModifier: skill_PrayerOfVengeanceSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_AdditionalPhysicalDamageModifier: skill_PrayerOfVengeanceSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_AdditionalFireDamageModifier: skill_PrayerOfVengeanceSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_AdditionalLightningDamageModifier: skill_PrayerOfVengeanceSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_AdditionalPlagueDamageModifier: skill_PrayerOfVengeanceSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_RangeModifier: skill_PrayerOfVengeanceSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_TheOldBellSkillDefinition_DamageModifier: skill_TheOldBellSkillDefinition_DamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_SkillSpeedModifier: skill_TheOldBellSkillDefinition_SkillSpeedModifier.skill using common
+    skill_TheOldBellSkillDefinition_CooldownModifier: skill_TheOldBellSkillDefinition_CooldownModifier.skill using common
+    skill_TheOldBellSkillDefinition_ChargesModifier: skill_TheOldBellSkillDefinition_ChargesModifier.skill using common
+    skill_TheOldBellSkillDefinition_PhysicalDamageConversionModifier: skill_TheOldBellSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_TheOldBellSkillDefinition_FireDamageConversionModifier: skill_TheOldBellSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_TheOldBellSkillDefinition_LightningDamageConversionModifier: skill_TheOldBellSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_TheOldBellSkillDefinition_PlagueDamageConversionModifier: skill_TheOldBellSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_TheOldBellSkillDefinition_AdditionalPhysicalDamageModifier: skill_TheOldBellSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_AdditionalFireDamageModifier: skill_TheOldBellSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_AdditionalLightningDamageModifier: skill_TheOldBellSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_AdditionalPlagueDamageModifier: skill_TheOldBellSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_RangeModifier: skill_TheOldBellSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_TheOldBellSkillDefinition_ManaCostModifier: skill_TheOldBellSkillDefinition_ManaCostModifier.skill using common
+    skill_TheOldBellSkillDefinition_LifeCostModifier: skill_TheOldBellSkillDefinition_LifeCostModifier.skill using common
+    skill_TheOldBellSkillDefinition_CanUseNegativeManaModifier: skill_TheOldBellSkillDefinition_CanUseNegativeManaModifier.skill using common
+    skill_TheOldBellSkillDefinition_RadiusModifier: skill_TheOldBellSkillDefinition_RadiusModifier.skill using RadiusModifier
+    skill_JudgementDefinition_DamageModifier: skill_JudgementDefinition_DamageModifier.skill using common
+    skill_JudgementDefinition_SkillSpeedModifier: skill_JudgementDefinition_SkillSpeedModifier.skill using common
+    skill_JudgementDefinition_CooldownModifier: skill_JudgementDefinition_CooldownModifier.skill using common
+    skill_JudgementDefinition_ChargesModifier: skill_JudgementDefinition_ChargesModifier.skill using common
+    skill_JudgementDefinition_PhysicalDamageConversionModifier: skill_JudgementDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_JudgementDefinition_FireDamageConversionModifier: skill_JudgementDefinition_FireDamageConversionModifier.skill using common
+    skill_JudgementDefinition_LightningDamageConversionModifier: skill_JudgementDefinition_LightningDamageConversionModifier.skill using common
+    skill_JudgementDefinition_PlagueDamageConversionModifier: skill_JudgementDefinition_PlagueDamageConversionModifier.skill using common
+    skill_JudgementDefinition_AdditionalPhysicalDamageModifier: skill_JudgementDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_JudgementDefinition_AdditionalFireDamageModifier: skill_JudgementDefinition_AdditionalFireDamageModifier.skill using common
+    skill_JudgementDefinition_AdditionalLightningDamageModifier: skill_JudgementDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_JudgementDefinition_AdditionalPlagueDamageModifier: skill_JudgementDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_JudgementDefinition_RangeModifier: skill_JudgementDefinition_RangeModifier.skill using RangeModifier
+    skill_DoubleKnivesSkillDefinition_DamageModifier: skill_DoubleKnivesSkillDefinition_DamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_SkillSpeedModifier: skill_DoubleKnivesSkillDefinition_SkillSpeedModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_CooldownModifier: skill_DoubleKnivesSkillDefinition_CooldownModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_ChargesModifier: skill_DoubleKnivesSkillDefinition_ChargesModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_PhysicalDamageConversionModifier: skill_DoubleKnivesSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_FireDamageConversionModifier: skill_DoubleKnivesSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_LightningDamageConversionModifier: skill_DoubleKnivesSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_PlagueDamageConversionModifier: skill_DoubleKnivesSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_AdditionalPhysicalDamageModifier: skill_DoubleKnivesSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_AdditionalFireDamageModifier: skill_DoubleKnivesSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_AdditionalLightningDamageModifier: skill_DoubleKnivesSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_AdditionalPlagueDamageModifier: skill_DoubleKnivesSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_RangeModifier: skill_DoubleKnivesSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_DoubleKnivesSkillDefinition_ManaCostModifier: skill_DoubleKnivesSkillDefinition_ManaCostModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_LifeCostModifier: skill_DoubleKnivesSkillDefinition_LifeCostModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_CanUseNegativeManaModifier: skill_DoubleKnivesSkillDefinition_CanUseNegativeManaModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_RadiusModifier: skill_DoubleKnivesSkillDefinition_RadiusModifier.skill using RadiusModifier
+    skill_DoubleKnivesSkillDefinition_SpinSpeedModifier: skill_DoubleKnivesSkillDefinition_SpinSpeedModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_MoveSpeedModifier: skill_DoubleKnivesSkillDefinition_MoveSpeedModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier: skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier.skill using common
+    skill_PassageSkillDefinition_DamageModifier: skill_PassageSkillDefinition_DamageModifier.skill using common
+    skill_PassageSkillDefinition_SkillSpeedModifier: skill_PassageSkillDefinition_SkillSpeedModifier.skill using common
+    skill_PassageSkillDefinition_CooldownModifier: skill_PassageSkillDefinition_CooldownModifier.skill using common
+    skill_PassageSkillDefinition_ChargesModifier: skill_PassageSkillDefinition_ChargesModifier.skill using common
+    skill_PassageSkillDefinition_PhysicalDamageConversionModifier: skill_PassageSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_PassageSkillDefinition_FireDamageConversionModifier: skill_PassageSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_PassageSkillDefinition_LightningDamageConversionModifier: skill_PassageSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_PassageSkillDefinition_PlagueDamageConversionModifier: skill_PassageSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_PassageSkillDefinition_AdditionalPhysicalDamageModifier: skill_PassageSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_PassageSkillDefinition_AdditionalFireDamageModifier: skill_PassageSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_PassageSkillDefinition_AdditionalLightningDamageModifier: skill_PassageSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_PassageSkillDefinition_AdditionalPlagueDamageModifier: skill_PassageSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_PassageSkillDefinition_RangeModifier: skill_PassageSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_LassoSkillDefinition_DamageModifier: skill_LassoSkillDefinition_DamageModifier.skill using common
+    skill_LassoSkillDefinition_SkillSpeedModifier: skill_LassoSkillDefinition_SkillSpeedModifier.skill using common
+    skill_LassoSkillDefinition_CooldownModifier: skill_LassoSkillDefinition_CooldownModifier.skill using common
+    skill_LassoSkillDefinition_ChargesModifier: skill_LassoSkillDefinition_ChargesModifier.skill using common
+    skill_LassoSkillDefinition_PhysicalDamageConversionModifier: skill_LassoSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_LassoSkillDefinition_FireDamageConversionModifier: skill_LassoSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_LassoSkillDefinition_LightningDamageConversionModifier: skill_LassoSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_LassoSkillDefinition_PlagueDamageConversionModifier: skill_LassoSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_LassoSkillDefinition_AdditionalPhysicalDamageModifier: skill_LassoSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_LassoSkillDefinition_AdditionalFireDamageModifier: skill_LassoSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_LassoSkillDefinition_AdditionalLightningDamageModifier: skill_LassoSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_LassoSkillDefinition_AdditionalPlagueDamageModifier: skill_LassoSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_LassoSkillDefinition_RangeModifier: skill_LassoSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_LassoSkillDefinition_ManaCostModifier: skill_LassoSkillDefinition_ManaCostModifier.skill using common
+    skill_LassoSkillDefinition_LifeCostModifier: skill_LassoSkillDefinition_LifeCostModifier.skill using common
+    skill_LassoSkillDefinition_CanUseNegativeManaModifier: skill_LassoSkillDefinition_CanUseNegativeManaModifier.skill using common
+    skill_LassoSkillDefinition_RadiusModifier: skill_LassoSkillDefinition_RadiusModifier.skill using RadiusModifier
+    skill_LassoSkillDefinition_StunDurationModifier: skill_LassoSkillDefinition_StunDurationModifier.skill using common
+    skill_LassoSkillDefinition_ChanceToBleedModifier: skill_LassoSkillDefinition_ChanceToBleedModifier.skill using common
+    skill_LassoSkillDefinition_BleedDurationModifier: skill_LassoSkillDefinition_BleedDurationModifier.skill using common
+    skill_LassoSkillDefinition_BleedIntensityModifier: skill_LassoSkillDefinition_BleedIntensityModifier.skill using common
+    skill_FeitorsLashSkillDefinition_DamageModifier: skill_FeitorsLashSkillDefinition_DamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_SkillSpeedModifier: skill_FeitorsLashSkillDefinition_SkillSpeedModifier.skill using common
+    skill_FeitorsLashSkillDefinition_CooldownModifier: skill_FeitorsLashSkillDefinition_CooldownModifier.skill using common
+    skill_FeitorsLashSkillDefinition_ChargesModifier: skill_FeitorsLashSkillDefinition_ChargesModifier.skill using common
+    skill_FeitorsLashSkillDefinition_PhysicalDamageConversionModifier: skill_FeitorsLashSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_FeitorsLashSkillDefinition_FireDamageConversionModifier: skill_FeitorsLashSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_FeitorsLashSkillDefinition_LightningDamageConversionModifier: skill_FeitorsLashSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_FeitorsLashSkillDefinition_PlagueDamageConversionModifier: skill_FeitorsLashSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_FeitorsLashSkillDefinition_AdditionalPhysicalDamageModifier: skill_FeitorsLashSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_AdditionalFireDamageModifier: skill_FeitorsLashSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_AdditionalLightningDamageModifier: skill_FeitorsLashSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_AdditionalPlagueDamageModifier: skill_FeitorsLashSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_RangeModifier: skill_FeitorsLashSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_SlowTimeSkillDefinition_DamageModifier: skill_SlowTimeSkillDefinition_DamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_SkillSpeedModifier: skill_SlowTimeSkillDefinition_SkillSpeedModifier.skill using common
+    skill_SlowTimeSkillDefinition_CooldownModifier: skill_SlowTimeSkillDefinition_CooldownModifier.skill using common
+    skill_SlowTimeSkillDefinition_ChargesModifier: skill_SlowTimeSkillDefinition_ChargesModifier.skill using common
+    skill_SlowTimeSkillDefinition_PhysicalDamageConversionModifier: skill_SlowTimeSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_SlowTimeSkillDefinition_FireDamageConversionModifier: skill_SlowTimeSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_SlowTimeSkillDefinition_LightningDamageConversionModifier: skill_SlowTimeSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_SlowTimeSkillDefinition_PlagueDamageConversionModifier: skill_SlowTimeSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_SlowTimeSkillDefinition_AdditionalPhysicalDamageModifier: skill_SlowTimeSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_AdditionalFireDamageModifier: skill_SlowTimeSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_AdditionalLightningDamageModifier: skill_SlowTimeSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_AdditionalPlagueDamageModifier: skill_SlowTimeSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_RangeModifier: skill_SlowTimeSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_UsePotionSkillDefinition_DamageModifier: skill_UsePotionSkillDefinition_DamageModifier.skill using common
+    skill_UsePotionSkillDefinition_SkillSpeedModifier: skill_UsePotionSkillDefinition_SkillSpeedModifier.skill using common
+    skill_UsePotionSkillDefinition_CooldownModifier: skill_UsePotionSkillDefinition_CooldownModifier.skill using common
+    skill_UsePotionSkillDefinition_ChargesModifier: skill_UsePotionSkillDefinition_ChargesModifier.skill using common
+    skill_UsePotionSkillDefinition_PhysicalDamageConversionModifier: skill_UsePotionSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_UsePotionSkillDefinition_FireDamageConversionModifier: skill_UsePotionSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_UsePotionSkillDefinition_LightningDamageConversionModifier: skill_UsePotionSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_UsePotionSkillDefinition_PlagueDamageConversionModifier: skill_UsePotionSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_UsePotionSkillDefinition_AdditionalPhysicalDamageModifier: skill_UsePotionSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_UsePotionSkillDefinition_AdditionalFireDamageModifier: skill_UsePotionSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_UsePotionSkillDefinition_AdditionalLightningDamageModifier: skill_UsePotionSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_UsePotionSkillDefinition_AdditionalPlagueDamageModifier: skill_UsePotionSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_UsePotionSkillDefinition_RangeModifier: skill_UsePotionSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_UsePotionSkillDefinition_ManaCostModifier: skill_UsePotionSkillDefinition_ManaCostModifier.skill using common
+    skill_UsePotionSkillDefinition_LifeCostModifier: skill_UsePotionSkillDefinition_LifeCostModifier.skill using common
+    skill_UsePotionSkillDefinition_CanUseNegativeManaModifier: skill_UsePotionSkillDefinition_CanUseNegativeManaModifier.skill using common
+    skill_UsePotionSkillDefinition_LifeRegenModifier: skill_UsePotionSkillDefinition_LifeRegenModifier.skill using common
+    skill_UsePotionSkillDefinition_BarrierRegenModifier: skill_UsePotionSkillDefinition_BarrierRegenModifier.skill using common
+    skill_UsePotionSkillDefinition_ManaRegenModifier: skill_UsePotionSkillDefinition_ManaRegenModifier.skill using common
+    skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier: skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier.skill using common
+    skill_ClosedBodySkillDefinition_DamageModifier: skill_ClosedBodySkillDefinition_DamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_SkillSpeedModifier: skill_ClosedBodySkillDefinition_SkillSpeedModifier.skill using common
+    skill_ClosedBodySkillDefinition_CooldownModifier: skill_ClosedBodySkillDefinition_CooldownModifier.skill using common
+    skill_ClosedBodySkillDefinition_ChargesModifier: skill_ClosedBodySkillDefinition_ChargesModifier.skill using common
+    skill_ClosedBodySkillDefinition_PhysicalDamageConversionModifier: skill_ClosedBodySkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_ClosedBodySkillDefinition_FireDamageConversionModifier: skill_ClosedBodySkillDefinition_FireDamageConversionModifier.skill using common
+    skill_ClosedBodySkillDefinition_LightningDamageConversionModifier: skill_ClosedBodySkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_ClosedBodySkillDefinition_PlagueDamageConversionModifier: skill_ClosedBodySkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_ClosedBodySkillDefinition_AdditionalPhysicalDamageModifier: skill_ClosedBodySkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_AdditionalFireDamageModifier: skill_ClosedBodySkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_AdditionalLightningDamageModifier: skill_ClosedBodySkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_AdditionalPlagueDamageModifier: skill_ClosedBodySkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_RangeModifier: skill_ClosedBodySkillDefinition_RangeModifier.skill using RangeModifier
+    skill_ClosedBodySkillDefinition_ManaCostModifier: skill_ClosedBodySkillDefinition_ManaCostModifier.skill using common
+    skill_ClosedBodySkillDefinition_LifeCostModifier: skill_ClosedBodySkillDefinition_LifeCostModifier.skill using common
+    skill_ClosedBodySkillDefinition_CanUseNegativeManaModifier: skill_ClosedBodySkillDefinition_CanUseNegativeManaModifier.skill using common
+    skill_ClosedBodySkillDefinition_BaseConvictionPercentageModifier: skill_ClosedBodySkillDefinition_BaseConvictionPercentageModifier.skill using common
+    skill_ClosedBodySkillDefinition_RetaliationAuraDurationModifier: skill_ClosedBodySkillDefinition_RetaliationAuraDurationModifier.skill using common
+    skill_ClosedBodySkillDefinition_RetaliationAuraDecayResistanceModifier: skill_ClosedBodySkillDefinition_RetaliationAuraDecayResistanceModifier.skill using common
+    skill_BombardmentSkillDefinition_DamageModifier: skill_BombardmentSkillDefinition_DamageModifier.skill using common
+    skill_BombardmentSkillDefinition_SkillSpeedModifier: skill_BombardmentSkillDefinition_SkillSpeedModifier.skill using common
+    skill_BombardmentSkillDefinition_CooldownModifier: skill_BombardmentSkillDefinition_CooldownModifier.skill using common
+    skill_BombardmentSkillDefinition_ChargesModifier: skill_BombardmentSkillDefinition_ChargesModifier.skill using common
+    skill_BombardmentSkillDefinition_PhysicalDamageConversionModifier: skill_BombardmentSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_BombardmentSkillDefinition_FireDamageConversionModifier: skill_BombardmentSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_BombardmentSkillDefinition_LightningDamageConversionModifier: skill_BombardmentSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_BombardmentSkillDefinition_PlagueDamageConversionModifier: skill_BombardmentSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_BombardmentSkillDefinition_AdditionalPhysicalDamageModifier: skill_BombardmentSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_BombardmentSkillDefinition_AdditionalFireDamageModifier: skill_BombardmentSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_BombardmentSkillDefinition_AdditionalLightningDamageModifier: skill_BombardmentSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_BombardmentSkillDefinition_AdditionalPlagueDamageModifier: skill_BombardmentSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_BombardmentSkillDefinition_RangeModifier: skill_BombardmentSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_SummonTheGuardSkillDefinition_DamageModifier: skill_SummonTheGuardSkillDefinition_DamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_SkillSpeedModifier: skill_SummonTheGuardSkillDefinition_SkillSpeedModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_CooldownModifier: skill_SummonTheGuardSkillDefinition_CooldownModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_ChargesModifier: skill_SummonTheGuardSkillDefinition_ChargesModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_PhysicalDamageConversionModifier: skill_SummonTheGuardSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_FireDamageConversionModifier: skill_SummonTheGuardSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_LightningDamageConversionModifier: skill_SummonTheGuardSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_PlagueDamageConversionModifier: skill_SummonTheGuardSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_AdditionalPhysicalDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_AdditionalFireDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_RangeModifier: skill_SummonTheGuardSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_MatadeiraSkillDefinition_DamageModifier: skill_MatadeiraSkillDefinition_DamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_SkillSpeedModifier: skill_MatadeiraSkillDefinition_SkillSpeedModifier.skill using common
+    skill_MatadeiraSkillDefinition_CooldownModifier: skill_MatadeiraSkillDefinition_CooldownModifier.skill using common
+    skill_MatadeiraSkillDefinition_ChargesModifier: skill_MatadeiraSkillDefinition_ChargesModifier.skill using common
+    skill_MatadeiraSkillDefinition_PhysicalDamageConversionModifier: skill_MatadeiraSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_MatadeiraSkillDefinition_FireDamageConversionModifier: skill_MatadeiraSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_MatadeiraSkillDefinition_LightningDamageConversionModifier: skill_MatadeiraSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_MatadeiraSkillDefinition_PlagueDamageConversionModifier: skill_MatadeiraSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_MatadeiraSkillDefinition_AdditionalPhysicalDamageModifier: skill_MatadeiraSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_AdditionalFireDamageModifier: skill_MatadeiraSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_AdditionalLightningDamageModifier: skill_MatadeiraSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_AdditionalPlagueDamageModifier: skill_MatadeiraSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_RangeModifier: skill_MatadeiraSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_HolyRosarySkillDefinition_DamageModifier: skill_HolyRosarySkillDefinition_DamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_SkillSpeedModifier: skill_HolyRosarySkillDefinition_SkillSpeedModifier.skill using common
+    skill_HolyRosarySkillDefinition_CooldownModifier: skill_HolyRosarySkillDefinition_CooldownModifier.skill using common
+    skill_HolyRosarySkillDefinition_ChargesModifier: skill_HolyRosarySkillDefinition_ChargesModifier.skill using common
+    skill_HolyRosarySkillDefinition_PhysicalDamageConversionModifier: skill_HolyRosarySkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_HolyRosarySkillDefinition_FireDamageConversionModifier: skill_HolyRosarySkillDefinition_FireDamageConversionModifier.skill using common
+    skill_HolyRosarySkillDefinition_LightningDamageConversionModifier: skill_HolyRosarySkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_HolyRosarySkillDefinition_PlagueDamageConversionModifier: skill_HolyRosarySkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_HolyRosarySkillDefinition_AdditionalPhysicalDamageModifier: skill_HolyRosarySkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_AdditionalFireDamageModifier: skill_HolyRosarySkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_AdditionalLightningDamageModifier: skill_HolyRosarySkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_AdditionalPlagueDamageModifier: skill_HolyRosarySkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_RangeModifier: skill_HolyRosarySkillDefinition_RangeModifier.skill using RangeModifier
+    skill_VeilofQuilsSkillDefinition_DamageModifier: skill_VeilofQuilsSkillDefinition_DamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_SkillSpeedModifier: skill_VeilofQuilsSkillDefinition_SkillSpeedModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_CooldownModifier: skill_VeilofQuilsSkillDefinition_CooldownModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_ChargesModifier: skill_VeilofQuilsSkillDefinition_ChargesModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_PhysicalDamageConversionModifier: skill_VeilofQuilsSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_FireDamageConversionModifier: skill_VeilofQuilsSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_LightningDamageConversionModifier: skill_VeilofQuilsSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_PlagueDamageConversionModifier: skill_VeilofQuilsSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_AdditionalPhysicalDamageModifier: skill_VeilofQuilsSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_AdditionalFireDamageModifier: skill_VeilofQuilsSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_AdditionalLightningDamageModifier: skill_VeilofQuilsSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_AdditionalPlagueDamageModifier: skill_VeilofQuilsSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_RangeModifier: skill_VeilofQuilsSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_SummonBruteSkillDefinition_DamageModifier: skill_SummonBruteSkillDefinition_DamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_SkillSpeedModifier: skill_SummonBruteSkillDefinition_SkillSpeedModifier.skill using common
+    skill_SummonBruteSkillDefinition_CooldownModifier: skill_SummonBruteSkillDefinition_CooldownModifier.skill using common
+    skill_SummonBruteSkillDefinition_ChargesModifier: skill_SummonBruteSkillDefinition_ChargesModifier.skill using common
+    skill_SummonBruteSkillDefinition_PhysicalDamageConversionModifier: skill_SummonBruteSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_SummonBruteSkillDefinition_FireDamageConversionModifier: skill_SummonBruteSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_SummonBruteSkillDefinition_LightningDamageConversionModifier: skill_SummonBruteSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_SummonBruteSkillDefinition_PlagueDamageConversionModifier: skill_SummonBruteSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_SummonBruteSkillDefinition_AdditionalPhysicalDamageModifier: skill_SummonBruteSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_AdditionalFireDamageModifier: skill_SummonBruteSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier: skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_RangeModifier: skill_SummonBruteSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_SummonMarksmenSkillDefinition_DamageModifier: skill_SummonMarksmenSkillDefinition_DamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_SkillSpeedModifier: skill_SummonMarksmenSkillDefinition_SkillSpeedModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_CooldownModifier: skill_SummonMarksmenSkillDefinition_CooldownModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_ChargesModifier: skill_SummonMarksmenSkillDefinition_ChargesModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_PhysicalDamageConversionModifier: skill_SummonMarksmenSkillDefinition_PhysicalDamageConversionModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_FireDamageConversionModifier: skill_SummonMarksmenSkillDefinition_FireDamageConversionModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_LightningDamageConversionModifier: skill_SummonMarksmenSkillDefinition_LightningDamageConversionModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_PlagueDamageConversionModifier: skill_SummonMarksmenSkillDefinition_PlagueDamageConversionModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_AdditionalPhysicalDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalPhysicalDamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_AdditionalFireDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalFireDamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_RangeModifier: skill_SummonMarksmenSkillDefinition_RangeModifier.skill using RangeModifier
+  }
+}

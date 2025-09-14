@@ -13,7 +13,11 @@
     type GearRoot,
     type GearSlotDB,
   } from "$lib/hellclock/gears";
-  import { SkillsHelper, type SkillsCalculatorRoot, type SkillsRoot } from "$lib/hellclock/skills";
+  import {
+    SkillsHelper,
+    type SkillsCalculatorRoot,
+    type SkillsRoot,
+  } from "$lib/hellclock/skills";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
@@ -21,28 +25,49 @@
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
-  
+
   // Initialize contexts with dependencies once they're available
   let skillContext: ReturnType<typeof provideSkillEquipped> | null = null;
-  let gearEvaluationContext: ReturnType<typeof provideGearEvaluation> | null = null;
-  let skillEvaluationContext: ReturnType<typeof provideSkillEvaluation> | null = null;
-  let evaluationManagerContext: ReturnType<typeof provideEvaluationManager> | null = null;
-  
+  let gearEvaluationContext: ReturnType<typeof provideGearEvaluation> | null =
+    null;
+  let skillEvaluationContext: ReturnType<typeof provideSkillEvaluation> | null =
+    null;
+  let evaluationManagerContext: ReturnType<
+    typeof provideEvaluationManager
+  > | null = null;
+
   $effect(() => {
     if (skillsHelper && !skillContext) {
       skillContext = provideSkillEquipped(undefined, skillsHelper);
     }
-    
+
     if (gearsHelper && statsHelper && !gearEvaluationContext) {
-      gearEvaluationContext = provideGearEvaluation(gearsHelper, statsHelper, "en");
+      gearEvaluationContext = provideGearEvaluation(
+        gearsHelper,
+        statsHelper,
+        "en",
+      );
     }
-    
+
     if (skillsHelper && !skillEvaluationContext) {
       skillEvaluationContext = provideSkillEvaluation(skillsHelper, "en");
     }
-    
-    if (engine && pack && statsHelper && gearsHelper && skillsHelper && !evaluationManagerContext) {
-      evaluationManagerContext = provideEvaluationManager(engine, pack, statsHelper, gearsHelper, skillsHelper);
+
+    if (
+      engine &&
+      pack &&
+      statsHelper &&
+      gearsHelper &&
+      skillsHelper &&
+      !evaluationManagerContext
+    ) {
+      evaluationManagerContext = provideEvaluationManager(
+        engine,
+        pack,
+        statsHelper,
+        gearsHelper,
+        skillsHelper,
+      );
     }
   });
 
@@ -85,7 +110,7 @@
 
       // send to worker
       label = "Loading pack";
-      let filePackDefinition = $state.snapshot(pack["hellclock-pack"]) as any;
+      let filePackDefinition = $state.snapshot(pack["hellclock"]) as any;
       const res = await engine.loadPack(filePackDefinition);
       if (res) {
         error = `${(res as any).error}`;
@@ -103,7 +128,10 @@
       );
 
       label = "Loading SkillsHelper";
-      skillsHelper = new SkillsHelper(pack["Skills"] as SkillsRoot, pack["skill-calculations"] as SkillsCalculatorRoot);
+      skillsHelper = new SkillsHelper(
+        pack["Skills"] as SkillsRoot,
+        pack["skill-calculations"] as SkillsCalculatorRoot,
+      );
 
       label = "Ready";
       progress = 100;

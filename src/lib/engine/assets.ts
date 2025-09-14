@@ -4,6 +4,12 @@ export async function fetchJSON<T = unknown>(url: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export async function fetchTEXT<T = unknown>(url: string): Promise<T> {
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  return res.text() as Promise<T>;
+}
+
 export async function loadGamePack(
   onProgress?: (pct: number, label: string) => void,
 ): Promise<Record<string, unknown>> {
@@ -22,12 +28,15 @@ export async function loadGamePack(
   const loaded: Record<string, unknown> = {};
   for (const url of manifest.json) {
     tick(`Downloading ${url}`);
-    const data = await fetchJSON(url);
+    const data = url.endsWith("json")
+      ? await fetchJSON(url)
+      : await fetchTEXT(url);
     const key =
       url
         .split("/")
         .pop()
-        ?.replace(/\.json$/i, "") || url;
+        ?.replace(/\.json$/i, "")
+        ?.replace(/\.pack$/i, "") || url;
     loaded[key] = data;
     done++;
     tick(`Downloaded ${url}`);

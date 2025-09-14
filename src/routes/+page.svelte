@@ -1,32 +1,24 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte";
-  import type { Engine } from "$lib/engine";
-  import type { GamePack, XNode } from "$lib/engine/types";
+  import type { ExplainPayload } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
   import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
-  import type { StatMod, StatsHelper } from "$lib/hellclock/stats";
   import { translate } from "$lib/hellclock/lang";
   import DisplayStats from "$lib/ui/DisplayStats.svelte";
   import GearSlots from "$lib/ui/GearSlots.svelte";
   import FilterGearSelector from "$lib/ui/FilterGearSelector.svelte";
   import type { GearItem, GearsHelper, GearSlot } from "$lib/hellclock/gears";
-  import { getValueFromMultiplier } from "$lib/hellclock/formats";
-  import { fmtValue } from "$lib/hellclock/utils";
   import SkillSlots from "$lib/ui/SkillSlots.svelte";
   import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
   import type {
     SkillSelected,
     SkillsHelper,
     SkillSlotDefinition,
-    SkillUpgradeModifier,
   } from "$lib/hellclock/skills";
   import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
   import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
   import { useEvaluationManager } from "$lib/context/evaluation.svelte";
 
-  const engine = getContext<Engine>("engine");
-  const gamepack = getContext<GamePack>("gamepack");
-  const statsHelper = getContext<StatsHelper>("statsHelper");
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
 
@@ -69,7 +61,16 @@
   let explainLoading = $state(false);
   let explainError = $state<string | null>(null);
   let explainTitle = $state<string>("");
-  let explainNode = $state<XNode | null>(null);
+  let explainData = $state<ExplainPayload | null>(null);
+  let activeExplainTab = $state<'human' | 'debug'>('human');
+
+  // Function to parse indentation from human-readable lines
+  const parseHumanLine = (line: string) => {
+    const leadingSpaces = line.match(/^(\s*)/)?.[1].length || 0;
+    const indentLevel = Math.floor(leadingSpaces / 2); // Every 2 spaces = 1 indent level
+    const content = line.trim();
+    return { indentLevel, content };
+  };
 
   let showGearSelector = $state(false);
   let gearSelectorIsBlessed = $state(true);
@@ -88,11 +89,12 @@
     explainTitle = stat;
     explainLoading = true;
     explainError = null;
-    explainNode = null;
+    explainData = null;
+    activeExplainTab = 'human';
     showExplain = true;
 
     try {
-      explainNode = await evaluationManager.explain(stat);
+      explainData = await evaluationManager.explain(stat);
     } catch (e: any) {
       explainError = String(e?.message ?? e);
     } finally {
@@ -267,9 +269,62 @@
       <div class="alert alert-soft alert-error mt-4">
         <span>{explainError}</span>
       </div>
-    {:else if explainNode}
-      <div class="mt-4 overflow-y-auto max-h-96">
-        <XNodeTree node={explainNode} />
+    {:else if explainData}
+      <div class="mt-4">
+        <!-- Summary -->
+        <div class="mb-4 p-3 bg-base-200 rounded-lg">
+          <h4 class="font-semibold text-sm mb-2">Summary</h4>
+          <p class="text-sm">{explainData.summary}</p>
+          <p class="text-lg font-mono mt-2">Final Value: {explainData.value}</p>
+        </div>
+
+        <!-- Tabs for Human vs Debug view -->
+        <div role="tablist" class="tabs tabs-boxed mb-4">
+          <button
+            role="tab"
+            class="tab {activeExplainTab === 'human' ? 'tab-active' : ''}"
+            onclick={() => activeExplainTab = 'human'}
+          >
+            Human Readable
+          </button>
+          <button
+            role="tab"
+            class="tab {activeExplainTab === 'debug' ? 'tab-active' : ''}"
+            onclick={() => activeExplainTab = 'debug'}
+          >
+            Debug Details
+          </button>
+        </div>
+
+        <!-- Human Readable View -->
+        {#if activeExplainTab === 'human'}
+          <div class="overflow-y-auto max-h-96">
+            <div class="font-mono text-sm space-y-2">
+              {#each explainData.human as line}
+                {@const parsed = parseHumanLine(line)}
+                <div
+                  class="py-2 leading-relaxed border-l-2 {parsed.indentLevel > 0 ? 'border-gray-300' : 'border-transparent'} {parsed.indentLevel > 0 ? 'bg-base-50' : ''} rounded-r-md relative group"
+                  style="padding-left: {0.75 + (parsed.indentLevel * 1.2)}rem; margin-left: {parsed.indentLevel * 0.3}rem"
+                >
+                  <span
+                    class="block truncate whitespace-nowrap {parsed.indentLevel === 0 ? 'font-semibold text-base-content' :
+                           parsed.indentLevel === 1 ? 'font-medium text-base-content opacity-90' :
+                           parsed.indentLevel === 2 ? 'text-base-content opacity-80' :
+                           'text-base-content opacity-70'}"
+                    title={parsed.content}
+                  >{parsed.content}</span>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Debug View -->
+        {#if activeExplainTab === 'debug'}
+          <div class="overflow-y-auto max-h-96">
+            <XNodeTree node={explainData.debug} />
+          </div>
+        {/if}
       </div>
     {:else}
       <p class="mt-4 opacity-70">No explanation returned.</p>

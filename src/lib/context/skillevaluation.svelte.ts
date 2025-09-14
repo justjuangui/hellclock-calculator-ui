@@ -1,4 +1,4 @@
-import type { SkillSelected, SkillsHelper, SkillUpgradeModifier } from "$lib/hellclock/skills";
+import type { SkillsHelper, SkillUpgradeModifier } from "$lib/hellclock/skills";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
@@ -7,6 +7,7 @@ import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
 export type SkillModSource = {
   source: string;
   amount: number;
+  layer: string;
   meta: {
     type: string;
     id: string;
@@ -22,7 +23,7 @@ export type SkillModCollection = Record<string, SkillModSource[]>;
 export type SkillEvaluationAPI = {
   // Get current skill modifications for evaluation
   getSkillMods: () => SkillModCollection;
-  
+
   // Check if skills have changed (for cache invalidation)
   get skillHash(): string;
 };
@@ -34,7 +35,7 @@ export function provideSkillEvaluation(
   lang = "en",
 ): SkillEvaluationAPI {
   const skillSlotsApi = useSkillEquipped();
-  
+
   function mapSkillModForEval(mod: SkillUpgradeModifier): string {
     let statName = mod.skillValueModifierKey.replaceAll(" ", "");
     let modifierType = mod.modifierType.toLowerCase();
@@ -47,31 +48,40 @@ export function provideSkillEvaluation(
     }
     return statName;
   }
-  
+
   function getSkillMods(): SkillModCollection {
     const mods: SkillModCollection = {};
-    
+
     Object.entries(skillSlotsApi.skillsEquipped).forEach(([slot, skill]) => {
       if (!skill) return;
-      
+
       // Add base value modifiers
-      const baseValMods = skillsHelper?.getSkillBaseValueModsById(skill.skill.name);
-      
+      const baseValMods = skillsHelper?.getSkillBaseValueModsById(
+        skill.skill.name,
+      );
+
       if (!baseValMods?.length) {
         console.warn(`baseValMods not found for skill ${skill.skill.name}`);
         return;
       }
-      
+
       for (const baseValMod of baseValMods) {
-        const skillGroup = `skill.${skill.skill.name}.${baseValMod.id}.base`;
+        const skillGroup = `skill_${skill.skill.name}_${baseValMod.id}`;
         if (!(skillGroup in mods)) {
           mods[skillGroup] = [];
         }
-        
-        const amount = (skill.skill as any)[baseValMod.value] || 0;
+
+        let amount = 0;
+        if (baseValMod.value.startsWith("CONST:N")) {
+          let [, , val] = baseValMod.value.split(":");
+          amount = Number(val) || 0;
+        } else {
+          amount = (skill.skill as any)[baseValMod.value] || 0;
+        }
         mods[skillGroup].push({
           source: `Skill ${translate(skill.skill.localizedName, lang)}`,
           amount: amount,
+          layer: "base",
           meta: {
             type: "skill",
             id: String(skill.skill.id),
@@ -81,7 +91,7 @@ export function provideSkillEvaluation(
           },
         });
       }
-      
+
       // Add level-based modifiers
       let valueModByLevel = skill.skill.modifiersPerLevel[skill.selectedLevel];
       if (!valueModByLevel) {
@@ -90,9 +100,10 @@ export function provideSkillEvaluation(
         );
         valueModByLevel = skill.skill.modifiersPerLevel[7];
       }
-      
+
       for (const modifier of valueModByLevel) {
-        const statName = `skill.${skill.skill.name}.${mapSkillModForEval(modifier)}`;
+        const [statInfo, layer] = mapSkillModForEval(modifier).split(".");
+        const statName = `skill_${skill.skill.name}_${statInfo}`;
         if (!(statName in mods)) {
           mods[statName] = [];
         }
@@ -103,8 +114,9 @@ export function provideSkillEvaluation(
             modifier.modifierType,
             1,
             1,
-            1
+            1,
           ),
+          layer: layer || "base",
           meta: {
             type: "skill",
             id: String(skill.skill.id),
@@ -115,23 +127,26 @@ export function provideSkillEvaluation(
         });
       }
     });
-    
+
     return mods;
   }
-  
+
   const api: SkillEvaluationAPI = {
     getSkillMods,
-    
+
     get skillHash() {
       // Create a hash of equipped skills for cache invalidation
       return Object.entries(skillSlotsApi.skillsEquipped)
         .filter(([, skill]) => skill)
-        .map(([slot, skill]) => `${slot}:${skill!.skill.id}:${skill!.selectedLevel}`)
+        .map(
+          ([slot, skill]) =>
+            `${slot}:${skill!.skill.id}:${skill!.selectedLevel}`,
+        )
         .sort()
         .join("|");
     },
   };
-  
+
   setContext(skillEvaluationKey, api);
   return api;
 }
@@ -145,3 +160,4 @@ export function useSkillEvaluation(): SkillEvaluationAPI {
   }
   return ctx;
 }
+

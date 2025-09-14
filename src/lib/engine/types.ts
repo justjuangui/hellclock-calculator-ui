@@ -14,10 +14,29 @@ export type EngineWorkerCommand =
 
 export type GamePack = Record<string, unknown>;
 
+// Legacy XNode type (kept for backward compatibility)
 export type XNode = {
   name?: string;
   op?: string;
   value: number;
   meta?: Record<string, string>;
   children?: XNode[];
+};
+
+// New WASM evaluation node structure
+export type EvaluationNode = {
+  type: string;
+  name: string;
+  value: number;
+  children?: EvaluationNode[];
+  meta?: Record<string, string | number>;
+  details?: Record<string, unknown>;
+};
+
+// New explain payload structure returned by WASM
+export type ExplainPayload = {
+  debug: EvaluationNode;
+  human: string[];
+  summary: string;
+  value: number;
 };

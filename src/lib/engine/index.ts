@@ -13,6 +13,9 @@ export class Engine {
   private pending = new Map<number, Pending>();
   private sanitize<T>(v: T): T {
     try {
+      if (v instanceof String) {
+        return v
+      }
       return structuredClone(v);
     } catch {
       return JSON.parse(JSON.stringify(v));

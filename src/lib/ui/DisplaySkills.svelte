@@ -68,8 +68,11 @@
       });
 
       // Use EvaluationManager to evaluate skill (ensures actor is built first)
-      const evaluation = await evaluationManager.evaluateSkill(skill, skillsHelper);
-      
+      const evaluation = await evaluationManager.evaluateSkill(
+        skill,
+        skillsHelper,
+      );
+
       // Only update if the skill is still the same (prevent race conditions)
       if (skillsAPI.selectedSkill?.skill.name === skill.skill.name) {
         skillsAPI.setCurrentEvaluation(evaluation);
@@ -165,7 +168,7 @@
           <div class="skeleton h-6 w-2/3"></div>
           <div class="skeleton h-6 w-1/3"></div>
         </div>
-      {:else if skillsAPI.currentEvaluation?.result?.values}
+      {:else if skillsAPI.currentEvaluation?.result}
         {@const currentEval = skillsAPI.currentEvaluation}
         <div class="flex flex-col gap-2 grow">
           <div role="tablist" class="tabs tabs-box tabs-sm">
@@ -199,7 +202,7 @@
                   <tr>
                     <td>{valStat.displayName}</td>
                     <td class="text-right"
-                      >{currentEval?.result?.values?.[valStat.id]}</td
+                      >{currentEval?.result?.[valStat.id]}</td
                     >
                     <td class="text-right">
                       <button
