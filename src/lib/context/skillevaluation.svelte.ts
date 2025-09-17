@@ -76,7 +76,7 @@ export function provideSkillEvaluation(
           let [, , val] = baseValMod.value.split(":");
           amount = Number(val) || 0;
         } else {
-          amount = (skill.skill as any)[baseValMod.value] || 0;
+          amount = Number((skill.skill as any)[baseValMod.value]) || 0;
         }
         mods[skillGroup].push({
           source: `Skill ${translate(skill.skill.localizedName, lang)}`,
@@ -98,7 +98,7 @@ export function provideSkillEvaluation(
         console.warn(
           `ValueModifiers not found for skill ${skill.skill.name} at level ${skill.selectedLevel}, using level 7`,
         );
-        valueModByLevel = skill.skill.modifiersPerLevel[7];
+        valueModByLevel = skill.skill.modifiersPerLevel[7] ?? [];
       }
 
       for (const modifier of valueModByLevel) {
@@ -160,4 +160,3 @@ export function useSkillEvaluation(): SkillEvaluationAPI {
   }
   return ctx;
 }
-

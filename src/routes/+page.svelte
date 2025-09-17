@@ -2,6 +2,7 @@
   import { getContext, onMount } from "svelte";
   import type { ExplainPayload } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
+  import PhaseDebugView from "$lib/ui/PhaseDebugView.svelte";
   import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
   import { translate } from "$lib/hellclock/lang";
   import DisplayStats from "$lib/ui/DisplayStats.svelte";
@@ -62,15 +63,8 @@
   let explainError = $state<string | null>(null);
   let explainTitle = $state<string>("");
   let explainData = $state<ExplainPayload | null>(null);
-  let activeExplainTab = $state<'human' | 'debug'>('human');
+  let activeExplainTab = $state<'phases' | 'debug'>('phases');
 
-  // Function to parse indentation from human-readable lines
-  const parseHumanLine = (line: string) => {
-    const leadingSpaces = line.match(/^(\s*)/)?.[1].length || 0;
-    const indentLevel = Math.floor(leadingSpaces / 2); // Every 2 spaces = 1 indent level
-    const content = line.trim();
-    return { indentLevel, content };
-  };
 
   let showGearSelector = $state(false);
   let gearSelectorIsBlessed = $state(true);
@@ -85,12 +79,21 @@
   // The doEvaluate function has been replaced by the EvaluationManager context
   // All evaluation is now handled automatically when equipment changes
 
+  // Helper function to format stat names for display
+  function formatStatName(stat: string): string {
+    return stat
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2'); // Add space before capital letters
+  }
+
   async function openExplain(stat: string) {
     explainTitle = stat;
     explainLoading = true;
     explainError = null;
     explainData = null;
-    activeExplainTab = 'human';
+    activeExplainTab = 'phases';
     showExplain = true;
 
     try {
@@ -256,7 +259,7 @@
 <dialog class="modal" open={showExplain}>
   <div class="modal-box max-w-4xl">
     <h3 class="font-bold text-lg flex items-center gap-2">
-      Explain: {explainTitle}
+      Explain: {formatStatName(explainTitle)}
     </h3>
 
     {#if explainLoading}
@@ -274,18 +277,18 @@
         <!-- Summary -->
         <div class="mb-4 p-3 bg-base-200 rounded-lg">
           <h4 class="font-semibold text-sm mb-2">Summary</h4>
-          <p class="text-sm">{explainData.summary}</p>
-          <p class="text-lg font-mono mt-2">Final Value: {explainData.value}</p>
+          <p class="text-lg font-mono">Final Value: {explainData.value}</p>
+          <p class="text-sm text-base-content/70 mt-1">Calculation: {formatStatName(explainTitle)} stat evaluation</p>
         </div>
 
         <!-- Tabs for Human vs Debug view -->
         <div role="tablist" class="tabs tabs-boxed mb-4">
           <button
             role="tab"
-            class="tab {activeExplainTab === 'human' ? 'tab-active' : ''}"
-            onclick={() => activeExplainTab = 'human'}
+            class="tab {activeExplainTab === 'phases' ? 'tab-active' : ''}"
+            onclick={() => activeExplainTab = 'phases'}
           >
-            Human Readable
+            Phase View
           </button>
           <button
             role="tab"
@@ -296,26 +299,10 @@
           </button>
         </div>
 
-        <!-- Human Readable View -->
-        {#if activeExplainTab === 'human'}
+        <!-- Phase View -->
+        {#if activeExplainTab === 'phases'}
           <div class="overflow-y-auto max-h-96">
-            <div class="font-mono text-sm space-y-2">
-              {#each explainData.human as line}
-                {@const parsed = parseHumanLine(line)}
-                <div
-                  class="py-2 leading-relaxed border-l-2 {parsed.indentLevel > 0 ? 'border-gray-300' : 'border-transparent'} {parsed.indentLevel > 0 ? 'bg-base-50' : ''} rounded-r-md relative group"
-                  style="padding-left: {0.75 + (parsed.indentLevel * 1.2)}rem; margin-left: {parsed.indentLevel * 0.3}rem"
-                >
-                  <span
-                    class="block truncate whitespace-nowrap {parsed.indentLevel === 0 ? 'font-semibold text-base-content' :
-                           parsed.indentLevel === 1 ? 'font-medium text-base-content opacity-90' :
-                           parsed.indentLevel === 2 ? 'text-base-content opacity-80' :
-                           'text-base-content opacity-70'}"
-                    title={parsed.content}
-                  >{parsed.content}</span>
-                </div>
-              {/each}
-            </div>
+            <PhaseDebugView node={explainData.debug} />
           </div>
         {/if}
 
