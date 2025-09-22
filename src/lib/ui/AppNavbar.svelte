@@ -2,14 +2,18 @@
   let githubUrl = "https://github.com/justjuangui/hellclock-calculator-ui";
 </script>
 
-<nav class="navbar bg-base-100 rounded-2xl shadow-md px-2">
-  <div class="flex-1">
-    <a href="/" class="btn btn-ghost text-xl">Hell Clock Planner</a>
-  </div>
-  <div class="gap-2">
+<nav
+  class="bg-base-100 border border-base-300 rounded-lg px-3 py-3 flex items-center justify-between min-h-[3rem]"
+>
+  <a
+    href="/"
+    class="text-lg font-semibold hover:text-primary transition-colors flex items-center"
+    >Hell Clock Planner</a
+  >
+  <div class="flex items-center gap-2">
     <!-- GitHub link -->
     <a
-      class="btn btn-ghost gap-2"
+      class="btn btn-ghost gap-2 flex items-center"
       href={githubUrl}
       target="_blank"
       rel="noopener noreferrer"

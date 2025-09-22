@@ -131,18 +131,18 @@
   };
 </script>
 
-<div class="space-y-3">
+<div class="space-y-2">
   {#if phases.length === 0}
     <!-- Fallback: show original tree if no phases detected -->
-    <div class="space-y-3">
-      <div class="card bg-base-100 border border-base-300">
-        <div class="card-body p-4">
-          <div class="flex items-center gap-3">
+    <div class="space-y-2">
+      <div class="bg-base-100 border border-base-300 rounded-lg">
+        <div class="p-3">
+          <div class="flex items-center gap-2">
             <span class="font-mono text-sm font-medium">{node.name || "(unnamed)"}</span>
             {#if node.type}
-              <span class="badge badge-ghost badge-sm">{node.type}</span>
+              <span class="badge badge-ghost badge-xs">{node.type}</span>
             {/if}
-            <span class="badge badge-outline badge-sm font-mono">= {fmt(node.value)}</span>
+            <span class="badge badge-outline badge-xs font-mono">= {fmt(node.value)}</span>
           </div>
 
           {#if node.meta && metaEntries(node.meta).length}
@@ -154,7 +154,7 @@
           {/if}
 
           {#if node.children?.length}
-            <div class="mt-3 space-y-2">
+            <div class="mt-2 space-y-1">
               {#each node.children as c (c.name || Math.random())}
                 <PhaseDebugView node={c} />
               {/each}
@@ -166,23 +166,23 @@
   {:else}
     <!-- Enhanced phase-based view -->
     {#each phases as phase (phase.id)}
-      <div class="card bg-base-100 border border-base-300 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="bg-base-100 border border-base-300 rounded-lg">
         <!-- Enhanced Phase Header -->
         <button
-          class="card-body p-0 w-full text-left transition-all duration-200 hover:bg-base-50"
+          class="w-full text-left transition-colors hover:bg-base-200"
           onclick={() => togglePhase(phase.id)}
         >
-          <div class="flex items-center justify-between p-4 border-b border-base-200">
-            <div class="flex items-center gap-3">
-              <h4 class="text-lg font-semibold text-base-content">{phase.displayName} Phase</h4>
-              <span class="badge {phase.color} font-mono">= {fmt(phase.value)}</span>
+          <div class="flex items-center justify-between p-3 border-b border-base-300">
+            <div class="flex items-center gap-2">
+              <h4 class="text-base font-semibold text-base-content">{phase.displayName} Phase</h4>
+              <span class="badge {phase.color} badge-xs font-mono">= {fmt(phase.value)}</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-base-content/70">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-base-content/70">
                 {phase.contributions.length} {phase.contributions.length === 1 ? 'contribution' : 'contributions'}
               </span>
               <div class="transition-transform duration-200 {expandedPhases[phase.id] ? 'rotate-90' : 'rotate-0'}">
-                <svg class="w-4 h-4 text-base-content/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3 h-3 text-base-content/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </div>
@@ -192,27 +192,27 @@
 
         <!-- Enhanced Phase Contributions (Collapsible) -->
         {#if expandedPhases[phase.id]}
-          <div class="card-body p-4 space-y-4 bg-base-200/50">
+          <div class="p-3 space-y-2 bg-base-200/30">
             {#if phase.contributions.length === 0}
               <!-- Empty State: No contributions found -->
-              <div class="flex flex-col items-center justify-center py-8 text-center">
-                <div class="mb-3">
-                  <svg class="w-12 h-12 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex flex-col items-center justify-center py-6 text-center">
+                <div class="mb-2">
+                  <svg class="w-8 h-8 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15.5 6.5a7.5 7.5 0 11-11.196 3.461A7.5 7.5 0 015.196 6.5z"/>
                   </svg>
                 </div>
-                <h6 class="text-base font-medium text-base-content/60 mb-1">No contributions for this phase</h6>
-                <p class="text-sm text-base-content/50 max-w-sm">
+                <h6 class="text-sm font-medium text-base-content/60 mb-1">No contributions for this phase</h6>
+                <p class="text-xs text-base-content/50 max-w-sm">
                   This phase doesn't contain any contribution nodes. The calculation uses base values or other computation methods.
                 </p>
               </div>
             {:else}
               {#each phase.contributions as contribution (contribution.name || Math.random())}
-              <div class="bg-base-100 rounded-lg border border-base-300 p-4 shadow-sm">
+              <div class="bg-base-100 rounded border border-base-300 p-3">
                 <!-- Contribution Header -->
-                <div class="flex items-start justify-between mb-3">
+                <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
-                    <h5 class="font-medium text-base-content">
+                    <h5 class="text-sm font-medium text-base-content">
                       {contribution.name && contribution.name !== "(unnamed)"
                         ? contribution.name.split('_').map(word =>
                             word.charAt(0).toUpperCase() + word.slice(1)
@@ -220,18 +220,18 @@
                         : "Contribution"}
                     </h5>
                     {#if contribution.type}
-                      <span class="badge badge-ghost badge-sm">{contribution.type}</span>
+                      <span class="badge badge-ghost badge-xs">{contribution.type}</span>
                     {/if}
                   </div>
-                  <span class="badge badge-outline font-mono">= {fmt(contribution.value)}</span>
+                  <span class="badge badge-outline badge-xs font-mono">= {fmt(contribution.value)}</span>
                 </div>
 
                 <!-- Contribution Details -->
-                <div class="space-y-2">
+                <div class="space-y-1">
                   {#each Object.entries(formatContributionInfo(contribution)) as [key, value] (key)}
-                    <div class="flex items-start gap-2 text-sm">
-                      <span class="font-medium text-base-content/80 min-w-20">{key}:</span>
-                      <span class="text-base-content/70 font-mono text-xs bg-base-200 px-2 py-1 rounded">
+                    <div class="flex items-start gap-2 text-xs">
+                      <span class="font-medium text-base-content/80 min-w-16">{key}:</span>
+                      <span class="text-base-content/70 font-mono bg-base-200 px-1 py-0.5 rounded text-xs">
                         {typeof value === 'object' ? JSON.stringify(value) : value}
                       </span>
                     </div>
@@ -240,18 +240,18 @@
 
                 <!-- Nested Children (if any) -->
                 {#if contribution.children?.length}
-                  <div class="mt-4 space-y-2">
-                    <h6 class="text-sm font-medium text-base-content/80 border-b border-base-300 pb-1">
+                  <div class="mt-3 space-y-1">
+                    <h6 class="text-xs font-medium text-base-content/80 border-b border-base-300 pb-1">
                       Sub-calculations
                     </h6>
-                    <div class="space-y-2 pl-4 border-l-2 border-base-300">
+                    <div class="space-y-1 pl-3 border-l-2 border-base-300">
                       {#each contribution.children as child (child.name || Math.random())}
-                        <div class="bg-base-200/30 rounded p-3">
-                          <div class="flex items-center justify-between mb-2">
-                            <span class="font-mono text-sm text-base-content">
+                        <div class="bg-base-200/30 rounded p-2">
+                          <div class="flex items-center justify-between mb-1">
+                            <span class="font-mono text-xs text-base-content">
                               {child.name || "(unnamed)"}
                             </span>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1">
                               {#if child.type}
                                 <span class="badge badge-ghost badge-xs">{child.type}</span>
                               {/if}
@@ -281,23 +281,3 @@
   {/if}
 </div>
 
-<style>
-  /* Additional smooth transition styles */
-  .card {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .card:hover {
-    transform: translateY(-1px);
-  }
-
-  /* Ensure proper cursor styling */
-  button.card-body {
-    cursor: pointer;
-  }
-
-  button.card-body:focus {
-    outline: 2px solid rgb(59 130 246 / 0.5);
-    outline-offset: 2px;
-  }
-</style>

@@ -161,20 +161,16 @@
     // Evaluation will happen automatically via EvaluationManager context
   }
 
-  onMount(async () => {
-    // Initialization is now handled by the EvaluationManager context
-    // No manual evaluation needed as it's automatic when equipment is loaded
-  });
 </script>
 
-<div class="grid gap-2 lg:grid-cols-6">
-  <div class="card card-xs shadow-sm bg-base-100 col-span-2">
-    <div class="card-body">
-      <div role="tablist" class="tabs tabs-box tabs-sm">
+<div class="grid gap-1 lg:grid-cols-12">
+  <div class="bg-base-100 border border-base-300 rounded-lg col-span-4">
+    <div class="p-3">
+      <div role="tablist" class="tabs tabs-border tabs-sm">
         {#each leftOptions as opt}
           <button
             role="tab"
-            class={` indicator tab ${selectedLeft.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
+            class={`indicator tab ${selectedLeft.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
             onclick={() => {
               if (!opt.soon) selectedLeft = opt;
             }}
@@ -191,9 +187,9 @@
       </div>
     </div>
   </div>
-  <div class="card card-xs shadow-sm bg-base-100 col-span-4">
-    <div class="card-body">
-      <div role="tablist" class="tabs tabs-box tabs-sm">
+  <div class="bg-base-100 border border-base-300 rounded-lg col-span-8">
+    <div class="p-3">
+      <div role="tablist" class="tabs tabs-border tabs-sm">
         {#each rightOptions as opt}
           <button
             role="tab"
@@ -216,13 +212,13 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col gap-2 col-span-2">
+  <div class="flex flex-col gap-1 col-span-4">
     <DisplayStats {openExplain} />
   </div>
-  <div class="col-span-4">
-    <div class="grid gap-2 lg:grid-cols-6">
+  <div class="col-span-8">
+    <div class="grid gap-1 lg:grid-cols-8">
       {#if ["Gear", "Skills"].includes(selectedRight.name)}
-        <div class="col-span-6">
+        <div class="col-span-8">
           <SkillSlots
             equipped={skillSlotsApi.skillsEquipped}
             {onSkillSlotClicked}
@@ -230,12 +226,12 @@
         </div>
       {/if}
       {#if selectedRight.name == "Skills"}
-        <div class="col-span-6">
+        <div class="col-span-8">
           <DisplaySkills {openExplain} />
         </div>
       {/if}
       {#if selectedRight.name == "Gear"}
-        <div class="col-span-2">
+        <div class="col-span-3">
           <GearSlots
             blessedGear={true}
             title="Gear"
@@ -243,7 +239,7 @@
             {onSlotClicked}
           />
         </div>
-        <div class="col-span-2">
+        <div class="col-span-3">
           <GearSlots
             blessedGear={false}
             title="Trinket"

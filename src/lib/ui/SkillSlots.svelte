@@ -19,31 +19,29 @@
   let skillSlots = $state(skillsHelper.getSkillSlotsDefinitions());
 </script>
 
-<div class="card bg-base-100 shadow">
-  <div class="card-body">
-    <h3 class="card-title">Skills</h3>
-    <p class="text-sm opacity-70">
+<div class="bg-base-100 border border-base-300 rounded-lg">
+  <div class="p-3">
+    <h3 class="text-base font-semibold mb-2">Skills</h3>
+    <p class="text-xs opacity-70 mb-3">
       Click a slot to browse and equip skills, to remove just click once again.
       Hover to see details.
     </p>
-    <div class="flex flex-row gap-2">
+    <div class="flex flex-row gap-1">
       {#each skillSlots as s}
         <div class="tooltip tooltip-bottom">
           <div class="tooltip-content">
             {#if equipped[s]?.skill}
-              <p class="opacity-70 text-sm">
+              <p class="opacity-70 text-xs">
                 {translate(equipped[s]?.skill.localizedName, lang)} Lvl.{equipped[
                   s
                 ]?.selectedLevel}
               </p>
             {:else}
-              <p class="opacity-70">Empty</p>
+              <p class="opacity-70 text-xs">Empty slot</p>
             {/if}
           </div>
-          <div
-            role="button"
-            tabindex="0"
-            class={`relative cursor-pointer aspect-square rounded-box border ${equipped[s] ? "border-success" : "border-base-300"} flex items-center justify-center w-12 h-12 bg-base-200 hover:bg-base-300 transition`}
+          <button
+            class={`w-10 h-10 rounded border-2 flex items-center justify-center transition-colors ${equipped[s] ? "border-success bg-success/10" : "border-base-300 bg-base-200 hover:bg-base-300"}`}
             onkeydown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
@@ -56,10 +54,12 @@
               <img
                 src={spriteUrl(equipped[s]?.skill.icon)}
                 alt={translate(equipped[s]?.skill.localizedName, lang)}
-                class="h-9 w-9 object-contain drop-shadow"
+                class="h-7 w-7 object-contain"
               />
+            {:else}
+              <span class="text-xs opacity-60">+</span>
             {/if}
-          </div>
+          </button>
         </div>
       {/each}
     </div>

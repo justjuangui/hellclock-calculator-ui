@@ -57,19 +57,19 @@
   });
 </script>
 
-<div class="card bg-base-100 shadow">
-  <div class="card-body">
-    <h3 class="card-title">{title}</h3>
-    <p class="text-sm opacity-70">
+<div class="bg-base-100 border border-base-300 rounded-lg">
+  <div class="p-3">
+    <h3 class="text-base font-semibold mb-2">{title}</h3>
+    <p class="text-xs opacity-70 mb-3">
       Click a slot to browse and equip items, to remove just click once again. Hover to see details.
     </p>
-    <div class="grid grid-cols-3 gap-2">
+    <div class="grid grid-cols-3 gap-1">
       {#each allSlots as s}
         <div
           role="button"
           tabindex="0"
           aria-label={slotLabel[s]}
-          class={`relative cursor-pointer aspect-square rounded-box border flex items-center justify-center ${equipped[s]?.color ? "border-[var(--color)]" : "border-base-300"} bg-base-200 hover:bg-base-300 transition`}
+          class={`relative cursor-pointer aspect-square rounded border-2 flex items-center justify-center transition-colors ${equipped[s]?.color ? "border-[var(--color)] bg-[var(--color)]/10" : "border-base-300 bg-base-200 hover:bg-base-300"}`}
           style={`--color: ${equipped[s]?.color ? parseRGBA01ToCss(equipped[s]!.color) : "transparent"}`}
           onkeydown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -84,7 +84,7 @@
             <img
               src={spriteUrl(equipped[s]?.sprite)}
               alt={translate(equipped[s]?.localizedName, lang)}
-              class="h-12 w-12 object-contain drop-shadow"
+              class="h-10 w-10 object-contain"
             />
           {:else}
             <span class="text-xs opacity-60 text-center px-1"
@@ -100,7 +100,7 @@
           </div>
           {#if equipped[s]}
             <span
-              class="badge border-[var(--color)] badge-sm absolute -top-1 -right-1"
+              class="badge border-[var(--color)] badge-xs absolute -top-1 -right-1"
               >T{equipped[s]!.tier}</span
             >
           {/if}

@@ -175,7 +175,7 @@
       </div>
     </div>
   {:else}
-    <div class="container mx-auto p-4">
+    <div class="w-5xl mx-auto p-4">
       <AppNavbar />
       <div class="mt-2">
         {@render children?.()}

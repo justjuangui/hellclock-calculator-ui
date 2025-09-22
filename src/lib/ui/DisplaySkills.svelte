@@ -120,22 +120,20 @@
   }
 </script>
 
-<div class="card bg-base-100 shadow">
-  <div class="card-body">
-    <h3 class="card-title">Skill Details</h3>
-    <div class="flex flex-row gap-2">
-      <div class="gap-2 flex flex-col">
+<div class="bg-base-100 border border-base-300 rounded-lg">
+  <div class="p-3">
+    <h3 class="text-base font-semibold mb-3">Skill Details</h3>
+    <div class="flex flex-row gap-3">
+      <div class="flex flex-col gap-1">
         {#each skillsAPI.activeSkills as skill (skill.skill.id)}
           <div class="tooltip tooltip-bottom">
             <div class="tooltip-content">
-              <p class="opacity-70 text-sm">
+              <p class="opacity-70 text-xs">
                 {translate(skill.skill.localizedName, lang)} Lvl.{skill.selectedLevel}
               </p>
             </div>
-            <div
-              role="button"
-              tabindex="0"
-              class={`relative cursor-pointer aspect-square rounded-box border ${skill === skillsAPI.selectedSkill ? "border-success" : "border-base-300"} flex items-center justify-center w-12 h-12 bg-base-200 hover:bg-base-300 transition`}
+            <button
+              class={`w-10 h-10 rounded border-2 flex items-center justify-center transition-colors ${skill === skillsAPI.selectedSkill ? "border-success bg-success/10" : "border-base-300 bg-base-200 hover:bg-base-300"}`}
               onkeydown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   selectFromUI(skill);
@@ -149,29 +147,29 @@
               <img
                 src={spriteUrl(skill.skill.icon)}
                 alt={translate(skill.skill.localizedName, lang)}
-                class="h-9 w-9 object-contain drop-shadow"
+                class="h-7 w-7 object-contain"
               />
-            </div>
+            </button>
           </div>
         {/each}
       </div>
-      <div class="divider divider-horizontal"></div>
+      <div class="w-px bg-base-300 mx-1"></div>
       {#if skillsAPI.currentEvaluation?.error}
         <div class="grow">
-          <div class="alert alert-soft alert-error">
-            <span>{skillsAPI.currentEvaluation.error}</span>
+          <div class="alert alert-error alert-sm">
+            <span class="text-sm">{skillsAPI.currentEvaluation.error}</span>
           </div>
         </div>
       {:else if skillsAPI.currentEvaluation?.loading}
-        <div class="flex gap-2 grow">
-          <div class="skeleton h-6 w-1/2"></div>
-          <div class="skeleton h-6 w-2/3"></div>
-          <div class="skeleton h-6 w-1/3"></div>
+        <div class="flex flex-col gap-1 grow">
+          <div class="skeleton h-4 w-1/2"></div>
+          <div class="skeleton h-4 w-2/3"></div>
+          <div class="skeleton h-4 w-1/3"></div>
         </div>
       {:else if skillsAPI.currentEvaluation?.result}
         {@const currentEval = skillsAPI.currentEvaluation}
         <div class="flex flex-col gap-2 grow">
-          <div role="tablist" class="tabs tabs-box tabs-sm">
+          <div role="tablist" class="tabs tabs-border tabs-sm">
             {#each currentEval?.valueGroups ?? [] as group (group.id)}
               <button
                 role="tab"
@@ -188,56 +186,41 @@
               </button>
             {/each}
           </div>
-          <div class="overflow-x-auto grow">
-            <table class="table table-zebra table-md">
-              <thead>
-                <tr>
-                  <th class="w-1/2">Stat</th>
-                  <th class="text-right">Value</th>
-                  <th class="w-10">Explain</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each currentEval?.valueGroups?.find((g) => g.id === selectedSkillValueModGroup!)?.displayValueMods ?? [] as valStat (valStat.id)}
-                  <tr>
-                    <td>{valStat.displayName}</td>
-                    <td class="text-right"
-                      >{currentEval?.result?.[valStat.id]}</td
+          <div class="space-y-1 grow">
+            {#each currentEval?.valueGroups?.find((g) => g.id === selectedSkillValueModGroup!)?.displayValueMods ?? [] as valStat (valStat.id)}
+              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-base-200 transition-colors group">
+                <span class="text-sm font-medium">{valStat.displayName}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-mono">{currentEval?.result?.[valStat.id]}</span>
+                  <button
+                    aria-label="Explain {valStat.displayName}"
+                    class="opacity-0 group-hover:opacity-100 p-1 hover:bg-base-300 rounded transition-all"
+                    onclick={() => openExplain(valStat.id)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      class="h-3 w-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
                     >
-                    <td class="text-right">
-                      <button
-                        aria-label="Explain {valStat.displayName}"
-                        class="btn btn-ghost btn-xs"
-                        onclick={() => openExplain(valStat.id)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
-                          />
-                          <circle cx="12" cy="12" r="3.25" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
+                      />
+                      <circle cx="12" cy="12" r="3.25" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            {/each}
           </div>
         </div>
       {:else}
         <div class="grow">
-          <div class="alert alert-soft alert-warning">
-            <p class="opacity-70">No stats listed for this group.</p>
-          </div>
+          <p class="text-sm opacity-70">No stats listed for this group.</p>
         </div>
       {/if}
     </div>
