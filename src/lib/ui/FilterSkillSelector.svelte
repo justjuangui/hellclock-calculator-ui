@@ -87,7 +87,7 @@
                       <input
                         type="range"
                         min="1"
-                        max="7"
+                        max="10"
                         bind:value={sk.selectedLevel}
                         class="range range-primary range-xs w-[100px]"
                       />

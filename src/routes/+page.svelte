@@ -150,7 +150,7 @@
       .getAllSkillDefinitions()
       .filter((sk) => !skillsSetted.includes(sk.id))
       .map((sk) => {
-        return { skill: { ...sk }, selectedLevel: 7 } as SkillSelected;
+        return { skill: { ...sk }, selectedLevel: 10 } as SkillSelected;
       });
     showSkillSelector = true;
   }
