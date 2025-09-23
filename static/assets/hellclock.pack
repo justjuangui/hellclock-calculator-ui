@@ -11,6 +11,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    resist_common {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add") + sum_by(group: "MagicResistance", layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult")
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     BulletCountModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -83,8 +94,8 @@ pack "hellclock" {
     CriticalChance: CriticalChance.PERCENTAGE using common
     CriticalDamage: CriticalDamage.PERCENTAGE using common
     Life: Life.DEFAULT using common
-    PhysicalResistance: PhysicalResistance.PERCENTAGE using common
-    MagicResistance: MagicResistance.PERCENTAGE using common
+    PhysicalResistance: PhysicalResistance.PERCENTAGE using resist_common
+    MagicResistance: MagicResistance.PERCENTAGE using resist_common
     MovementSpeed: MovementSpeed.PERCENTAGE using common
     AttackSpeed: AttackSpeed.PERCENTAGE using common
     CooldownSpeed: CooldownSpeed.PERCENTAGE using common
@@ -104,9 +115,9 @@ pack "hellclock" {
     SoulStoneGain: SoulStoneGain.PERCENTAGE using common
     BlessedGearDropChanceBonus: BlessedGearDropChanceBonus.PERCENTAGE using common
     BonusRelicDropsFromBoss: BonusRelicDropsFromBoss.DEFAULT using common
-    FireResistance: FireResistance.PERCENTAGE using common
-    LightningResistance: LightningResistance.PERCENTAGE using common
-    PlagueResistance: PlagueResistance.PERCENTAGE using common
+    FireResistance: FireResistance.PERCENTAGE using resist_common
+    LightningResistance: LightningResistance.PERCENTAGE using resist_common
+    PlagueResistance: PlagueResistance.PERCENTAGE using resist_common
     LifeRegen: LifeRegen.PERCENTAGE using common
     ManaRegen: ManaRegen.PERCENTAGE using common
     ChanceToApplyBleed: ChanceToApplyBleed.PERCENTAGE using common
@@ -114,16 +125,16 @@ pack "hellclock" {
     ChanceToApplyShock: ChanceToApplyShock.PERCENTAGE using common
     ChanceToApplyBlight: ChanceToApplyBlight.PERCENTAGE using common
     AdditionalChanceToReceiveCritical: AdditionalChanceToReceiveCritical.PERCENTAGE using common
-    DamageOverTimeResistance: DamageOverTimeResistance.PERCENTAGE using common
-    StunResistance: StunResistance.PERCENTAGE using common
-    CrowdControlResistance: CrowdControlResistance.PERCENTAGE using common
+    DamageOverTimeResistance: DamageOverTimeResistance.PERCENTAGE using resist_common
+    StunResistance: StunResistance.PERCENTAGE using resist_common
+    CrowdControlResistance: CrowdControlResistance.PERCENTAGE using resist_common
     DamageLifeRegen: DamageLifeRegen.PERCENTAGE using common
     DamageManaRegen: DamageManaRegen.PERCENTAGE using common
     GoldGain: GoldGain.PERCENTAGE using common
     ManaSpentBarrierRegen: ManaSpentBarrierRegen.PERCENTAGE using common
     BarrierGeneration: BarrierGeneration.PERCENTAGE using common
     BarrierDecayThreshold: BarrierDecayThreshold.DEFAULT using common
-    BarrierGain: BarrierGain.PERCENTAGE using common
+    MaxBarrier: MaxBarrier.PERCENTAGE using common
     BarrierDecayResilience: BarrierDecayResilience.PERCENTAGE using common
     ChanceToFindPotion: ChanceToFindPotion.PERCENTAGE using common
     PotionCapacity: PotionCapacity.DEFAULT using common
@@ -148,13 +159,13 @@ pack "hellclock" {
     BlightIntensity: BlightIntensity.PERCENTAGE using common
     WitherBuildupRate: WitherBuildupRate.PERCENTAGE using common
     StunBuildupRate: StunBuildupRate.PERCENTAGE using common
-    AilmentResistance: AilmentResistance.PERCENTAGE using common
+    AilmentResistance: AilmentResistance.PERCENTAGE using resist_common
     BleedDamage: BleedDamage.PERCENTAGE using common
-    WitherResistance: WitherResistance.PERCENTAGE using common
+    WitherResistance: WitherResistance.PERCENTAGE using resist_common
     Evasion: Evasion.PERCENTAGE using common
     SkillAreaOfEffect: SkillAreaOfEffect.PERCENTAGE using common
     ManaShield: ManaShield.PERCENTAGE using common
-    DamageResistance: DamageResistance.PERCENTAGE using common
+    DamageResistance: DamageResistance.PERCENTAGE using resist_common
     Endurance: Endurance.PERCENTAGE using common
     AntiMagic: AntiMagic.PERCENTAGE using common
     ChanceToMiss: ChanceToMiss.PERCENTAGE using common
@@ -186,6 +197,27 @@ pack "hellclock" {
     LightningDamageTakenAsFire: LightningDamageTakenAsFire.PERCENTAGE using common
     FireDamageTakenAsPlague: FireDamageTakenAsPlague.PERCENTAGE using common
     LootPickupRange: LootPickupRange.DEFAULT using common
+    BarrierGain: BarrierGain.PERCENTAGE using common
+    CurrencyDropChanceBonus: CurrencyDropChanceBonus.PERCENTAGE using common
+    IgniteResistance: IgniteResistance.PERCENTAGE using resist_common
+    BleedResistance: BleedResistance.PERCENTAGE using resist_common
+    MaxFireResistance: MaxFireResistance.PERCENTAGE using resist_common
+    MaxLightningResistance: MaxLightningResistance.PERCENTAGE using resist_common
+    MaxPlagueResistance: MaxPlagueResistance.PERCENTAGE using resist_common
+    MaxPhysicalResistance: MaxPhysicalResistance.PERCENTAGE using resist_common
+    FireDamageConvertedAsLightning: FireDamageConvertedAsLightning.PERCENTAGE using common
+    FireDamageConvertedAsPhysical: FireDamageConvertedAsPhysical.PERCENTAGE using common
+    FireDamageConvertedAsPlague: FireDamageConvertedAsPlague.PERCENTAGE using common
+    LightningDamageConvertedAsFire: LightningDamageConvertedAsFire.PERCENTAGE using common
+    LightningDamageConvertedAsPhysical: LightningDamageConvertedAsPhysical.PERCENTAGE using common
+    LightningDamageConvertedAsPlague: LightningDamageConvertedAsPlague.PERCENTAGE using common
+    PhysicalDamageConvertedAsFire: PhysicalDamageConvertedAsFire.PERCENTAGE using common
+    PhysicalDamageConvertedAsLightning: PhysicalDamageConvertedAsLightning.PERCENTAGE using common
+    PhysicalDamageConvertedAsPlague: PhysicalDamageConvertedAsPlague.PERCENTAGE using common
+    PlagueDamageConvertedAsFire: PlagueDamageConvertedAsFire.PERCENTAGE using common
+    PlagueDamageConvertedAsLightning: PlagueDamageConvertedAsLightning.PERCENTAGE using common
+    PlagueDamageConvertedAsPhysical: PlagueDamageConvertedAsPhysical.PERCENTAGE using common
+    HellClockTimeDropChanceBonus: HellClockTimeDropChanceBonus.PERCENTAGE using common
     skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using common
     skill_BasicAttackDefinition_SkillSpeedModifier: skill_BasicAttackDefinition_SkillSpeedModifier.skill using common
     skill_BasicAttackDefinition_CooldownModifier: skill_BasicAttackDefinition_CooldownModifier.skill using common
