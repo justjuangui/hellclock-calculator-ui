@@ -28,6 +28,8 @@ export type StatDefinition = {
   willClamp: boolean;
   minimumValue: number;
   maximumValue: number;
+  useStatForMaximumValue: boolean;
+  maximumValueStat: string;
 };
 
 export type StatsRoot = { Stats: StatDefinition[] };
@@ -49,7 +51,12 @@ export class StatsHelper {
   getValueForStat(statName: string, value: number): number {
     const stat = this.getStatByName(statName);
     if (!stat || !stat.willClamp) return value;
-    return Math.min(Math.max(value, stat.minimumValue), stat.maximumValue);
+    let maximumValue = stat.maximumValue || 0;
+    if (stat.useStatForMaximumValue && stat.maximumValueStat) {
+      let otherStat = this.getStatByName(stat.maximumValueStat);
+      maximumValue = otherStat ? otherStat.baseValue : maximumValue;
+    }
+    return Math.min(Math.max(value, stat.minimumValue), maximumValue);
   }
 
   getLabelForStat(statName: string, langCode?: string): string {
