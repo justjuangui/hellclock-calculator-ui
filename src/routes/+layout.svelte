@@ -18,10 +18,18 @@
     type SkillsCalculatorRoot,
     type SkillsRoot,
   } from "$lib/hellclock/skills";
+  import {
+    RelicsHelper,
+    type RelicsDB,
+    type RelicInventoryConfig,
+    type RelicAffixesDB,
+  } from "$lib/hellclock/relics";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
   import { provideSkillEvaluation } from "$lib/context/skillevaluation.svelte";
+  import { provideRelicEvaluation } from "$lib/context/relicevaluation.svelte";
+  import { provideRelicInventory } from "$lib/context/relicequipped.svelte";
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
@@ -32,9 +40,13 @@
     null;
   let skillEvaluationContext: ReturnType<typeof provideSkillEvaluation> | null =
     null;
+  let relicEvaluationContext: ReturnType<typeof provideRelicEvaluation> | null =
+    null;
   let evaluationManagerContext: ReturnType<
     typeof provideEvaluationManager
   > | null = null;
+  let relicInventoryContext: ReturnType<typeof provideRelicInventory> | null =
+    null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
@@ -51,6 +63,18 @@
 
     if (skillsHelper && !skillEvaluationContext) {
       skillEvaluationContext = provideSkillEvaluation(skillsHelper, "en");
+    }
+
+    if (relicsHelper && !relicInventoryContext) {
+      relicInventoryContext = provideRelicInventory(relicsHelper, 0);
+    }
+
+    if (relicsHelper && statsHelper && !relicEvaluationContext) {
+      relicEvaluationContext = provideRelicEvaluation(
+        relicsHelper,
+        statsHelper,
+        "en",
+      );
     }
 
     if (
@@ -81,6 +105,7 @@
   let statsHelper = $state<StatsHelper | null>(null);
   let gearsHelper = $state<GearsHelper | null>(null);
   let skillsHelper = $state<SkillsHelper | null>(null);
+  let relicsHelper = $state<RelicsHelper | null>(null);
 
   $effect(() => {
     setContext("gamepack", pack);
@@ -88,7 +113,15 @@
     setContext("statsHelper", statsHelper);
     setContext("gearsHelper", gearsHelper);
     setContext("skillsHelper", skillsHelper);
-    if (statsHelper && engine && pack && gearsHelper && skillsHelper) {
+    setContext("relicsHelper", relicsHelper);
+    if (
+      statsHelper &&
+      engine &&
+      pack &&
+      gearsHelper &&
+      skillsHelper &&
+      relicsHelper
+    ) {
       ready = true;
     }
   });
@@ -131,6 +164,13 @@
       skillsHelper = new SkillsHelper(
         pack["Skills"] as SkillsRoot,
         pack["skill-calculations"] as SkillsCalculatorRoot,
+      );
+
+      label = "Loading RelicsHelper";
+      relicsHelper = new RelicsHelper(
+        pack["Relics"] as RelicsDB,
+        pack["Relic Inventory Config"] as RelicInventoryConfig,
+        pack["Relic Affixes"] as RelicAffixesDB,
       );
 
       label = "Ready";

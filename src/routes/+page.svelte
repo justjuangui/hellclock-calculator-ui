@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { getContext } from "svelte";
   import type { ExplainPayload } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
   import PhaseDebugView from "$lib/ui/PhaseDebugView.svelte";
@@ -19,13 +19,17 @@
   import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
   import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
   import { useEvaluationManager } from "$lib/context/evaluation.svelte";
+  import RelicInventory from "$lib/ui/RelicInventory.svelte";
+  import FilterRelicSelector from "$lib/ui/FilterRelicSelector.svelte";
+  import type { RelicItem } from "$lib/hellclock/relics";
+  import { useRelicInventory } from "$lib/context/relicequipped.svelte";
 
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
 
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
-  const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
   const skillSlotsApi = useSkillEquipped();
+  const relicInventoryApi = useRelicInventory();
   const evaluationManager = useEvaluationManager();
   const lang = getContext<string>("lang") || "en";
 
@@ -36,7 +40,6 @@
   const rightOptions = [
     { name: "Gear", soon: false },
     { name: "Skills", soon: false },
-    { name: "Relics", soon: true },
     { name: "Constellation", soon: true },
     { name: "Bell", soon: true },
   ];
@@ -76,6 +79,11 @@
   let skillSelectorSlot = $state<SkillSlotDefinition>("SKILL_SLOT_1");
   let skillSelectorItems = $state<SkillSelected[]>([]);
 
+  let showRelicSelector = $state(false);
+  let relicSelectorPosition = $state<{ x: number; y: number }>({ x: 0, y: 0 });
+  let relicSelectorAvailableSpace = $state<{ width: number; height: number }>({ width: 0, height: 0 });
+  let relicSelectorTitle = $state<string>("Select Relic");
+
   // The doEvaluate function has been replaced by the EvaluationManager context
   // All evaluation is now handled automatically when equipment changes
 
@@ -98,8 +106,8 @@
 
     try {
       explainData = await evaluationManager.explain(stat);
-    } catch (e: any) {
-      explainError = String(e?.message ?? e);
+    } catch (e: unknown) {
+      explainError = String((e as Error)?.message ?? e);
     } finally {
       explainLoading = false;
     }
@@ -109,8 +117,6 @@
     if (remove) {
       if (blessedGear) {
         blessedSlotsApi.unset(s);
-      } else {
-        trinketSlotsApi.unset(s);
       }
       // Evaluation will happen automatically via EvaluationManager context
       return;
@@ -158,6 +164,19 @@
   function onSkillSelected(skill: SkillSelected) {
     skillSlotsApi.set(skillSelectorSlot, skill);
     showSkillSelector = false;
+    // Evaluation will happen automatically via EvaluationManager context
+  }
+
+  function onRelicSlotClicked(x: number, y: number, availableSpace: { width: number; height: number }) {
+    relicSelectorPosition = { x, y };
+    relicSelectorAvailableSpace = availableSpace;
+    relicSelectorTitle = `Select Relic (${availableSpace.width}×${availableSpace.height} space)`;
+    showRelicSelector = true;
+  }
+
+  function onRelicSelected(relic: RelicItem) {
+    relicInventoryApi.placeRelic(relic, relicSelectorPosition.x, relicSelectorPosition.y);
+    showRelicSelector = false;
     // Evaluation will happen automatically via EvaluationManager context
   }
 
@@ -239,13 +258,8 @@
             {onSlotClicked}
           />
         </div>
-        <div class="col-span-3">
-          <GearSlots
-            blessedGear={false}
-            title="Trinket"
-            equipped={trinketSlotsApi.equipped}
-            {onSlotClicked}
-          />
+        <div class="col-span-5">
+          <RelicInventory {onRelicSlotClicked} />
         </div>
       {/if}
     </div>
@@ -335,8 +349,6 @@
           onEquip={(item) => {
             if (gearSelectorIsBlessed) {
               blessedSlotsApi.set(gearSelectorSlot, item);
-            } else {
-              trinketSlotsApi.set(gearSelectorSlot, item);
             }
             showGearSelector = false;
             // Evaluation will happen automatically via EvaluationManager context
@@ -380,6 +392,33 @@
 
   <form method="dialog" class="modal-backdrop">
     <button aria-label="Close" onclick={() => (showSkillSelector = false)}
+      >close</button
+    >
+  </form>
+</dialog>
+<dialog class="modal" open={showRelicSelector}>
+  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+    <div class="grow overflow-y-hidden">
+      {#if showRelicSelector}
+        <FilterRelicSelector
+          title={relicSelectorTitle}
+          availableSpace={relicSelectorAvailableSpace}
+          onRelicSelected={onRelicSelected}
+        />
+      {/if}
+    </div>
+    <div class="divider my-0 px-6 pt-2"></div>
+    <div class="modal-action px-6 my-6 shrink">
+      <form method="dialog">
+        <button class="btn" onclick={() => (showRelicSelector = false)}
+          >Close</button
+        >
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close" onclick={() => (showRelicSelector = false)}
       >close</button
     >
   </form>

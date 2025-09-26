@@ -48,7 +48,15 @@ export function tooltipText(
   if (!item) return ["Empty"];
   const lines = [
     `${translate(item.localizedName, lang)} (T${item.tier})`,
-    ...item.mods.map((mod) => fmtValue(mod, lang, statsHelper, item.multiplierRange[0], item.multiplierRange[1])),
+    ...item.mods.map((mod) =>
+      fmtValue(
+        mod,
+        lang,
+        statsHelper,
+        item.multiplierRange[0],
+        item.multiplierRange[1],
+      ),
+    ),
   ];
   return lines;
 }
@@ -58,3 +66,13 @@ export function spriteUrl(sprite?: string): string | undefined {
   // put your sprite files at: static/assets/sprites/<sprite>.png → /assets/sprites/<sprite>.png
   return `/assets/sprites/${sprite}.png`;
 }
+
+export interface TooltipLine {
+  text: string;
+  color?: string;
+  borderColor?: string;
+  bgColor?: string;
+  icon?: string;
+  type: "header" | "info" | "divider" | "affix";
+}
+
