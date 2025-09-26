@@ -88,6 +88,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
   }
   stats {
     BaseDamage: BaseDamage.DEFAULT using common
@@ -218,6 +229,8 @@ pack "hellclock" {
     PlagueDamageConvertedAsLightning: PlagueDamageConvertedAsLightning.PERCENTAGE using common
     PlagueDamageConvertedAsPhysical: PlagueDamageConvertedAsPhysical.PERCENTAGE using common
     HellClockTimeDropChanceBonus: HellClockTimeDropChanceBonus.PERCENTAGE using common
+    MinimumAttackSpeed: MinimumAttackSpeed.PERCENTAGE using common
+    MinimumMovementSpeed: MinimumMovementSpeed.PERCENTAGE using common
     skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using common
     skill_BasicAttackDefinition_SkillSpeedModifier: skill_BasicAttackDefinition_SkillSpeedModifier.skill using common
     skill_BasicAttackDefinition_CooldownModifier: skill_BasicAttackDefinition_CooldownModifier.skill using common
@@ -582,7 +595,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier: skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier.skill using common
     skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier.skill using common
     skill_SummonBruteSkillDefinition_RangeModifier: skill_SummonBruteSkillDefinition_RangeModifier.skill using RangeModifier
-    skill_SummonMarksmenSkillDefinition_DamageModifier: skill_SummonMarksmenSkillDefinition_DamageModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_DamageModifier: skill_SummonMarksmenSkillDefinition_DamageModifier.skill using DamageModifier
     skill_SummonMarksmenSkillDefinition_SkillSpeedModifier: skill_SummonMarksmenSkillDefinition_SkillSpeedModifier.skill using common
     skill_SummonMarksmenSkillDefinition_CooldownModifier: skill_SummonMarksmenSkillDefinition_CooldownModifier.skill using common
     skill_SummonMarksmenSkillDefinition_ChargesModifier: skill_SummonMarksmenSkillDefinition_ChargesModifier.skill using common

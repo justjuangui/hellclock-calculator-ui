@@ -4894,7 +4894,7 @@
             "name": "The Old Bell - The Sacrificed - Life Cost to Damage Affix",
             "id": 88,
             "type": "SkillBehaviorAffixDefinition",
-            "rollVariableName": "Damage Conversion",
+            "rollVariableName": "Roll",
             "behaviorData": {
                 "type": "SkillBehaviorData",
                 "affectMultipleSkills": false,
@@ -4919,6 +4919,13 @@
                         {
                             "type": "SkillEffectVariable",
                             "name": "Damage Conversion",
+                            "baseValue": 0.07,
+                            "eSkillEffectVariableStackType": "UseHighest",
+                            "eSkillEffectVariableFormat": "Percentage"
+                        },
+                        {
+                            "type": "SkillEffectVariable",
+                            "name": "Roll",
                             "baseValue": 0.0,
                             "eSkillEffectVariableStackType": "UseHighest",
                             "eSkillEffectVariableFormat": "Rounded"
@@ -5218,7 +5225,7 @@
             "name": "The Old Bell - Unshakable Faith - Mana to Damage Affix",
             "id": 90,
             "type": "SkillBehaviorAffixDefinition",
-            "rollVariableName": "Conversion Rate",
+            "rollVariableName": "Roll",
             "behaviorData": {
                 "type": "SkillBehaviorData",
                 "affectMultipleSkills": false,
@@ -5235,10 +5242,17 @@
                     "variables": [
                         {
                             "type": "SkillEffectVariable",
-                            "name": "Conversion Rate",
+                            "name": "Roll",
                             "baseValue": 0.0,
-                            "eSkillEffectVariableStackType": "Sum",
+                            "eSkillEffectVariableStackType": "UseHighest",
                             "eSkillEffectVariableFormat": "Rounded"
+                        },
+                        {
+                            "type": "SkillEffectVariable",
+                            "name": "Conversion Rate",
+                            "baseValue": 0.07,
+                            "eSkillEffectVariableStackType": "UseHighest",
+                            "eSkillEffectVariableFormat": "Percentage"
                         }
                     ]
                 }
@@ -6310,10 +6324,10 @@
             ]
         },
         {
-            "name": "All Bullet Skills - Silver Bullet - Conviction Damage Bonus Affix",
+            "name": "All Bullet Skills - Silver Bullets - Conviction Damage Bonus Affix",
             "id": 98,
             "type": "SkillBehaviorAffixDefinition",
-            "rollVariableName": "Damage Conversion",
+            "rollVariableName": "Roll",
             "behaviorData": {
                 "type": "SkillBehaviorData",
                 "affectMultipleSkills": true,
@@ -6333,9 +6347,9 @@
                         },
                         {
                             "type": "SkillEffectVariable",
-                            "name": "Damage Conversion",
+                            "name": "Roll",
                             "baseValue": 0.0,
-                            "eSkillEffectVariableStackType": "Sum",
+                            "eSkillEffectVariableStackType": "UseHighest",
                             "eSkillEffectVariableFormat": "Rounded"
                         },
                         {
@@ -9462,7 +9476,11 @@
                 }
             ],
             "eAffixRarity": "Special",
-            "blockCraftOnRelicSizes": [],
+            "blockCraftOnRelicSizes": [
+                "Small",
+                "Exalted",
+                "Grand"
+            ],
             "incompatibleBlessings": [],
             "relicUpgradeModifierConfig": {
                 "name": "Multiplicative Relic Upgrade Modifier Config",
@@ -11308,39 +11326,39 @@
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "Die Alte Glocke beschwört für 8 Sek. 1 Geister der katholischen Garde von Canudos. Die Grundabklingzeit wird um 3 Sekunden erhöht."
+                    "langTranslation": "Die Alte Glocke beschwört für 8 Sek. 1 Geister der katholischen Garde von Canudos (max. 4). Die Grundabklingzeit wird um 1 Sekunde erhöht."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "The Old Bell spawns 1 Spirits of the Canudos Catholic Guard for 8s. Base Cooldown is increased by 3 seconds."
+                    "langTranslation": "The Old Bell spawns 1 Spirits of the Canudos Catholic Guard for 8s (max 4). Base Cooldown is increased by 1 seconds."
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "La Campana Antigua invoca 1 espíritus de la Guardia Católica de Canudos durante 8 s. El enfriamiento base se incrementa en 3 segundos."
+                    "langTranslation": "La Campana Antigua invoca 1 espíritus de la Guardia Católica de Canudos durante 8 s (máx. 4). El enfriamiento base se incrementa en 1 segundo."
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "La Vieille Cloche invoque 1 esprits de la Garde catholique de Canudos pendant 8 s. Le temps de recharge de base est augmenté de 3 secondes."
+                    "langTranslation": "La Vieille Cloche invoque 1 esprits de la Garde catholique de Canudos pendant 8 s (max. 4). Le temps de recharge de base est augmenté de 1 seconde."
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "古き鐘は1体のカヌードスカトリック衛兵の霊体を8秒間、出現させる。基本クールダウンが3秒増加する。"
+                    "langTranslation": "古き鐘は1体のカヌードスカトリック衛兵の霊体を8秒間出現させる（最大4体）。基本クールダウンが1秒増加する。"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "Przez 8 s Stary Dzwon przywołuje duchy Guarda Católica z Canudos (1). Bazowy czas odnowienia zostaje wydłużony o 3 sekundy."
+                    "langTranslation": "Przez 8 s Stary Dzwon przywołuje duchy Guarda Católica z Canudos (1, maks. 4). Bazowy czas odnowienia zostaje wydłużony o 1 sekundę."
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "O Velho Sino invoca 1 Espíritos da Guarda Católica de Canudos por 8s. Tempo de Recarga Base é aumentado em 3 segundos."
+                    "langTranslation": "O Velho Sino invoca 1 Espíritos da Guarda Católica de Canudos por 8s (máx. 4). Tempo de Recarga Base é aumentado em 1 segundo."
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Старый колокол призывает духов католической стражи Канудуса (1 шт.) на 8 сек. Базовое время перезарядки увеличено на 3 секунды."
+                    "langTranslation": "Старый колокол призывает духов католической стражи Канудуса (1 шт.) на 8 сек. (макс. 4). Базовое время перезарядки увеличено на 1 секунду."
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "古钟生成 1 名卡努杜斯天主教卫队英灵，持续 8 秒。基础冷却时间增加了3秒。"
+                    "langTranslation": "古钟生成 1 名卡努杜斯天主教卫队英灵，持续 8 秒（最多 4 个）。基础冷却时间增加 1 秒。"
                 }
             ]
         },
@@ -11852,32 +11870,32 @@
                     "type": "TierCategoryRollRange",
                     "tier": 1,
                     "rollRange": [
-                        0.07,
-                        0.08
+                        0.065,
+                        0.07
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 2,
                     "rollRange": [
-                        0.08,
-                        0.09
+                        0.07,
+                        0.075
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 3,
                     "rollRange": [
-                        0.09,
-                        0.095
+                        0.075,
+                        0.08
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 4,
                     "rollRange": [
-                        0.095,
-                        0.1
+                        0.08,
+                        0.085
                     ]
                 }
             ],
@@ -11925,48 +11943,48 @@
             "modifierType": "Additive",
             "upgradeModifierOverride": {
                 "0": 0.0,
-                "1": 0.005,
-                "2": 0.01,
-                "3": 0.015,
-                "4": 0.02,
-                "5": 0.025
+                "1": 0.003,
+                "2": 0.006,
+                "3": 0.009,
+                "4": 0.012,
+                "5": 0.015
             },
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "Zauber erhalten pro aktiver Beschwörung +10% Schaden."
+                    "langTranslation": "Zauber erhalten pro aktiver Beschwörung +8% Schaden."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "Spells gain +10% damage per active summon."
+                    "langTranslation": "Spells gain +8% damage per active summon."
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "Los hechizos obtienen +10% de daño por cada invocación activa."
+                    "langTranslation": "Los hechizos obtienen +8% de daño por cada invocación activa."
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "Les sorts infligent +10% de dégâts supplémentaires par invocation active"
+                    "langTranslation": "Les sorts infligent +8% de dégâts supplémentaires par invocation active"
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "発動中の召喚1つにつき呪文のダメージが+10%増加する。"
+                    "langTranslation": "発動中の召喚1つにつき呪文のダメージが+8%増加する。"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "Zaklęcia zyskują +10% pkt. obrażeń na udane przyzwanie."
+                    "langTranslation": "Zaklęcia zyskują +8% pkt. obrażeń na udane przyzwanie."
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "Magias ganham +10% de dano por invocação ativa."
+                    "langTranslation": "Magias ganham +8% de dano por invocação ativa."
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Урон заклинаний увеличивается на +10% за каждый активный призыв."
+                    "langTranslation": "Урон заклинаний увеличивается на +8% за каждый активный призыв."
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "每个激活的召唤物会使法术伤害提高 +10%。"
+                    "langTranslation": "每个激活的召唤物会使法术伤害提高 +8%。"
                 }
             ]
         },
@@ -12140,6 +12158,13 @@
                             "baseValue": 0.0,
                             "eSkillEffectVariableStackType": "UseHighest",
                             "eSkillEffectVariableFormat": "Rounded"
+                        },
+                        {
+                            "type": "SkillEffectVariable",
+                            "name": "Conversion",
+                            "baseValue": 0.06,
+                            "eSkillEffectVariableStackType": "UseHighest",
+                            "eSkillEffectVariableFormat": "Percentage"
                         }
                     ]
                 }
@@ -13867,32 +13892,32 @@
                     "type": "TierCategoryRollRange",
                     "tier": 1,
                     "rollRange": [
-                        0.02,
-                        0.035
+                        0.04,
+                        0.055
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 2,
                     "rollRange": [
-                        0.035,
-                        0.0455
+                        0.055,
+                        0.07
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 3,
                     "rollRange": [
-                        0.0455,
-                        0.05915
+                        0.07,
+                        0.085
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 4,
                     "rollRange": [
-                        0.05915,
-                        0.06
+                        0.085,
+                        0.1
                     ]
                 }
             ],
@@ -13937,43 +13962,51 @@
             "eAffixRarity": "Unique",
             "blockCraftOnRelicSizes": [],
             "incompatibleBlessings": [],
-            "relicUpgradeModifierConfig": {},
+            "modifierType": "Additive",
+            "upgradeModifierOverride": {
+                "0": 0.0,
+                "1": 0.015,
+                "2": 0.03,
+                "3": 0.045,
+                "4": 0.06,
+                "5": 0.075
+            },
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "Bombardierung verursacht Seuchenschaden; Treffer stellen 6% aller Abklingzeiten wieder her."
+                    "langTranslation": "Bombardierung verursacht Seuchenschaden; Treffer stellen 10% aller Abklingzeiten wieder her."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "Bombardment deals Plague damage, Hits recover 6% of all cooldowns."
+                    "langTranslation": "Bombardment deals Plague damage, Hits recover 10% of all cooldowns."
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "Bombardeo inflige daño de Plaga, los golpes recuperan 6% de todos los enfriamientos."
+                    "langTranslation": "Bombardeo inflige daño de Plaga, los golpes recuperan 10% de todos los enfriamientos."
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "Bombardement inflige des dégâts de peste et redonne 6% de tous les temps de recharge en touchant un ennemi"
+                    "langTranslation": "Bombardement inflige des dégâts de peste et redonne 10% de tous les temps de recharge en touchant un ennemi"
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "砲撃は疫病ダメージを与え、ヒットによるあらゆるクールダウンが6%解除される。"
+                    "langTranslation": "砲撃は疫病ダメージを与え、ヒットによるあらゆるクールダウンが10%解除される。"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "Bombardowanie zadaje obrażenia od zarazy, a trafienia przywracają 6% wszystkich czasów odnawiania"
+                    "langTranslation": "Bombardowanie zadaje obrażenia od zarazy, a trafienia przywracają 10% wszystkich czasów odnawiania"
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "Bombardeio causa dano Tóxico, e os seus acertos recuperam 6% de todos os Tempos de Recarga."
+                    "langTranslation": "Bombardeio causa dano Tóxico, e os seus acertos recuperam 10% de todos os Tempos de Recarga."
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Обстрел наносит урон чумой. Попадания ускоряют все перезарядки на 6%."
+                    "langTranslation": "Обстрел наносит урон чумой. Попадания ускоряют все перезарядки на 10%."
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "炮火倾泻造成瘟疫伤害。命中敌人时，所有技能的冷却时间将恢复 6%。"
+                    "langTranslation": "炮火倾泻造成瘟疫伤害。命中敌人时，所有技能的冷却时间将恢复 10%。"
                 }
             ]
         },
@@ -17435,7 +17468,7 @@
                             "name": "Roll",
                             "baseValue": 0.0,
                             "eSkillEffectVariableStackType": "UseHighest",
-                            "eSkillEffectVariableFormat": "MultiplicativeAdditive"
+                            "eSkillEffectVariableFormat": "Multiplicative"
                         }
                     ]
                 }
@@ -17446,32 +17479,32 @@
                     "type": "TierCategoryRollRange",
                     "tier": 1,
                     "rollRange": [
-                        1.3,
-                        1.4
+                        1.15,
+                        1.2
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 2,
                     "rollRange": [
-                        1.4,
-                        1.52
+                        1.2,
+                        1.26
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 3,
                     "rollRange": [
-                        1.52,
-                        1.67
+                        1.26,
+                        1.35
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 4,
                     "rollRange": [
-                        1.67,
-                        1.8
+                        1.35,
+                        1.4
                     ]
                 }
             ],
@@ -17537,39 +17570,39 @@
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "Verspotten durch Rohling gewährt während Aktivierung 80%[+] Beschwörungsschaden."
+                    "langTranslation": "Verspotten durch Rohling gewährt während Aktivierung 40%[x] Beschwörungsschaden."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "Brute Taunt grants 80%[+] Summon Damage while active."
+                    "langTranslation": "Brute Taunt grants 40%[x] Summon Damage while active."
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "Burla del Bruto otorga 80%[+] de daño por invocación cuando está activa."
+                    "langTranslation": "Burla del Bruto otorga 40%[x] de daño por invocación cuando está activa."
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "La Provocation de la Brute accorde un bonus de 80%[+] de dégâts d'invocation"
+                    "langTranslation": "La Provocation de la Brute accorde un bonus de 40%[x] de dégâts d'invocation"
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "用心棒の挑発は、発動中、80%[+]召喚ダメージを与える。"
+                    "langTranslation": "用心棒の挑発は、発動中、40%[x]召喚ダメージを与える。"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "Efekt Prowokacji Bestii zapewnia 80%[+] obrażeń od Przyzwań, dopóki trwa."
+                    "langTranslation": "Efekt Prowokacji Bestii zapewnia 40%[x] obrażeń od Przyzwań, dopóki trwa."
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "O efeito ativo do Cabrunco Espectral concede 80%[+] de dano para todas as invocações ao longo de sua duração."
+                    "langTranslation": "O efeito ativo do Cabrunco Espectral concede 40%[x] de dano para todas as invocações ao longo de sua duração."
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Провокация громилы увеличивает на время действия урон призванного существа на 80%[+]."
+                    "langTranslation": "Провокация громилы увеличивает на время действия урон призванного существа на 40%[x]."
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "蛮人嘲讽激活期间，召唤物伤害提升 80%[+]。"
+                    "langTranslation": "蛮人嘲讽激活期间，召唤物伤害提升 40%[x]。"
                 }
             ]
         },
@@ -20437,32 +20470,32 @@
                     "type": "TierCategoryRollRange",
                     "tier": 1,
                     "rollRange": [
-                        1.1,
-                        1.2
+                        1.48,
+                        1.6
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 2,
                     "rollRange": [
-                        1.2,
-                        1.3
+                        1.6,
+                        1.7
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 3,
                     "rollRange": [
-                        1.3,
-                        1.4
+                        1.7,
+                        1.78
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 4,
                     "rollRange": [
-                        1.5,
-                        1.6
+                        1.78,
+                        1.84
                     ]
                 }
             ],
@@ -20531,39 +20564,39 @@
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Schaden durch Beschwörungen."
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Schaden durch Beschwörungen."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Summon Damage"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Summon Damage"
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Daño de Invocación"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Daño de Invocación"
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Dégâts des invocations"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Dégâts des invocations"
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> 召喚ダメージ"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> 召喚ダメージ"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Obrażenia od przywołania"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Obrażenia od przywołania"
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> Dano de Invocações"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> Dano de Invocações"
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Урон призванных существ <style=\"TooltipValue\">+60%[+]</style>"
+                    "langTranslation": "Урон призванных существ <style=\"TooltipValue\">+84%[+]</style>"
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "<style=\"TooltipValue\">+60%[+]</style> 召唤物伤害值"
+                    "langTranslation": "<style=\"TooltipValue\">+84%[+]</style> 召唤物伤害值"
                 }
             ]
         },
@@ -26715,32 +26748,32 @@
                     "type": "TierCategoryRollRange",
                     "tier": 1,
                     "rollRange": [
-                        0.13,
-                        0.17
+                        0.18,
+                        0.23
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 2,
                     "rollRange": [
-                        0.17,
-                        0.21
+                        0.23,
+                        0.28
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 3,
                     "rollRange": [
-                        0.21,
-                        0.25
+                        0.28,
+                        0.33
                     ]
                 },
                 {
                     "type": "TierCategoryRollRange",
                     "tier": 4,
                     "rollRange": [
-                        0.25,
-                        0.29
+                        0.33,
+                        0.38
                     ]
                 }
             ],
@@ -26806,39 +26839,39 @@
             "description": [
                 {
                     "langCode": "de",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Schaden durch Beschwörungen."
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Schaden durch Beschwörungen."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Summon Damage"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Summon Damage"
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Daño de Invocación"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Daño de Invocación"
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Dégâts des invocations"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Dégâts des invocations"
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> 召喚ダメージ"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> 召喚ダメージ"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Obrażenia od przywołania"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Obrażenia od przywołania"
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> Dano de Invocações"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> Dano de Invocações"
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Урон призванных существ <style=\"TooltipValue\">+29%</style>"
+                    "langTranslation": "Урон призванных существ <style=\"TooltipValue\">+38%</style>"
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "<style=\"TooltipValue\">+29%</style> 召唤物伤害值"
+                    "langTranslation": "<style=\"TooltipValue\">+38%</style> 召唤物伤害值"
                 }
             ]
         },
@@ -35163,6 +35196,149 @@
                 {
                     "langCode": "zh-cn",
                     "langTranslation": "分裂射击的法力消耗减少 25%[x]"
+                }
+            ]
+        },
+        {
+            "name": "Stat - Rare - Anti-Magic and Life Reduction Affix",
+            "id": 304,
+            "type": "StatModifierAffixDefinition",
+            "eStatDefinition": "AntiMagic",
+            "statModifierType": "Additive",
+            "applyRollToAdditionalStatModifiers": false,
+            "additionalStatModifierDefinitions": [
+                {
+                    "type": "StatModifierDefinition",
+                    "eStatDefinition": "Life",
+                    "modifierType": "Multiplicative",
+                    "value": 0.82
+                }
+            ],
+            "customIcon": "",
+            "tierRollRanges": [
+                {
+                    "type": "TierCategoryRollRange",
+                    "tier": 1,
+                    "rollRange": [
+                        0.14,
+                        0.16
+                    ]
+                },
+                {
+                    "type": "TierCategoryRollRange",
+                    "tier": 2,
+                    "rollRange": [
+                        0.16,
+                        0.18
+                    ]
+                },
+                {
+                    "type": "TierCategoryRollRange",
+                    "tier": 3,
+                    "rollRange": [
+                        0.18,
+                        0.2
+                    ]
+                },
+                {
+                    "type": "TierCategoryRollRange",
+                    "tier": 4,
+                    "rollRange": [
+                        0.2,
+                        0.22
+                    ]
+                }
+            ],
+            "nameLocalizationKey": [
+                {
+                    "langCode": "de",
+                    "langTranslation": "Abwehr"
+                },
+                {
+                    "langCode": "en",
+                    "langTranslation": "Warding"
+                },
+                {
+                    "langCode": "es",
+                    "langTranslation": "Protección"
+                },
+                {
+                    "langCode": "fr",
+                    "langTranslation": "Protection"
+                },
+                {
+                    "langCode": "ja",
+                    "langTranslation": "守護"
+                },
+                {
+                    "langCode": "pl",
+                    "langTranslation": "Ochrona"
+                },
+                {
+                    "langCode": "pt-br",
+                    "langTranslation": "Fechada"
+                },
+                {
+                    "langCode": "ru",
+                    "langTranslation": "Защита"
+                },
+                {
+                    "langCode": "zh-cn",
+                    "langTranslation": "守卫"
+                }
+            ],
+            "eAffixRarity": "Special",
+            "blockCraftOnRelicSizes": [
+                "Small",
+                "Exalted",
+                "Grand"
+            ],
+            "incompatibleBlessings": [],
+            "modifierType": "Additive",
+            "upgradeModifierOverride": {
+                "0": 0.0,
+                "1": 0.015,
+                "2": 0.03,
+                "3": 0.045,
+                "4": 0.06,
+                "5": 0.075
+            },
+            "description": [
+                {
+                    "langCode": "de",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Antimagie\r\n<style=\"TooltipValue\">‑18%[x]</style> Leben.\r."
+                },
+                {
+                    "langCode": "en",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Anti-Magic\r\n<style=\"TooltipValue\">‑18%[x]</style> Life\r"
+                },
+                {
+                    "langCode": "es",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Antimagia\r\n<style=\"TooltipValue\">‑18%[x]</style> Vida\r"
+                },
+                {
+                    "langCode": "fr",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Anti-magie\r\n<style=\"TooltipValue\">‑18%[x]</style> Vie\r"
+                },
+                {
+                    "langCode": "ja",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style>反魔法\r\n<style=\"TooltipValue\">‑18%[x]</style> 生命\r"
+                },
+                {
+                    "langCode": "pl",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Antymagia\r\n<style=\"TooltipValue\">‑18%[x]</style> Życie\r"
+                },
+                {
+                    "langCode": "pt-br",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> Anti-Magia\r\n<style=\"TooltipValue\">‑18%[x]</style> Vida\r"
+                },
+                {
+                    "langCode": "ru",
+                    "langTranslation": "Защита от магии\r\nЗдоровье <style=\"TooltipValue\">‑18%[x]</style>\r <style=\"TooltipValue\">+22%</style>"
+                },
+                {
+                    "langCode": "zh-cn",
+                    "langTranslation": "<style=\"TooltipValue\">+22%</style> 反魔法\r\n<style=\"TooltipValue\">‑18%[x]</style> 生命\r"
                 }
             ]
         }

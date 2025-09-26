@@ -8,6 +8,9 @@
         "/assets/Gear.json",
         "/assets/Stats.json",
         "/assets/Skills.json",
+        "/assets/Relics.json",
+        "/assets/Relic Inventory Config.json",
+        "/assets/Relic Affixes.json",
         "/assets/skill-calculations.json"
     ]
 }

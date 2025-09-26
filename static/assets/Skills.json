@@ -3266,6 +3266,12 @@
                 "1": [
                     {
                         "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 1.4
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Cooldown Modifier",
                         "modifierType": "Multiplicative",
                         "value": 1.3
@@ -3301,6 +3307,12 @@
                         "skillValueModifierKey": "Bleed Intensity Modifier",
                         "modifierType": "Multiplicative",
                         "value": 1.6
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 1.6
                     }
                 ],
                 "3": [
@@ -3319,6 +3331,12 @@
                     {
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Bleed Intensity Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 1.9
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Multiplicative",
                         "value": 1.9
                     }
@@ -3341,6 +3359,12 @@
                         "skillValueModifierKey": "Bleed Intensity Modifier",
                         "modifierType": "Multiplicative",
                         "value": 2.1
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 2.1
                     }
                 ],
                 "5": [
@@ -3359,6 +3383,12 @@
                     {
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Bleed Intensity Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 2.4
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Multiplicative",
                         "value": 2.4
                     }
@@ -3381,6 +3411,12 @@
                         "skillValueModifierKey": "Bleed Intensity Modifier",
                         "modifierType": "Multiplicative",
                         "value": 2.7
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 2.7
                     }
                 ],
                 "7": [
@@ -3399,6 +3435,12 @@
                     {
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Bleed Intensity Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 3.0
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Multiplicative",
                         "value": 3.0
                     }
@@ -3421,6 +3463,12 @@
                         "skillValueModifierKey": "Bleed Intensity Modifier",
                         "modifierType": "Multiplicative",
                         "value": 3.3
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 3.3
                     }
                 ],
                 "9": [
@@ -3441,6 +3489,12 @@
                         "skillValueModifierKey": "Bleed Intensity Modifier",
                         "modifierType": "Multiplicative",
                         "value": 3.6
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 3.6
                     }
                 ],
                 "10": [
@@ -3459,6 +3513,12 @@
                     {
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Bleed Intensity Modifier",
+                        "modifierType": "Multiplicative",
+                        "value": 4.0
+                    },
+                    {
+                        "type": "SkillUpgradeModifier",
+                        "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Multiplicative",
                         "value": 4.0
                     }
@@ -3497,7 +3557,9 @@
             "name": "FeitorsLashSkillDefinition",
             "id": 72,
             "type": "SlashSkillDefinition",
-            "slashAreaAngle": 120.0,
+            "slashAreaAngle": 130.0,
+            "slashAreaAngleVisualOffset": -20.0,
+            "slashAreaRangeVisualOffset": -2.0,
             "slashDuration": 0.2,
             "manaCost": 90.0,
             "useNegativeMana": false,
@@ -4656,7 +4718,7 @@
                 }
             ],
             "icon": "IconSkill_RainOfHeads",
-            "baseDamageMod": 1.32,
+            "baseDamageMod": 1.4,
             "eDamageType": "PHYSICAL",
             "isAreaDamage": false,
             "modifiersPerLevel": {
@@ -5282,7 +5344,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.0
+                        "value": 1.5
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5296,7 +5358,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.0
+                        "value": 3.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5310,7 +5372,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 3.0
+                        "value": 4.5
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5324,7 +5386,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 4.0
+                        "value": 6.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5338,7 +5400,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 5.0
+                        "value": 7.5
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5352,7 +5414,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 6.0
+                        "value": 9.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5366,7 +5428,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 7.0
+                        "value": 10.5
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5380,7 +5442,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 8.0
+                        "value": 12.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5394,7 +5456,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 9.0
+                        "value": 13.5
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5408,7 +5470,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 10.0
+                        "value": 15.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5558,7 +5620,7 @@
                 }
             ],
             "icon": "IconSkill_HolyRosary",
-            "baseDamageMod": 1.2,
+            "baseDamageMod": 1.3,
             "eDamageType": "LIGHTNING",
             "isAreaDamage": false,
             "modifiersPerLevel": {
@@ -5567,7 +5629,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.3
+                        "value": 0.325
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5581,7 +5643,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.6
+                        "value": 0.65
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5595,7 +5657,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.9
+                        "value": 0.975
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5609,7 +5671,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.2
+                        "value": 1.3
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5623,7 +5685,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.5
+                        "value": 1.625
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5637,7 +5699,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.8
+                        "value": 1.95
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5651,7 +5713,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.1
+                        "value": 2.275
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5665,7 +5727,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.4
+                        "value": 2.925
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5679,7 +5741,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.7
+                        "value": 3.25
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -5693,7 +5755,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 3.0
+                        "value": 3.575
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6146,7 +6208,7 @@
                 }
             ],
             "icon": "IconSkill_SummonBrute",
-            "baseDamageMod": 1.0,
+            "baseDamageMod": 3.0,
             "eDamageType": "PHYSICAL",
             "isAreaDamage": false,
             "modifiersPerLevel": {
@@ -6155,7 +6217,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.3
+                        "value": 1.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6167,7 +6229,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 1.3
+                        "value": 1.4
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6181,7 +6243,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.6
+                        "value": 2.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6193,7 +6255,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 1.6
+                        "value": 1.8
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6207,7 +6269,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.9
+                        "value": 3.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6219,7 +6281,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 1.9
+                        "value": 2.2
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6233,7 +6295,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.2
+                        "value": 4.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6245,7 +6307,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 2.1
+                        "value": 2.6
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6259,7 +6321,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.5
+                        "value": 5.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6271,7 +6333,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 2.4
+                        "value": 3.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6285,7 +6347,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.8
+                        "value": 6.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6297,7 +6359,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 2.7
+                        "value": 3.4
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6311,7 +6373,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.1
+                        "value": 7.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6323,7 +6385,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 3.0
+                        "value": 3.8
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6337,7 +6399,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.4
+                        "value": 8.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6349,7 +6411,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 3.3
+                        "value": 4.2
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6363,7 +6425,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.7
+                        "value": 9.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6375,7 +6437,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 3.6
+                        "value": 4.6
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6389,7 +6451,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 3.0
+                        "value": 10.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6401,7 +6463,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Summon Life Modifier",
                         "modifierType": "Multiplicative",
-                        "value": 3.9
+                        "value": 5.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6496,43 +6558,43 @@
             "descriptionKey": [
                 {
                     "langCode": "de",
-                    "langTranslation": "Beschwöre ein stationäres Phantomgewehr, das auf die Gegner feuert, die am nächsten sind.\n\nEs können max. 2 Gewehre auf einmal aktiv sein."
+                    "langTranslation": "Beschwöre ein stationäres Phantomgewehr, das auf die nächstgelegenen Gegner feuert.\n\nEs können maximal 2 Gewehre gleichzeitig aktiv sein.\n\nDer Schaden der Schüsse wird mit allen Boni auf Projektilanzahl multipliziert."
                 },
                 {
                     "langCode": "en",
-                    "langTranslation": "Summon a stationary phantom rifle that shoots at the nearest enemies.\n\nA maximum of 2 rifles can be active at once."
+                    "langTranslation": "Summon a stationary phantom rifle that shoots at the nearest enemies.\n\nA maximum of 2 rifles can be active at once.\n\nShot damage is multiplied by any bonuses to Projectile Amount."
                 },
                 {
                     "langCode": "es",
-                    "langTranslation": "Invoca un rifle fantasma fijo que dispara a los enemigos cercanos.\n\nComo máximo, puedes activar 2 rifles en simultáneo."
+                    "langTranslation": "Invoca un rifle fantasma fijo que dispara a los enemigos cercanos.\n\nComo máximo, puedes activar 2 rifles en simultáneo.\n\nEl daño de los disparos se multiplica por cualquier bonificación a la Cantidad de Proyectiles."
                 },
                 {
                     "langCode": "fr",
-                    "langTranslation": "Invoque un tireur fantôme statique qui tire sur les ennemis les plus proches.\n\nVous pouvez avoir un maximum de 2 tireurs actifs à la fois."
+                    "langTranslation": "Invoque un fusil fantôme statique qui tire sur les ennemis les plus proches.\n\nVous pouvez avoir un maximum de 2 fusils actifs à la fois.\n\nLes dégâts des tirs sont multipliés par tous les bonus au Nombre de projectiles."
                 },
                 {
                     "langCode": "ja",
-                    "langTranslation": "その場に留まり、最も近い敵に射撃する幻影のライフルを召喚する。\n\n同時に最大2個までのライフルを起動できる。"
+                    "langTranslation": "その場に留まり、最も近い敵に射撃する幻影のライフルを召喚する。\n\n同時に最大2個までのライフルを起動できる。\n\n射撃ダメージは「投射物数」へのボーナスによって倍率がかかる。"
                 },
                 {
                     "langCode": "pl",
-                    "langTranslation": "Przywołuje stacjonarny karabin-widmo, który strzela do najbliższych wrogów.\n\nAktywne mogą być jednocześnie maksymalnie 2 karabiny."
+                    "langTranslation": "Przywołuje stacjonarny karabin-widmo, który strzela do najbliższych wrogów.\n\nAktywne mogą być jednocześnie maksymalnie 2 karabiny.\n\nObrażenia z wystrzałów są mnożone przez wszystkie premie do Liczby Pocisków."
                 },
                 {
                     "langCode": "pt-br",
-                    "langTranslation": "Invoca um rifle fantasma estacionário que atira nos inimigos mais próximos.\n\nNo máximo 2 rifles podem estar ativos ao mesmo tempo."
+                    "langTranslation": "Invoca um rifle fantasma estacionário que atira nos inimigos mais próximos.\n\nNo máximo 2 rifles podem estar ativos ao mesmo tempo.\n\nO dano dos disparos é multiplicado por quaisquer bônus de Quantidade de Projéteis."
                 },
                 {
                     "langCode": "ru",
-                    "langTranslation": "Вам на помощь приходит стрелок, который стоит на месте и ведет огонь по ближайшим врагам.\n\nОдновременно можно призвать не более 2 стрелков."
+                    "langTranslation": "Призывает стационарное фантомное ружьё, которое стреляет по ближайшим врагам.\n\nОдновременно может быть активно не более 2 ружей.\n\nУрон выстрелов умножается на все бонусы к количеству снарядов."
                 },
                 {
                     "langCode": "zh-cn",
-                    "langTranslation": "召唤一把定点幻影步枪，自动射击最近的敌人。\n\n最多可同时激活 2 把步枪。"
+                    "langTranslation": "召唤一把定点幻影步枪，自动射击最近的敌人。\n\n最多可同时激活 2 把步枪。\n\n射击伤害会根据所有【投射物数量】加成进行倍增。"
                 }
             ],
             "icon": "IconSkill_PhantomMarksmen",
-            "baseDamageMod": 1.12,
+            "baseDamageMod": 1.3,
             "eDamageType": "PHYSICAL",
             "isAreaDamage": false,
             "modifiersPerLevel": {
@@ -6541,7 +6603,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.35
+                        "value": 0.4
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6555,7 +6617,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 0.7
+                        "value": 0.8
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6569,7 +6631,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.05
+                        "value": 1.2
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6583,7 +6645,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.4
+                        "value": 1.6
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6597,7 +6659,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 1.75
+                        "value": 2.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6611,7 +6673,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.1
+                        "value": 2.4
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6625,7 +6687,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.45
+                        "value": 2.8
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6639,7 +6701,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 2.8
+                        "value": 3.2
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6653,7 +6715,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 3.15
+                        "value": 3.6
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6667,7 +6729,7 @@
                         "type": "SkillUpgradeModifier",
                         "skillValueModifierKey": "Damage Modifier",
                         "modifierType": "Additive",
-                        "value": 3.5
+                        "value": 4.0
                     },
                     {
                         "type": "SkillUpgradeModifier",
@@ -6686,7 +6748,16 @@
                 }
             ],
             "skillDamageStatModifiers": {},
-            "skillValueModifierConfigs": [],
+            "skillValueModifierConfigs": [
+                {
+                    "type": "SkillValueModifierConfig",
+                    "skillValueModifierKey": "Damage Modifier",
+                    "multiplicativeStats": [
+                        "SkillProjectileAmount"
+                    ],
+                    "additiveStats": []
+                }
+            ],
             "cooldown": 1.5,
             "minCooldown": 0.3,
             "useAttackSpeed": false,
