@@ -7,6 +7,7 @@
   } from "$lib/hellclock/utils";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import GameTooltip from "./GameTooltip.svelte";
+    import type { SkillsHelper } from "$lib/hellclock/skills";
 
   interface Props {
     onRelicSlotClicked?: (
@@ -18,6 +19,7 @@
 
   const relicsHelper = getContext<RelicsHelper>("relicsHelper");
   const statsHelper = getContext<StatsHelper>("statsHelper");
+  const skillsHelper = getContext<SkillsHelper>("skillsHelper");
   const lang = getContext<string>("lang") || "en";
   const relicInventory = useRelicInventory();
 
@@ -164,7 +166,7 @@
               }}
               aria-label="Occupied slot"
             >
-              <GameTooltip lines={relicsHelper.getTooltipLines(cell.relic, lang, statsHelper)} />
+              <GameTooltip lines={relicsHelper.getTooltipLines(cell.relic, lang, statsHelper, skillsHelper)} />
               <!-- Relic sprite -->
               <img
                 src={cell.relic.sprite}

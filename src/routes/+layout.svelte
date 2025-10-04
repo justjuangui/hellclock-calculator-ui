@@ -17,6 +17,7 @@
     SkillsHelper,
     type SkillsCalculatorRoot,
     type SkillsRoot,
+    type SkillsConfig,
   } from "$lib/hellclock/skills";
   import {
     RelicsHelper,
@@ -164,6 +165,7 @@
       skillsHelper = new SkillsHelper(
         pack["Skills"] as SkillsRoot,
         pack["skill-calculations"] as SkillsCalculatorRoot,
+        pack["Skills Config"] as SkillsConfig,
       );
 
       label = "Loading RelicsHelper";

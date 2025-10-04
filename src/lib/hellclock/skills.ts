@@ -3,6 +3,14 @@ import type { LangText } from "./lang";
 
 export type DamageType = "PHYSICAL" | "FIRE" | "PLAGUE" | "LIGHTNING";
 
+export interface SkillsConfig {
+  name: "SkillsConfig";
+  type: "SkillsConfig";
+  maxSkillRank: number;
+  maxSkillUpgradeLevelBonus: number;
+  startingMaxSkillLevel: number;
+}
+
 export interface SkillUpgradeModifier {
   type: "SkillUpgradeModifier";
   skillValueModifierKey: string;
@@ -312,9 +320,15 @@ export type SkillsCalculatorRoot = {
 export class SkillsHelper {
   private skillsRoot: SkillsRoot;
   private skillsCalculator: SkillsCalculatorRoot;
-  constructor(skillsRoot: SkillsRoot, skillsCalculator: SkillsCalculatorRoot) {
+  private skillsConfig: SkillsConfig;
+  constructor(
+    skillsRoot: SkillsRoot,
+    skillsCalculator: SkillsCalculatorRoot,
+    skillsConfig: SkillsConfig,
+  ) {
     this.skillsRoot = skillsRoot;
     this.skillsCalculator = skillsCalculator;
+    this.skillsConfig = skillsConfig;
   }
 
   getSkillById(id: number): Skill | undefined {
@@ -339,6 +353,10 @@ export class SkillsHelper {
     return (
       this.skillsCalculator.skills.find((s) => s.id === id)?.displayGroups || []
     );
+  }
+
+  getMaxSkillUpgradeLevelBonus(): string {
+    return this.skillsConfig.maxSkillUpgradeLevelBonus.toString();
   }
 
   getSkillBaseValueModsById(id: string): SkillBaseValueMod[] {

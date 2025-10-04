@@ -1,4 +1,8 @@
-import type { RelicAffix, RelicsHelper } from "$lib/hellclock/relics";
+import type {
+  AddSkillValueModifierSkillEffectData,
+  RelicAffix,
+  RelicsHelper,
+} from "$lib/hellclock/relics";
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
@@ -40,7 +44,10 @@ export function provideRelicEvaluation(
   const relicInventoryApi = useRelicInventory();
 
   function mapModForEval(affix: RelicAffix): string {
-    if (affix.type !== "StatModifierAffixDefinition" || !affix.eStatDefinition) {
+    if (
+      affix.type !== "StatModifierAffixDefinition" ||
+      !affix.eStatDefinition
+    ) {
       return "";
     }
 
@@ -78,56 +85,64 @@ export function provideRelicEvaluation(
       // Process primary affixes
       if (relic.selectedPrimaryAffixes) {
         for (const affix of relic.selectedPrimaryAffixes) {
-          if (affix.type === "StatModifierAffixDefinition") {
-            processAffix(
-              affix,
-              relic.primaryAffixValues?.[affix.id] || 0,
-              relicName,
-              positionKey,
-              "primary",
-              mods
-            );
-          }
+          processAffix(
+            affix,
+            relic.primaryAffixValues?.[affix.id] || 0,
+            relicName,
+            positionKey,
+            "primary",
+            mods,
+          );
         }
       }
 
       // Process secondary affixes
       if (relic.selectedSecondaryAffixes) {
         for (const affix of relic.selectedSecondaryAffixes) {
-          if (affix.type === "StatModifierAffixDefinition") {
-            processAffix(
-              affix,
-              relic.secondaryAffixValues?.[affix.id] || 0,
-              relicName,
-              positionKey,
-              "secondary",
-              mods
-            );
-          }
+          processAffix(
+            affix,
+            relic.secondaryAffixValues?.[affix.id] || 0,
+            relicName,
+            positionKey,
+            "secondary",
+            mods,
+          );
         }
       }
 
       // Process devotion affix
-      if (relic.selectedDevotionAffix && relic.selectedDevotionAffix.type === "StatModifierAffixDefinition") {
+      if (relic.selectedDevotionAffix) {
         processAffix(
           relic.selectedDevotionAffix,
           relic.implicitAffixValues?.[relic.selectedDevotionAffix.id] || 0,
           relicName,
           positionKey,
           "devotion",
-          mods
+          mods,
         );
       }
 
       // Process corruption affix
-      if (relic.selectedCorruptionAffix && relic.selectedCorruptionAffix.type === "StatModifierAffixDefinition") {
+      if (relic.selectedCorruptionAffix) {
         processAffix(
           relic.selectedCorruptionAffix,
           relic.implicitAffixValues?.[relic.selectedCorruptionAffix.id] || 0,
           relicName,
           positionKey,
           "corrupted",
-          mods
+          mods,
+        );
+      }
+
+      // Process special affix
+      if (relic.selectedSpecialAffix) {
+        processAffix(
+          relic.selectedSpecialAffix,
+          relic.specialAffixValues?.[relic.selectedSpecialAffix.id] || 0,
+          relicName,
+          positionKey,
+          "Special",
+          mods,
         );
       }
     }
@@ -141,7 +156,106 @@ export function provideRelicEvaluation(
     relicName: string,
     positionKey: string,
     affixType: string,
-    mods: RelicModCollection
+    mods: RelicModCollection,
+  ): void {
+    if (affix.type === "StatModifierAffixDefinition") {
+      processStatModifierAffix(
+        affix,
+        value,
+        relicName,
+        positionKey,
+        affixType,
+        mods,
+      );
+    } else if (affix.type === "SkillBehaviorAffixDefinition") {
+      processSkillBehaviorAffix(
+        affix,
+        value,
+        relicName,
+        positionKey,
+        affixType,
+        mods,
+      );
+    }
+  }
+
+  function processSkillBehaviorAffix(
+    affix: RelicAffix,
+    value: number,
+    relicName: string,
+    positionKey: string,
+    affixType: string,
+    mods: RelicModCollection,
+  ): void {
+    // For now only support for SkillDefinition behavior affixes
+    if (affix.behaviorData?.skillDefinition) {
+      for (const effect of affix.behaviorData.effects?.filter(
+        (e) =>
+          e.type === "AddSkillValueModifierSkillEffectData" &&
+          e.effectTrigger === "Always",
+      ) ?? []) {
+        const addEffect = effect as AddSkillValueModifierSkillEffectData;
+        for (const modifier of addEffect.modifiers) {
+          const skillValueModifierName =
+            modifier.skillValueModifierKey.replaceAll(" ", "");
+
+          let layer = "add";
+          const modifierType = modifier.modifierType.toLowerCase();
+          if (modifierType === "multiplicative") {
+            layer = "mult";
+          } else if (modifierType === "multiplicativeadditive") {
+            layer = "multadd";
+          }
+          const statName = `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`;
+
+          if (!(statName in mods)) {
+            mods[statName] = [];
+          }
+
+          let valueToUse = value;
+
+          if (modifier.value.valueOrName !== "Roll") {
+            // Search for variable if exists and get the baseValue
+            const varValue = affix.behaviorData.variables.variables.find(
+              (v) => v.name === modifier.value.valueOrName,
+            );
+
+            if (varValue) {
+              valueToUse = varValue.baseValue;
+            } else {
+              valueToUse = Number(modifier.value.valueOrName) || 0;
+            }
+          }
+          mods[statName].push({
+            source: `${relicName} (${affixType})`,
+            amount: getValueFromMultiplier(
+              valueToUse,
+              modifier.modifierType,
+              1,
+              1,
+              1,
+            ),
+            layer: layer || "base",
+            meta: {
+              type: "relic",
+              id: String(affix.id),
+              position: positionKey,
+              affixType: affixType,
+              value: String(valueToUse),
+            },
+          });
+        }
+      }
+    }
+  }
+
+  function processStatModifierAffix(
+    affix: RelicAffix,
+    value: number,
+    relicName: string,
+    positionKey: string,
+    affixType: string,
+    mods: RelicModCollection,
   ): void {
     const statInfo = mapModForEval(affix);
     if (!statInfo) return;
@@ -176,13 +290,7 @@ export function provideRelicEvaluation(
         id: String(affix.id),
         position: positionKey,
         affixType: affixType,
-        value: fmtValue(
-          mockMod,
-          lang,
-          statsHelper!,
-          1,
-          1,
-        ),
+        value: fmtValue(mockMod, lang, statsHelper!, 1, 1),
       },
     });
   }
@@ -209,14 +317,20 @@ export function provideRelicEvaluation(
         // Hash primary affixes
         if (relic.selectedPrimaryAffixes) {
           affixHash += relic.selectedPrimaryAffixes
-            .map((a: RelicAffix) => `p${a.id}:${relic.primaryAffixValues?.[a.id] || 0}`)
+            .map(
+              (a: RelicAffix) =>
+                `p${a.id}:${relic.primaryAffixValues?.[a.id] || 0}`,
+            )
             .join(",");
         }
 
         // Hash secondary affixes
         if (relic.selectedSecondaryAffixes) {
           affixHash += relic.selectedSecondaryAffixes
-            .map((a: RelicAffix) => `s${a.id}:${relic.secondaryAffixValues?.[a.id] || 0}`)
+            .map(
+              (a: RelicAffix) =>
+                `s${a.id}:${relic.secondaryAffixValues?.[a.id] || 0}`,
+            )
             .join(",");
         }
 
@@ -230,7 +344,14 @@ export function provideRelicEvaluation(
           affixHash += `c${relic.selectedCorruptionAffix.id}:${relic.implicitAffixValues?.[relic.selectedCorruptionAffix.id] || 0}`;
         }
 
-        relicEntries.push(`${relic.position.x},${relic.position.y}:${relic.id}:${affixHash}`);
+        // Hash special affix
+        if (relic.selectedSpecialAffix) {
+          affixHash += `x${relic.selectedSpecialAffix.id}:${relic.specialAffixValues?.[relic.selectedSpecialAffix.id] || 0}`;
+        }
+
+        relicEntries.push(
+          `${relic.position.x},${relic.position.y}:${relic.id}:${affixHash}`,
+        );
       }
 
       return relicEntries.sort().join("|");

@@ -61,6 +61,20 @@ export function tooltipText(
   return lines;
 }
 
+export function formatIndexed(fmt: string, ...args: unknown[]): string {
+  return fmt.replace(/{(\d+)}/g, (_, i: string) => {
+    const idx = Number(i);
+    return idx in args ? String(args[idx]) : `{${i}}`;
+  });
+}
+
+export function formatHCStyle(input: string): string {
+  return input
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function spriteUrl(sprite?: string): string | undefined {
   if (!sprite) return undefined;
   // put your sprite files at: static/assets/sprites/<sprite>.png → /assets/sprites/<sprite>.png
@@ -75,4 +89,3 @@ export interface TooltipLine {
   icon?: string;
   type: "header" | "info" | "divider" | "affix";
 }
-

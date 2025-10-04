@@ -398,7 +398,7 @@
 </dialog>
 <dialog class="modal" open={showRelicSelector}>
   <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
-    <div class="grow overflow-y-hidden">
+    <div class="flex flex-col grow overflow-y-hidden">
       {#if showRelicSelector}
         <FilterRelicSelector
           title={relicSelectorTitle}

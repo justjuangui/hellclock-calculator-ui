@@ -1,5 +1,6 @@
 import type { StatFormat } from "$lib/hellclock/stats";
 import { type StatModifierType } from "$lib/hellclock/stats";
+import type { VariableFormat } from "$lib/hellclock/relics";
 
 export enum EComplementType {
   None,
@@ -91,6 +92,42 @@ export function getValueFromMultiplier(
     val = (val - 1) * normalize + 1;
   }
   return val;
+}
+
+export function formatSkillEffectVariableModNumber(
+  value: number,
+  variableFormat: VariableFormat,
+) {
+  if (variableFormat === "Rounded") {
+    value = Math.floor(value);
+  }
+
+  if (
+    variableFormat === "Multiplicative" ||
+    variableFormat === "MultiplicativeAdditive"
+  ) {
+    return formatStatNumber(
+        value,
+        "PERCENTAGE",
+        ESingType.Never,
+        EComplementType.Decrement,
+      ) + (variableFormat === "Multiplicative" ? "[x]" : "[+]")
+;
+  } else if (variableFormat === "Percentage") {
+    return formatStatNumber(
+      value,
+      "PERCENTAGE",
+      ESingType.Never,
+      EComplementType.None,
+    );
+  }
+
+  return formatStatNumber(
+    value,
+    "DEFAULT",
+    ESingType.Never,
+    EComplementType.None,
+  );
 }
 
 export function formatStatModNumber(

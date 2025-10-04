@@ -1,9 +1,18 @@
 <script lang="ts">
-  import type { RelicAffix, RelicsHelper } from "$lib/hellclock/relics";
+  import type {
+    RelicAffix,
+    RelicsHelper,
+    RelicSize,
+  } from "$lib/hellclock/relics";
   import { translate } from "$lib/hellclock/lang";
   import { getContext } from "svelte";
   import { StatsHelper } from "$lib/hellclock/stats";
-  import { formatStatModNumber } from "$lib/hellclock/formats";
+  import { SkillsHelper } from "$lib/hellclock/skills";
+  import {
+    formatSkillEffectVariableModNumber,
+    formatStatModNumber,
+  } from "$lib/hellclock/formats";
+  import { formatHCStyle, formatIndexed } from "$lib/hellclock/utils";
 
   interface Props {
     affixes: RelicAffix[];
@@ -11,12 +20,14 @@
     affixValues: Record<number, number>;
     maxAffixes: number;
     tier: number;
+    relicSize: RelicSize;
     onToggleAffix: (affix: RelicAffix) => void;
     onUpdateValue: (affixId: number, value: number) => void;
   }
 
   const relicsHelper = getContext<RelicsHelper>("relicsHelper");
   const statsHelper = getContext<StatsHelper>("statsHelper");
+  const skillsHelper = getContext<SkillsHelper>("skillsHelper");
   const lang = getContext<string>("lang") || "en";
 
   const {
@@ -25,6 +36,7 @@
     affixValues,
     maxAffixes,
     tier,
+    relicSize,
     onToggleAffix,
     onUpdateValue,
   }: Props = $props();
@@ -46,24 +58,75 @@
         1,
         1,
       );
+    } else if (affix.type === "SkillBehaviorAffixDefinition") {
+      return formatSkillEffectVariableModNumber(
+        value,
+        affix.behaviorData!.variables.variables[0].eSkillEffectVariableFormat,
+      );
+    } else if (affix.type === "SkillLevelAffixDefinition") {
+      return `+${value}`;
     }
     return value.toFixed(3);
   }
 
-  function formatHCStyle(input: string): string {
-    return input
-      .replace(/<[^>]*>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function getAffixDisplayName(affix: RelicAffix): string {
+  function getAffixDisplayName(affix: RelicAffix, value?: number): string {
     if (affix.type === "StatModifierAffixDefinition") {
       return statsHelper.getLabelForStat(affix.eStatDefinition!, lang);
     } else if (affix.type === "SkillLevelAffixDefinition") {
-      return formatHCStyle(translate(affix.description, lang) || affix.name);
+      let skill = skillsHelper.getSkillById(affix.skillDefinition!.id);
+      let skillname = translate(skill!.localizedName, lang);
+      let maxLevel = skillsHelper?.getMaxSkillUpgradeLevelBonus() || "3";
+
+      return formatIndexed(
+        formatHCStyle(translate(affix.description, lang) || affix.name),
+        skillname,
+        getAffixDisplayValue(affix, value || 1),
+        maxLevel,
+      );
+    } else if (affix.type === "SkillBehaviorAffixDefinition") {
+      const desc = translate(affix.description, lang);
+      // check if have additional params
+      const extraParams: any[] = [];
+      if (affix.additionalLocalizationVariables?.length) {
+        for (let varName of affix.additionalLocalizationVariables) {
+          const variable = affix.behaviorData!.variables.variables.find(
+            (v) => v.name === varName.skillEffectVariableReference.valueOrName,
+          );
+          if (variable) {
+            extraParams.push(
+              formatSkillEffectVariableModNumber(
+                variable.baseValue,
+                variable.eSkillEffectVariableFormat,
+              ),
+            );
+          } else {
+            extraParams.push(
+              varName.skillEffectVariableReference.valueOrName || "",
+            );
+          }
+        }
+      }
+
+      return formatIndexed(
+        formatHCStyle(desc),
+        getAffixDisplayValue(affix, value || 0),
+        ...extraParams,
+      );
     }
     return affix.name;
+  }
+
+  function getTagsAffix(affix: RelicAffix): string[] {
+    const tags: string[] = [];
+    if (
+      !affix.blockCraftOnRelicSizes ||
+      !affix.blockCraftOnRelicSizes.length ||
+      !affix.blockCraftOnRelicSizes.includes(relicSize)
+    ) {
+      tags.push("Craft");
+    }
+    tags.push("Drop");
+    return tags;
   }
 </script>
 
@@ -71,6 +134,7 @@
   <div class="space-y-2">
     {#each affixes as affix}
       {@const isSelected = selectedAffixes.some((a) => a.id === affix.id)}
+      {@const tags = getTagsAffix(affix)}
       {@const [min, max] = relicsHelper?.getAffixValueRange(affix.id, tier) || [
         0, 0,
       ]}
@@ -84,7 +148,7 @@
         <div class="card-body">
           <div class="flex items-center justify-between">
             <h6 class="card-title text-sm">
-              {getAffixDisplayName(affix)}
+              {getAffixDisplayName(affix, currentValue)}
             </h6>
             <button
               class="btn btn-xs {isSelected ? 'btn-error' : 'btn-primary'}"
@@ -94,7 +158,7 @@
             </button>
           </div>
 
-          {#if isSelected && affix.type === "StatModifierAffixDefinition"}
+          {#if isSelected}
             <div class="mt-2">
               <div class="flex items-center justify-between text-xs mb-1">
                 <div>
@@ -102,29 +166,40 @@
                     >{getAffixDisplayValue(affix, currentValue)}</span
                   >
                 </div>
-                <div class="opacity-70">
-                  Range: <span class="font-mono"
-                    >{getAffixDisplayValue(affix, min)}</span
-                  >
-                  -
-                  <span class="font-mono"
-                    >{getAffixDisplayValue(affix, max)}</span
-                  >
-                </div>
+                {#if min !== max}
+                  <div class="opacity-70">
+                    Range: <span class="font-mono"
+                      >{getAffixDisplayValue(affix, min)}</span
+                    >
+                    -
+                    <span class="font-mono"
+                      >{getAffixDisplayValue(affix, max)}</span
+                    >
+                  </div>
+                {/if}
               </div>
-              <input
-                type="range"
-                {min}
-                {max}
-                step="0.001"
-                value={currentValue}
-                onchange={(e) =>
-                  onUpdateValue(
-                    affix.id,
-                    parseFloat((e.target as HTMLInputElement)?.value || "0"),
-                  )}
-                class="range range-primary range-xs w-full"
-              />
+              {#if min !== max}
+                <input
+                  type="range"
+                  {min}
+                  {max}
+                  step="any"
+                  value={currentValue}
+                  onchange={(e) =>
+                    onUpdateValue(
+                      affix.id,
+                      parseFloat((e.target as HTMLInputElement)?.value || "0"),
+                    )}
+                  class="range range-primary range-xs w-full"
+                />
+              {/if}
+            </div>
+          {/if}
+          {#if tags.length > 0}
+            <div class="card-actions">
+              {#each tags as tag}
+                <div class="badge badge-soft badge-xs">{tag}</div>
+              {/each}
             </div>
           {/if}
         </div>
@@ -136,4 +211,3 @@
     <p class="text-sm">No affixes available</p>
   </div>
 {/if}
-

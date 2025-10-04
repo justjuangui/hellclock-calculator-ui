@@ -32,9 +32,15 @@
   let search = $state("");
 
   // Active tab for affix configuration
-  const affixTabs = ["primary", "secondary", "devotion", "corrupted"];
+  const affixTabs = [
+    "special",
+    "primary",
+    "secondary",
+    "imbuement",
+    "corrupted",
+  ];
   let activeAffixTab = $state<
-    "primary" | "secondary" | "devotion" | "corrupted"
+    "primary" | "secondary" | "imbuement" | "corrupted" | "special"
   >("primary");
 
   // Selection state
@@ -110,6 +116,13 @@
     return relics;
   });
 
+  const availableImbuedTypes = $derived.by(() => {
+    if (!selectedSize || !relicsHelper) return ["None"];
+    return relicsHelper
+      .getAvailableImbuedTypesForSize(selectedSize)
+      .filter((m) => m != "Corrupted");
+  });
+
   function getRelicSpriteUrl(rbd: RelicBaseDefinition, tier: number): string {
     let spriteName = "";
     if (rbd.sprite) {
@@ -125,6 +138,12 @@
   $effect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
       selectedSize = null;
+    }
+  });
+
+  $effect(() => {
+    if (!selectedSize) {
+      selectedImbuedType = "None";
     }
   });
 
@@ -169,32 +188,12 @@
   function selectRelic(relicDef: RelicBaseDefinition) {
     selectedRelicDef = relicDef;
     activeAffixTab = "primary";
-
-    // Ensure size and rarity are set based on the selected relic
-    selectedSize = relicDef.eRelicSize;
-
-    // Set rarity based on relic type - if not already set
-    if (!selectedRarity) {
-      if (relicDef.type === "UniqueRelicBaseDefinition") {
-        selectedRarity = "Unique";
-      } else {
-        // Default to Rare for non-unique relics if not already selected
-        selectedRarity = "Rare";
-      }
-    }
-
-    // Reset imbued type if not available for this relic size
-    const availableTypes = relicsHelper?.getAvailableImbuedTypesForSize(
-      relicDef.eRelicSize,
-    ) || ["None"];
-    if (!availableTypes.includes(selectedImbuedType)) {
-      selectedImbuedType = "None";
-    }
+    selectedImbuedType = "None";
 
     relicConfiguration =
       relicsHelper?.createDefaultConfiguration(
         relicDef,
-        selectedRarity,
+        selectedRarity!,
         selectedTier,
       ) || null;
   }
@@ -216,6 +215,7 @@
       name: getRelicDisplayName(selectedRelicDef, relicConfiguration),
       size: selectedSize!,
       tier: relicConfiguration.tier,
+      imbuedType: selectedImbuedType,
       rarity: relicConfiguration.rarity,
       sprite: getRelicSpriteUrl(selectedRelicDef, relicConfiguration.tier),
       width: sizeConfig?.relicInventoryShape.width || 1,
@@ -230,9 +230,13 @@
       selectedDevotionAffix: relicConfiguration.selectedDevotionAffix
         ? { ...relicConfiguration.selectedDevotionAffix }
         : undefined,
+      selectedSpecialAffix: relicConfiguration.selectedSpecialAffix
+        ? { ...relicConfiguration.selectedSpecialAffix }
+        : undefined,
       primaryAffixValues: { ...relicConfiguration.primaryAffixValues },
       secondaryAffixValues: { ...relicConfiguration.secondaryAffixValues },
       implicitAffixValues: { ...relicConfiguration.implicitAffixValues },
+      specialAffixValues: { ...relicConfiguration.specialAffixValues },
     };
 
     onRelicSelected(simpleRelic);
@@ -241,7 +245,7 @@
   function updateAffixValue(
     affixId: number,
     value: number,
-    type: "primary" | "secondary" | "implicit",
+    type: "primary" | "secondary" | "implicit" | "corrupted" | "special",
   ) {
     if (!relicConfiguration) return;
 
@@ -249,6 +253,10 @@
       relicConfiguration.primaryAffixValues[affixId] = value;
     } else if (type === "secondary") {
       relicConfiguration.secondaryAffixValues[affixId] = value;
+    } else if (type === "corrupted") {
+      relicConfiguration.corruptionAffixValues[affixId] = value;
+    } else if (type === "special") {
+      relicConfiguration.specialAffixValues[affixId] = value;
     } else {
       relicConfiguration.implicitAffixValues[affixId] = value;
     }
@@ -259,7 +267,7 @@
 
   function toggleAffix(
     affix: RelicAffix,
-    type: "primary" | "secondary" | "corrupted" | "devotion",
+    type: "primary" | "secondary" | "corrupted" | "imbuement" | "special",
   ) {
     if (
       !relicConfiguration ||
@@ -277,17 +285,16 @@
       } else {
         // Add affix (only one allowed)
         relicConfiguration.selectedCorruptionAffix = affix;
-        const [min, max] = relicsHelper.getAffixValueRange(
+        const [_, max] = relicsHelper.getAffixValueRange(
           affix.id,
           selectedTier,
         ) || [0, 0];
-        const defaultValue = (min + max) / 2;
-        relicConfiguration.implicitAffixValues[affix.id] = defaultValue;
+        relicConfiguration.implicitAffixValues[affix.id] = max;
       }
       return;
     }
 
-    if (type === "devotion") {
+    if (type === "imbuement") {
       if (relicConfiguration.selectedDevotionAffix?.id === affix.id) {
         // Remove affix
         delete relicConfiguration.selectedDevotionAffix;
@@ -295,12 +302,28 @@
       } else {
         // Add affix (only one allowed)
         relicConfiguration.selectedDevotionAffix = affix;
-        const [min, max] = relicsHelper.getAffixValueRange(
+        const [_, max] = relicsHelper.getAffixValueRange(
           affix.id,
           selectedTier,
         ) || [0, 0];
-        const defaultValue = (min + max) / 2;
-        relicConfiguration.implicitAffixValues[affix.id] = defaultValue;
+        relicConfiguration.implicitAffixValues[affix.id] = max;
+      }
+      return;
+    }
+
+    if (type === "special") {
+      if (relicConfiguration.selectedSpecialAffix?.id === affix.id) {
+        // Remove affix
+        delete relicConfiguration.selectedSpecialAffix;
+        delete relicConfiguration.specialAffixValues[affix.id];
+      } else {
+        // Add affix (only one allowed)
+        relicConfiguration.selectedSpecialAffix = affix;
+        const [_, max] = relicsHelper.getAffixValueRange(
+          affix.id,
+          selectedTier,
+        ) || [0, 0];
+        relicConfiguration.specialAffixValues[affix.id] = max;
       }
       return;
     }
@@ -331,16 +354,15 @@
 
       if (affixArray.length < maxCount) {
         affixArray.push(affix);
-        const [min, max] = relicsHelper.getAffixValueRange(
+        const [_, max] = relicsHelper.getAffixValueRange(
           affix.id,
           selectedTier,
         ) || [0, 0];
-        const defaultValue = (min + max) / 2;
 
         if (type === "primary") {
-          relicConfiguration.primaryAffixValues[affix.id] = defaultValue;
+          relicConfiguration.primaryAffixValues[affix.id] = max;
         } else {
-          relicConfiguration.secondaryAffixValues[affix.id] = defaultValue;
+          relicConfiguration.secondaryAffixValues[affix.id] = max;
         }
       }
     }
@@ -361,6 +383,9 @@
     let displayName = `${rbd.eRelicSize} Relic`;
 
     if (rcf) {
+      if (rcf.selectedSpecialAffix) {
+        displayName = `${translate(rcf.selectedSpecialAffix.nameLocalizationKey, lang)} ${displayName}`;
+      }
       if (rcf.selectedPrimaryAffixes?.length) {
         displayName += ` of ${translate(rcf.selectedPrimaryAffixes[0].nameLocalizationKey, lang)}`;
       } else if (rcf.selectedSecondaryAffixes?.length) {
@@ -379,10 +404,12 @@
       return `(${rcf.selectedPrimaryAffixes.length}/${rcf.maxPrimaryAffixes})`;
     } else if (type === "secondary") {
       return `(${rcf.selectedSecondaryAffixes.length}/${rcf.maxSecondaryAffixes})`;
-    } else if (type === "devotion") {
+    } else if (type === "imbuement") {
       return `(${rcf.selectedDevotionAffix ? 1 : 0}/${rcf.maxDevotionAffixes})`;
     } else if (type === "corrupted") {
       return `(${rcf.selectedCorruptionAffix ? 1 : 0}/${rcf.maxCorruptionAffixes})`;
+    } else if (type === "special") {
+      return `(${rcf.selectedSpecialAffix ? 1 : 0}/${rcf.maxSpecialAffixes})`;
     }
     return "(0/0)";
   }
@@ -550,11 +577,11 @@
       </div>
 
       <!-- Affix Tabs -->
-      <div class="tabs tabs-bordered mb-3">
+      <div class="tabs tabs-bordered tabs-xs mb-3">
         {#if relicsHelper && selectedRelicDef && selectedRarity}
           {#each affixTabs as tab}
             <button
-              class="tab tab-sm {activeAffixTab === tab ? 'tab-active' : ''}"
+              class="tab {activeAffixTab === tab ? 'tab-active' : ''}"
               onclick={() => (activeAffixTab = tab as any)}
             >
               {`${tab.charAt(0).toUpperCase() + tab.substring(1)} ${getAffixCountByAffixTab(relicConfiguration, tab)}`}
@@ -567,6 +594,7 @@
       <div class="overflow-y-auto">
         {#if activeAffixTab === "primary" && relicConfiguration}
           <AffixSelector
+            relicSize={selectedSize!}
             affixes={relicConfiguration.availablePrimaryAffixes ?? []}
             selectedAffixes={relicConfiguration.selectedPrimaryAffixes}
             affixValues={relicConfiguration.primaryAffixValues}
@@ -578,6 +606,7 @@
           />
         {:else if activeAffixTab === "secondary" && relicConfiguration}
           <AffixSelector
+            relicSize={selectedSize!}
             affixes={relicConfiguration.availableSecondaryAffixes ?? []}
             selectedAffixes={relicConfiguration.selectedSecondaryAffixes}
             affixValues={relicConfiguration.secondaryAffixValues}
@@ -589,6 +618,7 @@
           />
         {:else if activeAffixTab === "corrupted" && relicConfiguration}
           <AffixSelector
+            relicSize={selectedSize!}
             affixes={relicConfiguration.availableCorruptionAffixes ?? []}
             selectedAffixes={relicConfiguration.selectedCorruptionAffix
               ? [relicConfiguration.selectedCorruptionAffix]
@@ -598,25 +628,62 @@
             tier={selectedTier}
             onToggleAffix={(affix) => toggleAffix(affix, "corrupted")}
             onUpdateValue={(affixId, value) =>
-              updateAffixValue(affixId, value, "implicit")}
+              updateAffixValue(affixId, value, "corrupted")}
           />
-        {:else if activeAffixTab === "devotion" && relicConfiguration}
+        {:else if activeAffixTab === "special" && relicConfiguration}
           <AffixSelector
-            affixes={[
-              ...(relicConfiguration.availableFaithImbuedAffixes ?? []),
-              ...(relicConfiguration.availableDisciplineImbuedAffixes ?? []),
-              ...(relicConfiguration.availableFuryImbuedAffixes ?? []),
-            ]}
-            selectedAffixes={relicConfiguration.selectedDevotionAffix
-              ? [relicConfiguration.selectedDevotionAffix]
+            relicSize={selectedSize!}
+            affixes={relicConfiguration.availableSpecialAffixes ?? []}
+            selectedAffixes={relicConfiguration.selectedSpecialAffix
+              ? [relicConfiguration.selectedSpecialAffix]
               : []}
-            affixValues={relicConfiguration.implicitAffixValues}
-            maxAffixes={relicConfiguration.maxDevotionAffixes}
+            affixValues={relicConfiguration.specialAffixValues}
+            maxAffixes={1}
             tier={selectedTier}
-            onToggleAffix={(affix) => toggleAffix(affix, "devotion")}
+            onToggleAffix={(affix) => toggleAffix(affix, "special")}
             onUpdateValue={(affixId, value) =>
-              updateAffixValue(affixId, value, "implicit")}
+              updateAffixValue(affixId, value, "special")}
           />
+        {:else if activeAffixTab === "imbuement" && relicConfiguration}
+          <div class="p-2">
+            <select
+              bind:value={selectedImbuedType}
+              class="select select-bordered select-sm w-full"
+            >
+              {#each availableImbuedTypes as imbuedType (imbuedType)}
+                <option value={imbuedType}
+                  >{imbuedType.charAt(0).toUpperCase() +
+                    imbuedType.substring(1).replaceAll("Imbued", "")}</option
+                >
+              {/each}
+            </select>
+          </div>
+
+          {#if selectedImbuedType === "None"}
+            <div class="text-center py-4 opacity-70">
+              <p class="text-sm">No devotion affix selected</p>
+            </div>
+          {:else}
+            <AffixSelector
+              relicSize={selectedSize!}
+              affixes={selectedImbuedType === "FaithImbued"
+                ? (relicConfiguration.availableFaithImbuedAffixes ?? [])
+                : selectedImbuedType === "DisciplineImbued"
+                  ? (relicConfiguration.availableDisciplineImbuedAffixes ?? [])
+                  : selectedImbuedType === "FuryImbued"
+                    ? (relicConfiguration.availableFuryImbuedAffixes ?? [])
+                    : []}
+              selectedAffixes={relicConfiguration.selectedDevotionAffix
+                ? [relicConfiguration.selectedDevotionAffix]
+                : []}
+              affixValues={relicConfiguration.implicitAffixValues}
+              maxAffixes={relicConfiguration.maxDevotionAffixes}
+              tier={selectedTier}
+              onToggleAffix={(affix) => toggleAffix(affix, "imbuement")}
+              onUpdateValue={(affixId, value) =>
+                updateAffixValue(affixId, value, "implicit")}
+            />
+          {/if}
         {/if}
       </div>
     {:else}

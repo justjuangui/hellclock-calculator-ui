@@ -1,7 +1,20 @@
 import { type LangText, translate } from "$lib/hellclock/lang";
-import type { StatMod, StatModifierType, StatsHelper } from "$lib/hellclock/stats";
-import { formatStatModNumber } from "$lib/hellclock/formats";
-import { parseRGBA01ToCss, type TooltipLine } from "$lib/hellclock/utils";
+import type {
+  StatMod,
+  StatModifierType,
+  StatsHelper,
+} from "$lib/hellclock/stats";
+import {
+  formatSkillEffectVariableModNumber,
+  formatStatModNumber,
+} from "$lib/hellclock/formats";
+import {
+  formatHCStyle,
+  formatIndexed,
+  parseRGBA01ToCss,
+  type TooltipLine,
+} from "$lib/hellclock/utils";
+import type { SkillsHelper } from "$lib/hellclock/skills";
 
 export type RelicSize = "Small" | "Large" | "Exalted" | "Grand";
 export type RelicRarity = "Common" | "Magic" | "Rare" | "Unique";
@@ -47,6 +60,218 @@ export type RelicBaseDefinition = {
   nameLocalizationKey?: LangText[];
 };
 
+export type AffixSkillDefinition = {
+  id: number;
+  name: string;
+};
+
+export type VariableFormat =
+  | "Multiplicative"
+  | "NoFormat"
+  | "Rounded"
+  | "Percentage"
+  | "MultiplicativeAdditive";
+
+export type SkillEffectVariableReference = {
+  type: "SkillEffectVariableReference";
+  valueOrName: string;
+  eSkillEffectVariableModifier: string;
+  statusToStack: Record<string, any>;
+  supportVariableValueOrName: string;
+  supportESkillEffectVariableModifier: string;
+  supportStatusToStack: Record<string, any>;
+};
+
+export type SkillEffectVariable = {
+  type: "SkillEffectVariable";
+  name: string;
+  baseValue: number;
+  eSkillEffectVariableStackType: string;
+  eSkillEffectVariableFormat: VariableFormat;
+};
+
+export type SkillEffectVariables = {
+  type: "SkillEffectVariables";
+  variables: SkillEffectVariable[];
+};
+
+export type SkillBehaviorLocalizationVariable = {
+  type: "SkillBehaviorLocalizationVariable";
+  skillEffectVariableReference: SkillEffectVariableReference;
+  overrideFormat: boolean;
+  valueFormatOverride: VariableFormat;
+};
+
+export type SkillEffectRuleSet = {
+  type: "SkillEffectRuleSet";
+  rules: any[]; // Could be expanded with specific rule types if needed
+};
+
+export type SkillEffectAreaValueOverride = {
+  type: "SkillEffectAreaValueOverride";
+  valueKey: string;
+  value: SkillEffectVariableReference;
+};
+
+export type ModifierType =
+  | "Additive"
+  | "Multiplicative"
+  | "MultiplicativeAdditive";
+
+export type SkillEffectSkillModifierDefinition = {
+  type: "SkillEffectSkillModifierDefinition";
+  skillValueModifierKey: string;
+  modifierType: ModifierType;
+  value: SkillEffectVariableReference;
+  useStatConversion: boolean;
+  conversionStatDefinition: string;
+  listenToVariableModifiersUpdate: boolean;
+};
+
+export type SkillEffectStatModifierDefinition = {
+  type: "SkillEffectStatModifierDefinition";
+  eStatDefinition: string;
+  modifierType: ModifierType;
+  value: SkillEffectVariableReference;
+  useStatConversion: boolean;
+  conversionStatDefinition: string;
+  listenToVariableModifiersUpdate: boolean;
+};
+
+export type StatusDefinition = {
+  name: string;
+  id: number;
+  type: string;
+};
+
+// Base interface for all skill effects
+export type BaseSkillEffect = {
+  name: string;
+  type: string;
+  useCharacterEffectTrigger: boolean;
+  effectTrigger: string;
+  characterEffectTrigger: string;
+  ruleSet: SkillEffectRuleSet;
+  revertOnRuleFail: boolean;
+  triggerTargetValue: SkillEffectVariableReference;
+  triggerTargetEnumValue: number;
+  triggerTargetStringValue: string;
+  subEffects: any[];
+};
+
+export type PlaceEffectAreaSkillEffectData = BaseSkillEffect & {
+  type: "PlaceEffectAreaSkillEffectData";
+  effectTarget: string;
+  parentToTarget: boolean;
+  useSkillRadius: boolean;
+  useSkillAsSource: boolean;
+  useSkillDamage: boolean;
+  effectAreaConfig: string;
+  effectAreaValueOverrides: SkillEffectAreaValueOverride[];
+};
+
+export type AddSkillValueModifierSkillEffectData = BaseSkillEffect & {
+  type: "AddSkillValueModifierSkillEffectData";
+  modifiers: SkillEffectSkillModifierDefinition[];
+};
+
+export type RegenSkillEffectData = BaseSkillEffect & {
+  type: "RegenSkillEffectData";
+  eStatRegen: "Life" | "Mana";
+  regenValue: SkillEffectVariableReference;
+  eRegenSourceValue: string;
+};
+
+export type AddStatusToTargetSkillEffectData = BaseSkillEffect & {
+  type: "AddStatusToTargetSkillEffectData";
+  removeOnEffectReversion: boolean;
+  effectTarget: string;
+  statusDefinition: StatusDefinition;
+  statusDuration: SkillEffectVariableReference;
+  statusIntensity: SkillEffectVariableReference;
+  stackAmount: SkillEffectVariableReference;
+};
+
+export type AddSkillStatModifierSkillEffectData = BaseSkillEffect & {
+  type: "AddSkillStatModifierSkillEffectData";
+  modifiers: any[]; // Could be expanded with specific modifier types
+};
+
+export type AddCharacterStatModifierSkillEffectData = BaseSkillEffect & {
+  type: "AddCharacterStatModifierSkillEffectData";
+  modifiers: any[]; // Could be expanded with specific modifier types
+};
+
+export type DamageTargetSkillEffectData = BaseSkillEffect & {
+  type: "DamageTargetSkillEffectData";
+  damageValue: SkillEffectVariableReference;
+  damageType: string;
+  effectTarget: string;
+};
+
+export type RemoveStatusFromTargetSkillEffectData = BaseSkillEffect & {
+  type: "RemoveStatusFromTargetSkillEffectData";
+  statusDefinition: StatusDefinition;
+  effectTarget: string;
+};
+
+export type AddEffectAreaEffectData = BaseSkillEffect & {
+  type: "AddEffectAreaEffectData";
+  effectAreaDefinition: any;
+  overrideLayerMask: boolean;
+  layerMask: string;
+  effectAreaValueOverrides: SkillEffectAreaValueOverride[];
+};
+
+export type PlayGameplayFxSkillEffectData = BaseSkillEffect & {
+  type: "PlayGameplayFxSkillEffectData";
+  fxPrefab: string;
+  effectTarget: string;
+};
+
+export type AddBarrierSkillEffectData = BaseSkillEffect & {
+  type: "AddBarrierSkillEffectData";
+  barrierValue: SkillEffectVariableReference;
+  effectTarget: string;
+};
+
+export type DrainTargetResourceSkillEffectData = BaseSkillEffect & {
+  type: "DrainTargetResourceSkillEffectData";
+  resourceType: string;
+  drainValue: SkillEffectVariableReference;
+  effectTarget: string;
+};
+
+// Union type for all possible skill effects
+export type SkillEffect =
+  | PlaceEffectAreaSkillEffectData
+  | AddSkillValueModifierSkillEffectData
+  | RegenSkillEffectData
+  | AddStatusToTargetSkillEffectData
+  | AddSkillStatModifierSkillEffectData
+  | AddCharacterStatModifierSkillEffectData
+  | DamageTargetSkillEffectData
+  | RemoveStatusFromTargetSkillEffectData
+  | AddEffectAreaEffectData
+  | PlayGameplayFxSkillEffectData
+  | AddBarrierSkillEffectData
+  | DrainTargetResourceSkillEffectData;
+
+export type SkillBehaviorData = {
+  type: "SkillBehaviorData";
+  affectMultipleSkills: boolean;
+  useListOfSkills: boolean;
+  listOfSkills: any[];
+  skillTagFilter: string;
+  skillDefinition: {
+    name: string;
+    id: number;
+    type: string;
+  };
+  variables: SkillEffectVariables;
+  effects: SkillEffect[];
+};
+
 export type RelicAffix = {
   name: string;
   id: number;
@@ -54,7 +279,8 @@ export type RelicAffix = {
     | "RegenOnKillAffixDefinition"
     | "StatModifierAffixDefinition"
     | "SkillLevelAffixDefinition"
-    | "StatusMaxStacksAffixDefinition";
+    | "StatusMaxStacksAffixDefinition"
+    | "SkillBehaviorAffixDefinition";
   eStatRegen?: "Life" | "Mana";
   flatRegen?: boolean;
   customIcon?: string;
@@ -64,10 +290,18 @@ export type RelicAffix = {
   statModifiersDefinitions?: StatMod[];
   eSkillType?: string;
   skillLevelModifier?: number;
+  eAffixRarity?: "Common" | "Special" | "Unique";
+  blockCraftOnRelicSizes?: string;
   eStatusType?: string;
   stackModifier?: number;
   eStatDefinition?: string;
   statModifierType?: StatModifierType;
+  skillDefinition?: AffixSkillDefinition;
+  // SkillBehaviorAffixDefinition specific fields
+  rollVariableName?: string;
+  descriptionValuePrefix?: string;
+  additionalLocalizationVariables?: SkillBehaviorLocalizationVariable[];
+  behaviorData?: SkillBehaviorData;
 };
 
 export type RelicSizeConfig = {
@@ -582,6 +816,16 @@ export class RelicsHelper {
     );
     const maxCounts = this.getMaxAffixCounts(baseDefinition, rarity);
 
+    // Get Special Affix
+    const specialAffix =
+      rarity !== "Rare"
+        ? []
+        : this.getRelicAffixes().filter(
+            (st) =>
+              st.eAffixRarity === "Special" &&
+              st.tierRollRanges.some((t) => t.tier === tier),
+          );
+
     return {
       rarity,
       tier,
@@ -589,6 +833,8 @@ export class RelicsHelper {
       maxSecondaryAffixes: maxCounts.secondary,
       maxDevotionAffixes: 1,
       maxCorruptionAffixes: 1,
+      maxSpecialAffixes: specialAffix.length > 0 ? 1 : 0,
+      availableSpecialAffixes: specialAffix,
       availablePrimaryAffixes: primaryAffixes,
       availableSecondaryAffixes: secondaryAffixes,
       availableFuryImbuedAffixes: furyAffixes,
@@ -602,6 +848,8 @@ export class RelicsHelper {
       primaryAffixValues: {},
       secondaryAffixValues: {},
       implicitAffixValues: {},
+      corruptionAffixValues: {},
+      specialAffixValues: {},
     };
   }
 
@@ -612,6 +860,7 @@ export class RelicsHelper {
     relic: RelicItem,
     lang: string,
     statsHelper?: StatsHelper,
+    skillsHelper?: SkillsHelper,
   ): TooltipLine[] {
     if (!relic) return [{ text: "Empty", type: "info" }];
 
@@ -643,17 +892,43 @@ export class RelicsHelper {
 
     const affixIcons = this.getRelicAffixIcons();
 
+    if (relic.selectedSpecialAffix) {
+      const value = relic.specialAffixValues?.[relic.selectedSpecialAffix.id];
+      lines.push({
+        text: this.formatRelicAffix(
+          relic.selectedSpecialAffix,
+          value,
+          lang,
+          statsHelper,
+          skillsHelper,
+        ),
+        icon: this.getAffixIconByAffix(
+          relic.selectedSpecialAffix,
+          affixIcons.defaultIcon,
+          skillsHelper!,
+        ),
+        type: "affix",
+      });
+      lines.push({ text: "", type: "divider" });
+    }
+
     // Corrupted affix (implicit)
     if (relic.selectedCorruptionAffix) {
-      const value = relic.implicitAffixValues?.[relic.selectedCorruptionAffix.id];
+      const value =
+        relic.implicitAffixValues?.[relic.selectedCorruptionAffix.id];
       lines.push({
         text: this.formatRelicAffix(
           relic.selectedCorruptionAffix,
           value,
           lang,
           statsHelper,
+          skillsHelper,
         ),
-        icon: affixIcons.implicitIcon,
+        icon: this.getAffixIconByAffix(
+          relic.selectedCorruptionAffix,
+          affixIcons.implicitIcon,
+          skillsHelper!,
+        ),
         type: "affix",
       });
     }
@@ -667,8 +942,13 @@ export class RelicsHelper {
           value,
           lang,
           statsHelper,
+          skillsHelper,
         ),
-        icon: affixIcons.implicitIcon,
+        icon: this.getAffixIconByAffix(
+          relic.selectedDevotionAffix,
+          affixIcons.implicitIcon,
+          skillsHelper!,
+        ),
         type: "affix",
       });
     }
@@ -702,7 +982,10 @@ export class RelicsHelper {
       }
     }
 
-    if (relic.selectedPrimaryAffixes?.length || relic.selectedSecondaryAffixes?.length) {
+    if (
+      relic.selectedPrimaryAffixes?.length ||
+      relic.selectedSecondaryAffixes?.length
+    ) {
       lines.push({ text: "", type: "divider" });
     }
 
@@ -711,10 +994,29 @@ export class RelicsHelper {
         text: "Corrupted",
         type: "header",
         color: "rgba(255,0,0,0.8)",
-      })
+      });
     }
 
     return lines;
+  }
+
+  private getAffixIconByAffix(
+    affix: RelicAffix,
+    defaultIcon: string,
+    skillsHelper: SkillsHelper,
+  ): string {
+    if (affix.customIcon) {
+      return affix.customIcon;
+    }
+
+    if (affix.type === "SkillBehaviorAffixDefinition" && affix.behaviorData) {
+      const skill = skillsHelper?.getSkillById(
+        affix.behaviorData.skillDefinition.id,
+      );
+      return skill!.icon;
+    }
+
+    return defaultIcon;
   }
 
   /**
@@ -725,6 +1027,7 @@ export class RelicsHelper {
     value: number | undefined,
     lang: string,
     statsHelper?: StatsHelper,
+    skillsHelper?: SkillsHelper,
   ): string {
     // Get the localized name
     const affixName = translate(affix.nameLocalizationKey, lang) || affix.name;
@@ -737,7 +1040,9 @@ export class RelicsHelper {
     switch (affix.type) {
       case "StatModifierAffixDefinition":
         if (statsHelper && affix.eStatDefinition) {
-          const statDefinition = statsHelper.getStatByName(affix.eStatDefinition);
+          const statDefinition = statsHelper.getStatByName(
+            affix.eStatDefinition,
+          );
           if (statDefinition) {
             const formattedValue = formatStatModNumber(
               value,
@@ -762,14 +1067,48 @@ export class RelicsHelper {
         return `${value}${isFlat} ${regenType} on Kill`;
 
       case "SkillLevelAffixDefinition":
-        const skillModifier = affix.skillLevelModifier || 1;
-        const totalModifier = value * skillModifier;
-        return `+${totalModifier} to ${affix.eSkillType || "Skill"} Level`;
+        const skill = skillsHelper?.getSkillById(affix.skillDefinition!.id);
+        const skillName = translate(skill!.localizedName, lang);
+        return `+${value} to ${skillName} Level`;
 
       case "StatusMaxStacksAffixDefinition":
         const stackModifier = affix.stackModifier || 1;
         const totalStacks = value * stackModifier;
         return `+${totalStacks} Max ${affix.eStatusType || "Status"} Stacks`;
+      case "SkillBehaviorAffixDefinition":
+        const desc = translate(affix.description, lang);
+        // check if have additional params
+        const extraParams: any[] = [];
+        if (affix.additionalLocalizationVariables?.length) {
+          for (let varName of affix.additionalLocalizationVariables) {
+            const variable = affix.behaviorData!.variables.variables.find(
+              (v) =>
+                v.name === varName.skillEffectVariableReference.valueOrName,
+            );
+            if (variable) {
+              extraParams.push(
+                formatSkillEffectVariableModNumber(
+                  variable.baseValue,
+                  variable.eSkillEffectVariableFormat,
+                ),
+              );
+            } else {
+              extraParams.push(
+                varName.skillEffectVariableReference.valueOrName || "",
+              );
+            }
+          }
+        }
+
+        return formatIndexed(
+          formatHCStyle(desc),
+          formatSkillEffectVariableModNumber(
+            value,
+            affix.behaviorData!.variables.variables[0]
+              .eSkillEffectVariableFormat,
+          ),
+          ...extraParams,
+        );
 
       default:
         return `${value} ${affixName}`;
@@ -781,10 +1120,13 @@ export class RelicsHelper {
 export type RelicConfiguration = {
   rarity: RelicRarity;
   tier: number;
+  imbuedType?: RelicImbuedType;
   maxPrimaryAffixes: number;
   maxSecondaryAffixes: number;
   maxDevotionAffixes: number;
   maxCorruptionAffixes: number;
+  maxSpecialAffixes?: number;
+  availableSpecialAffixes?: RelicAffix[];
   availablePrimaryAffixes?: RelicAffix[];
   availableSecondaryAffixes?: RelicAffix[];
   availableFuryImbuedAffixes?: RelicAffix[];
@@ -795,9 +1137,12 @@ export type RelicConfiguration = {
   selectedSecondaryAffixes: RelicAffix[];
   selectedDevotionAffix?: RelicAffix;
   selectedCorruptionAffix?: RelicAffix;
+  selectedSpecialAffix?: RelicAffix;
   primaryAffixValues: Record<number, number>; // affixId -> selected value
   secondaryAffixValues: Record<number, number>; // affixId -> selected value
   implicitAffixValues: Record<number, number>; // affixId -> selected value
+  corruptionAffixValues: Record<number, number>; // affixId -> selected value
+  specialAffixValues: Record<number, number>; // affixId -> selected value
 };
 
 export type RelicItem = {
@@ -809,11 +1154,15 @@ export type RelicItem = {
   sprite: string;
   width: number;
   height: number;
+  imbuedType?: RelicImbuedType;
   selectedPrimaryAffixes?: RelicAffix[];
   selectedSecondaryAffixes?: RelicAffix[];
   selectedDevotionAffix?: RelicAffix;
   selectedCorruptionAffix?: RelicAffix;
+  selectedSpecialAffix?: RelicAffix;
   primaryAffixValues?: Record<number, number>; // affixId -> selected value
   secondaryAffixValues?: Record<number, number>; // affixId -> selected value
   implicitAffixValues?: Record<number, number>; // affixId -> selected value
+  corruptionAffixValues?: Record<number, number>; // affixId -> selected value
+  specialAffixValues?: Record<number, number>; // affixId -> selected value
 };
