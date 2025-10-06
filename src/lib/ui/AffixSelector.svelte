@@ -21,6 +21,7 @@
     maxAffixes: number;
     tier: number;
     relicSize: RelicSize;
+    canRemove?: boolean;
     onToggleAffix: (affix: RelicAffix) => void;
     onUpdateValue: (affixId: number, value: number) => void;
   }
@@ -37,6 +38,7 @@
     maxAffixes,
     tier,
     relicSize,
+    canRemove = true,
     onToggleAffix,
     onUpdateValue,
   }: Props = $props();
@@ -150,12 +152,14 @@
             <h6 class="card-title text-sm">
               {getAffixDisplayName(affix, currentValue)}
             </h6>
-            <button
-              class="btn btn-xs {isSelected ? 'btn-error' : 'btn-primary'}"
-              onclick={() => onToggleAffix(affix)}
-            >
-              {isSelected ? "Remove" : "Add"}
-            </button>
+            {#if canRemove}
+              <button
+                class="btn btn-xs {isSelected ? 'btn-error' : 'btn-primary'}"
+                onclick={() => onToggleAffix(affix)}
+              >
+                {isSelected ? "Remove" : "Add"}
+              </button>
+            {/if}
           </div>
 
           {#if isSelected}

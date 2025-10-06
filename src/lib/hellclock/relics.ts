@@ -58,6 +58,7 @@ export type RelicBaseDefinition = {
   secondaryAffixPool: WeightedAffixReference[];
   sprite?: string;
   nameLocalizationKey?: LangText[];
+  intrinsicAffixes?: RelicAffix[];
 };
 
 export type AffixSkillDefinition = {
@@ -817,14 +818,29 @@ export class RelicsHelper {
     const maxCounts = this.getMaxAffixCounts(baseDefinition, rarity);
 
     // Get Special Affix
-    const specialAffix =
-      rarity !== "Rare"
-        ? []
-        : this.getRelicAffixes().filter(
-            (st) =>
-              st.eAffixRarity === "Special" &&
-              st.tierRollRanges.some((t) => t.tier === tier),
-          );
+    const specialAffix = [];
+    let selectedSpecialAffix: RelicAffix | undefined = undefined;
+    let specialAffixValue: Record<number, number> = {};
+    if (rarity === "Rare") {
+      specialAffix.push(
+        ...this.getRelicAffixes().filter(
+          (st) =>
+            st.eAffixRarity === "Special" &&
+            st.tierRollRanges.some((t) => t.tier === tier),
+        ),
+      );
+    } else if (rarity === "Unique") {
+      // unique hace intrinsic special affix and should be selected by default
+      const affixs = this.getRelicAffixById(
+        baseDefinition.intrinsicAffixes![0].id,
+      )!;
+      specialAffix.push(affixs);
+      selectedSpecialAffix = affixs;
+      specialAffixValue = {
+        [affixs.id]: affixs.tierRollRanges.find((t) => t.tier === tier)!
+          .rollRange[1],
+      };
+    }
 
     return {
       rarity,
@@ -845,11 +861,12 @@ export class RelicsHelper {
       selectedSecondaryAffixes: [],
       selectedDevotionAffix: undefined,
       selectedCorruptionAffix: undefined,
+      selectedSpecialAffix,
       primaryAffixValues: {},
       secondaryAffixValues: {},
       implicitAffixValues: {},
       corruptionAffixValues: {},
-      specialAffixValues: {},
+      specialAffixValues: specialAffixValue,
     };
   }
 

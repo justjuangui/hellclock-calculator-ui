@@ -277,6 +277,11 @@
     )
       return;
 
+    if (relicConfiguration.rarity === "Unique" && type === "special") {
+      // Unique relics cannot change special afix
+      return;
+    }
+
     if (type === "corrupted") {
       if (relicConfiguration.selectedCorruptionAffix?.id === affix.id) {
         // Remove affix
@@ -413,6 +418,19 @@
     }
     return "(0/0)";
   }
+
+  function getAffixCountForAvailableRelic(
+    rbd: RelicBaseDefinition,
+    rfc: RelicConfiguration | null,
+  ) {
+    const minPrimary = rbd.primaryAffixAmount[0];
+    const minSecondary = rbd.secondaryAffixAmount[0];
+    const maxPrimary = rfc ? rfc.maxPrimaryAffixes : rbd.primaryAffixAmount[1];
+    const maxSecondary = rfc
+      ? rfc.maxSecondaryAffixes
+      : rbd.secondaryAffixAmount[1];
+    return `Primary: ${minPrimary}-${maxPrimary}, Secondary: ${minSecondary}-${maxSecondary}`;
+  }
 </script>
 
 <!-- Header -->
@@ -510,22 +528,18 @@
       </h4>
 
       {#if availableRelicDefs.length > 0}
-        <div class="space-y-2">
+        <ul class="space-y-2 list bg-base-100 rounded-box shadow-md">
           {#each availableRelicDefs as relicDef (relicDef.id)}
-            <button
-              class="w-full flex flex-row gap-1 p-3 border rounded text-left transition-colors {selectedRelicDef?.id ===
-              relicDef.id
-                ? 'border-primary bg-primary/10'
-                : 'border-base-300 hover:border-base-400 hover:bg-base-200'}"
-              onclick={() => selectRelic(relicDef)}
-            >
-              <img
-                alt={relicDef.name}
-                src={getRelicSpriteUrl(relicDef, selectedTier)}
-                class="w-12 mb-2"
-              />
-              <div class="flex-shrink">
-                <div class="font-medium">
+            <li class="list-row">
+              <div>
+                <img
+                  alt={relicDef.name}
+                  src={getRelicSpriteUrl(relicDef, selectedTier)}
+                  class="w-12 mb-2"
+                />
+              </div>
+              <div>
+                <div>
                   {getRelicDisplayName(
                     relicDef,
                     selectedRelicDef?.id == relicDef.id
@@ -533,20 +547,55 @@
                       : null,
                   )}
                 </div>
-                <div class="text-xs opacity-70 mt-1">
-                  Primary: {relicDef.primaryAffixAmount[0]}-{relicDef
-                    .primaryAffixAmount[1]} • Secondary: {relicDef
-                    .secondaryAffixAmount[0]}-{relicDef.secondaryAffixAmount[1]}
+                <div class="text-xs uppercase font-semibold opacity-60">
+                  {getAffixCountForAvailableRelic(
+                    relicDef,
+                    selectedRelicDef?.id == relicDef.id
+                      ? relicConfiguration
+                      : null,
+                  )}
                 </div>
                 {#if relicDef.type === "UniqueRelicBaseDefinition"}
                   <div class="text-xs mt-1 text-orange-600 font-medium">
                     Unique Relic
                   </div>
+                  <div class="text-xs opacity-70">
+                    {translate(
+                      relicsHelper.getRelicAffixById(
+                        relicDef.intrinsicAffixes![0]!.id,
+                      )!.description,
+                      lang,
+                    )}
+                  </div>
                 {/if}
               </div>
-            </button>
+              <button
+                class="btn btn-square btn-ghost {selectedRelicDef?.id ===
+                relicDef.id
+                  ? 'border-primary bg-primary/10'
+                  : 'border-base-300 hover:border-base-400 hover:bg-base-200'}"
+                onclick={() => selectRelic(relicDef)}
+                aria-label={selectedRelicDef?.id === relicDef.id
+                  ? "Selected"
+                  : "Select"}
+              >
+                <svg
+                  class="size-[1.2em]"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  ><g
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    stroke-width="2"
+                    fill="none"
+                    stroke="currentColor"
+                    ><path d="M6 3L20 12 6 21 6 3z"></path></g
+                  ></svg
+                >
+              </button>
+            </li>
           {/each}
-        </div>
+        </ul>
       {:else}
         <div class="flex h-full items-center justify-center">
           <div class="text-center py-8 opacity-70">
@@ -640,6 +689,7 @@
             affixValues={relicConfiguration.specialAffixValues}
             maxAffixes={1}
             tier={selectedTier}
+            canRemove={relicConfiguration.rarity !== "Unique"}
             onToggleAffix={(affix) => toggleAffix(affix, "special")}
             onUpdateValue={(affixId, value) =>
               updateAffixValue(affixId, value, "special")}
