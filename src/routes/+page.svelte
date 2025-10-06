@@ -267,7 +267,7 @@
 </div>
 
 <dialog class="modal" open={showExplain}>
-  <div class="modal-box max-w-4xl">
+  <div class="modal-box max-w-5xl">
     <h3 class="font-bold text-lg flex items-center gap-2">
       Explain: {formatStatName(explainTitle)}
     </h3>
@@ -341,7 +341,7 @@
   </form>
 </dialog>
 <dialog class="modal" open={showGearSelector}>
-  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+  <div class="modal-box max-w-5xl p-0 h-full flex flex-col">
     <div class="grow overflow-y-hidden">
       {#if showGearSelector}
         <FilterGearSelector
@@ -374,7 +374,7 @@
   </form>
 </dialog>
 <dialog class="modal" open={showSkillSelector}>
-  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+  <div class="modal-box max-w-5xl p-0 h-full flex flex-col">
     <div class="grow overflow-y-hidden">
       {#if showSkillSelector}
         <FilterSkillSelector skills={skillSelectorItems} {onSkillSelected} />
@@ -397,7 +397,7 @@
   </form>
 </dialog>
 <dialog class="modal" open={showRelicSelector}>
-  <div class="modal-box max-w-4xl p-0 h-3/4 flex flex-col">
+  <div class="modal-box max-w-5xl p-0 h-full flex flex-col">
     <div class="flex flex-col grow overflow-y-hidden">
       {#if showRelicSelector}
         <FilterRelicSelector
