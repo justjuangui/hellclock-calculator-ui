@@ -65,7 +65,10 @@
         value,
         affix.behaviorData!.variables.variables[0].eSkillEffectVariableFormat,
       );
-    } else if (affix.type === "SkillLevelAffixDefinition") {
+    } else if (
+      affix.type === "SkillLevelAffixDefinition" ||
+      affix.type === "StatusMaxStacksAffixDefinition"
+    ) {
       return `+${value}`;
     } else if (affix.type === "RegenOnKillAffixDefinition") {
       const statDef = statsHelper.getStatByName(affix.eStatRegen!);
@@ -127,8 +130,15 @@
         getAffixDisplayValue(affix, value || 0),
         ...extraParams,
       );
-    } else if (affix.type == "RegenOnKillAffixDefinition") {
+    } else if (affix.type === "RegenOnKillAffixDefinition") {
       return `${statsHelper.getLabelForStat(affix.eStatRegen!, lang)} on Kill`;
+    } else if (affix.type === "StatusMaxStacksAffixDefinition") {
+      if (affix.description) {
+        return formatIndexed(
+          formatHCStyle(translate(affix.description, lang)),
+          getAffixDisplayValue(affix, value || 0),
+        );
+      }
     }
     return affix.name;
   }

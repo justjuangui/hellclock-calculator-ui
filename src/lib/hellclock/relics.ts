@@ -1089,9 +1089,8 @@ export class RelicsHelper {
         return `+${value} to ${skillName} Level`;
 
       case "StatusMaxStacksAffixDefinition":
-        const stackModifier = affix.stackModifier || 1;
-        const totalStacks = value * stackModifier;
-        return `+${totalStacks} Max ${affix.eStatusType || "Status"} Stacks`;
+        const stackLabel = translate(affix.description, lang) || affix.name;
+        return formatIndexed(formatHCStyle(stackLabel), `+${value}`);
       case "SkillBehaviorAffixDefinition":
         const desc = translate(affix.description, lang);
         // check if have additional params
