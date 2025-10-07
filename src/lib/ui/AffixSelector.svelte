@@ -67,6 +67,19 @@
       );
     } else if (affix.type === "SkillLevelAffixDefinition") {
       return `+${value}`;
+    } else if (affix.type === "RegenOnKillAffixDefinition") {
+      const statDef = statsHelper.getStatByName(affix.eStatRegen!);
+      if (!statDef) return String(value);
+      const clampvalue = statsHelper.getValueForStat(affix.eStatRegen!, value);
+
+      return formatStatModNumber(
+        clampvalue,
+        affix.flatRegen ? "DEFAULT" : "PERCENTAGE",
+        "Additive",
+        1,
+        1,
+        1,
+      );
     }
     return value.toFixed(3);
   }
@@ -114,6 +127,8 @@
         getAffixDisplayValue(affix, value || 0),
         ...extraParams,
       );
+    } else if (affix.type == "RegenOnKillAffixDefinition") {
+      return `${statsHelper.getLabelForStat(affix.eStatRegen!, lang)} on Kill`;
     }
     return affix.name;
   }

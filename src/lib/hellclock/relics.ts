@@ -1079,9 +1079,9 @@ export class RelicsHelper {
         return `${value} ${affixName}`;
 
       case "RegenOnKillAffixDefinition":
-        const regenType = affix.eStatRegen || "Unknown";
-        const isFlat = affix.flatRegen ? "flat" : "%";
-        return `${value}${isFlat} ${regenType} on Kill`;
+        const statsLabel = statsHelper!.getLabelForStat(affix.eStatRegen!, lang);
+        const formattedRegen = formatStatModNumber(value, affix.flatRegen ? "DEFAULT" : "PERCENTAGE", "Additive", 1, 0, 1);
+        return `${formattedRegen} ${statsLabel} on Kill`;
 
       case "SkillLevelAffixDefinition":
         const skill = skillsHelper?.getSkillById(affix.skillDefinition!.id);
