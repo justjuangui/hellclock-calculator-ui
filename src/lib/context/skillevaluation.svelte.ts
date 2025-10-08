@@ -102,6 +102,10 @@ export function provideSkillEvaluation(
       }
 
       for (const modifier of valueModByLevel) {
+        // For now Skip status
+        if (modifier.skillValueModifierKey.includes("!Status")) {
+          continue;
+        }
         const [statInfo, layer] = mapSkillModForEval(modifier).split(".");
         const statName = `skill_${skill.skill.name}_${statInfo}`;
         if (!(statName in mods)) {
