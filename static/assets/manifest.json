@@ -12,6 +12,7 @@
         "/assets/Relic Inventory Config.json",
         "/assets/Relic Affixes.json",
         "/assets/skill-calculations.json",
-        "/assets/Skills Config.json"
+        "/assets/Skills Config.json",
+        "/assets/Constellations.json"
     ]
 }
