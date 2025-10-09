@@ -23,9 +23,15 @@
   import FilterRelicSelector from "$lib/ui/FilterRelicSelector.svelte";
   import type { RelicItem } from "$lib/hellclock/relics";
   import { useRelicInventory } from "$lib/context/relicequipped.svelte";
+  import ConstellationMap from "$lib/ui/ConstellationMap.svelte";
+  import type { ConstellationsHelper } from "$lib/hellclock/constellations";
+  import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
 
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
+  const constellationsHelper = getContext<ConstellationsHelper>(
+    "constellationsHelper",
+  );
 
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
   const skillSlotsApi = useSkillEquipped();
@@ -40,21 +46,29 @@
   const rightOptions = [
     { name: "Gear", soon: false },
     { name: "Skills", soon: false },
-    { name: "Constellation", soon: true },
+    { name: "Constellation", soon: false },
     { name: "Bell", soon: true },
   ];
 
   let selectedLeft = $state(leftOptions[0]);
   let selectedRight = $state(rightOptions[0]);
+  let previousRightTab = $state(rightOptions[0]);
 
   // Check if any skills are equipped to control Skills tab availability
   const hasSkills = $derived(skillSlotsApi.activeSkills.length > 0);
+
+  // Auto-open constellation map when Constellation tab is selected
+  $effect(() => {
+    if (selectedRight.name === "Constellation") {
+      showConstellationMap = true;
+    }
+  });
 
   // Auto-switch from Skills tab to Gear tab when all skills are removed
   $effect(() => {
     if (selectedRight.name === "Skills" && !hasSkills) {
       // Find Gear tab and switch to it
-      const gearTab = rightOptions.find(opt => opt.name === "Gear");
+      const gearTab = rightOptions.find((opt) => opt.name === "Gear");
       if (gearTab) {
         selectedRight = gearTab;
       }
@@ -66,8 +80,7 @@
   let explainError = $state<string | null>(null);
   let explainTitle = $state<string>("");
   let explainData = $state<ExplainPayload | null>(null);
-  let activeExplainTab = $state<'phases' | 'debug'>('phases');
-
+  let activeExplainTab = $state<"phases" | "debug">("phases");
 
   let showGearSelector = $state(false);
   let gearSelectorIsBlessed = $state(true);
@@ -81,8 +94,13 @@
 
   let showRelicSelector = $state(false);
   let relicSelectorPosition = $state<{ x: number; y: number }>({ x: 0, y: 0 });
-  let relicSelectorAvailableSpace = $state<{ width: number; height: number }>({ width: 0, height: 0 });
+  let relicSelectorAvailableSpace = $state<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
   let relicSelectorTitle = $state<string>("Select Relic");
+
+  let showConstellationMap = $state(false);
 
   // The doEvaluate function has been replaced by the EvaluationManager context
   // All evaluation is now handled automatically when equipment changes
@@ -90,10 +108,10 @@
   // Helper function to format stat names for display
   function formatStatName(stat: string): string {
     return stat
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2'); // Add space before capital letters
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+      .replace(/([a-z])([A-Z])/g, "$1 $2"); // Add space before capital letters
   }
 
   async function openExplain(stat: string) {
@@ -101,7 +119,7 @@
     explainLoading = true;
     explainError = null;
     explainData = null;
-    activeExplainTab = 'phases';
+    activeExplainTab = "phases";
     showExplain = true;
 
     try {
@@ -167,7 +185,11 @@
     // Evaluation will happen automatically via EvaluationManager context
   }
 
-  function onRelicSlotClicked(x: number, y: number, availableSpace: { width: number; height: number }) {
+  function onRelicSlotClicked(
+    x: number,
+    y: number,
+    availableSpace: { width: number; height: number },
+  ) {
     relicSelectorPosition = { x, y };
     relicSelectorAvailableSpace = availableSpace;
     relicSelectorTitle = `Select Relic (${availableSpace.width}×${availableSpace.height} space)`;
@@ -175,11 +197,14 @@
   }
 
   function onRelicSelected(relic: RelicItem) {
-    relicInventoryApi.placeRelic(relic, relicSelectorPosition.x, relicSelectorPosition.y);
+    relicInventoryApi.placeRelic(
+      relic,
+      relicSelectorPosition.x,
+      relicSelectorPosition.y,
+    );
     showRelicSelector = false;
     // Evaluation will happen automatically via EvaluationManager context
   }
-
 </script>
 
 <div class="grid gap-1 lg:grid-cols-12">
@@ -215,12 +240,23 @@
             class={`indicator tab ${selectedRight.name === opt.name ? "tab-active" : ""} ${opt.soon || (opt.name === "Skills" && !hasSkills) ? "tab-disabled" : ""}`}
             onclick={() => {
               if (!opt.soon && !(opt.name === "Skills" && !hasSkills)) {
+                // Track previous tab before switching (except when switching to Constellation)
+                if (
+                  opt.name !== "Constellation" &&
+                  selectedRight.name !== "Constellation"
+                ) {
+                  previousRightTab = selectedRight;
+                }
                 selectedRight = opt;
               }
             }}
             aria-selected={selectedRight.name === opt.name}
             aria-disabled={opt.soon || (opt.name === "Skills" && !hasSkills)}
-            title={opt.soon ? "Coming soon" : (opt.name === "Skills" && !hasSkills) ? "No skills equipped" : opt.name}
+            title={opt.soon
+              ? "Coming soon"
+              : opt.name === "Skills" && !hasSkills
+                ? "No skills equipped"
+                : opt.name}
           >
             {opt.name}
             {#if opt.soon}
@@ -288,7 +324,9 @@
         <div class="mb-4 p-3 bg-base-200 rounded-lg">
           <h4 class="font-semibold text-sm mb-2">Summary</h4>
           <p class="text-lg font-mono">Final Value: {explainData.value}</p>
-          <p class="text-sm text-base-content/70 mt-1">Calculation: {formatStatName(explainTitle)} stat evaluation</p>
+          <p class="text-sm text-base-content/70 mt-1">
+            Calculation: {formatStatName(explainTitle)} stat evaluation
+          </p>
         </div>
 
         <!-- Tabs for Human vs Debug view -->
@@ -296,28 +334,28 @@
           <button
             role="tab"
             class="tab {activeExplainTab === 'phases' ? 'tab-active' : ''}"
-            onclick={() => activeExplainTab = 'phases'}
+            onclick={() => (activeExplainTab = "phases")}
           >
             Phase View
           </button>
           <button
             role="tab"
             class="tab {activeExplainTab === 'debug' ? 'tab-active' : ''}"
-            onclick={() => activeExplainTab = 'debug'}
+            onclick={() => (activeExplainTab = "debug")}
           >
             Debug Details
           </button>
         </div>
 
         <!-- Phase View -->
-        {#if activeExplainTab === 'phases'}
+        {#if activeExplainTab === "phases"}
           <div class="overflow-y-auto max-h-96">
             <PhaseDebugView node={explainData.debug} />
           </div>
         {/if}
 
         <!-- Debug View -->
-        {#if activeExplainTab === 'debug'}
+        {#if activeExplainTab === "debug"}
           <div class="overflow-y-auto max-h-96">
             <XNodeTree node={explainData.debug} />
           </div>
@@ -403,7 +441,7 @@
         <FilterRelicSelector
           title={relicSelectorTitle}
           availableSpace={relicSelectorAvailableSpace}
-          onRelicSelected={onRelicSelected}
+          {onRelicSelected}
         />
       {/if}
     </div>
@@ -423,3 +461,19 @@
     >
   </form>
 </dialog>
+
+<!-- Constellation Map Full Screen -->
+{#if showConstellationMap}
+  <ConstellationMap
+    onClose={() => {
+      showConstellationMap = false;
+      // Return to previous tab when closing constellation map
+      if (selectedRight.name === "Constellation") {
+        selectedRight =
+          previousRightTab.name !== "Constellation"
+            ? previousRightTab
+            : rightOptions[0];
+      }
+    }}
+  />
+{/if}

@@ -25,12 +25,18 @@
     type RelicInventoryConfig,
     type RelicAffixesDB,
   } from "$lib/hellclock/relics";
+  import {
+    ConstellationsHelper,
+    type ConstellationsConfig,
+  } from "$lib/hellclock/constellations";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
   import { provideSkillEvaluation } from "$lib/context/skillevaluation.svelte";
   import { provideRelicEvaluation } from "$lib/context/relicevaluation.svelte";
   import { provideRelicInventory } from "$lib/context/relicequipped.svelte";
+  import { provideConstellationEquipped } from "$lib/context/constellationequipped.svelte";
+  import { provideConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
@@ -48,6 +54,12 @@
   > | null = null;
   let relicInventoryContext: ReturnType<typeof provideRelicInventory> | null =
     null;
+  let constellationEquippedContext: ReturnType<
+    typeof provideConstellationEquipped
+  > | null = null;
+  let constellationEvaluationContext: ReturnType<
+    typeof provideConstellationEvaluation
+  > | null = null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
@@ -74,6 +86,20 @@
       relicEvaluationContext = provideRelicEvaluation(
         relicsHelper,
         statsHelper,
+        "en",
+      );
+    }
+
+    if (constellationsHelper && !constellationEquippedContext) {
+      constellationEquippedContext = provideConstellationEquipped(
+        constellationsHelper,
+        100, // Initial devotion points
+      );
+    }
+
+    if (constellationsHelper && !constellationEvaluationContext) {
+      constellationEvaluationContext = provideConstellationEvaluation(
+        constellationsHelper,
         "en",
       );
     }
@@ -107,6 +133,7 @@
   let gearsHelper = $state<GearsHelper | null>(null);
   let skillsHelper = $state<SkillsHelper | null>(null);
   let relicsHelper = $state<RelicsHelper | null>(null);
+  let constellationsHelper = $state<ConstellationsHelper | null>(null);
 
   $effect(() => {
     setContext("gamepack", pack);
@@ -115,13 +142,16 @@
     setContext("gearsHelper", gearsHelper);
     setContext("skillsHelper", skillsHelper);
     setContext("relicsHelper", relicsHelper);
+    setContext("constellationsHelper", constellationsHelper);
+    setContext("lang", "en");
     if (
       statsHelper &&
       engine &&
       pack &&
       gearsHelper &&
       skillsHelper &&
-      relicsHelper
+      relicsHelper &&
+      constellationsHelper
     ) {
       ready = true;
     }
@@ -173,6 +203,11 @@
         pack["Relics"] as RelicsDB,
         pack["Relic Inventory Config"] as RelicInventoryConfig,
         pack["Relic Affixes"] as RelicAffixesDB,
+      );
+
+      label = "Loading ConstellationsHelper";
+      constellationsHelper = new ConstellationsHelper(
+        pack["Constellations"] as ConstellationsConfig,
       );
 
       label = "Ready";

@@ -17,6 +17,22 @@ export function parseRGBA01ToCss(rgbaStr: string | undefined): string {
   return `rgba(${r},${g},${b},${a ?? 1})`;
 }
 
+export function parseRGBA01ToPixiHex(rgbaStr: string | undefined): { color: number; alpha: number } {
+  if (!rgbaStr) return { color: 0x000000, alpha: 1 };
+  const nums = rgbaStr
+    .replace(/rgba?\s*\(|\)/gi, "")
+    .split(",")
+    .map((s) => parseFloat(s.trim()));
+
+  let [r, g, b, a] = nums;
+  r = Math.round((r ?? 0) * 255);
+  g = Math.round((g ?? 0) * 255);
+  b = Math.round((b ?? 0) * 255);
+  const color = (r << 16) | (g << 8) | b;
+  const alpha = a ?? 1;
+  return { color, alpha };
+}
+
 export function prettySlot(s: string): string {
   return s
     .replace(/_/g, " ")
@@ -87,5 +103,5 @@ export interface TooltipLine {
   borderColor?: string;
   bgColor?: string;
   icon?: string;
-  type: "header" | "info" | "divider" | "affix";
+  type: "header" | "info" | "divider" | "affix" | "affixCol";
 }

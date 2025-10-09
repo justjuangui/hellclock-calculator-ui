@@ -924,7 +924,7 @@ export class RelicsHelper {
           affixIcons.defaultIcon,
           skillsHelper!,
         ),
-        type: "affix",
+        type: "affixCol",
       });
       lines.push({ text: "", type: "divider" });
     }

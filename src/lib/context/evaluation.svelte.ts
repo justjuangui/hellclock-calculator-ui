@@ -7,6 +7,7 @@ import { getContext, setContext } from "svelte";
 import { useGearEvaluation } from "$lib/context/gearevaluation.svelte";
 import { useSkillEvaluation } from "$lib/context/skillevaluation.svelte";
 import { useRelicEvaluation } from "$lib/context/relicevaluation.svelte";
+import { useConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
 
 // Unified mod source type for evaluation
 export type UnifiedModSource = {
@@ -76,11 +77,13 @@ export function provideEvaluationManager(
   let lastGearHash = $state<string>("");
   let lastSkillHash = $state<string>("");
   let lastRelicHash = $state<string>("");
+  let lastConstellationHash = $state<string>("");
 
   // Get evaluation APIs (these must be called after contexts are initialized)
   let gearEvaluationAPI: ReturnType<typeof useGearEvaluation> | null = null;
   let skillEvaluationAPI: ReturnType<typeof useSkillEvaluation> | null = null;
   let relicEvaluationAPI: ReturnType<typeof useRelicEvaluation> | null = null;
+  let constellationEvaluationAPI: ReturnType<typeof useConstellationEvaluation> | null = null;
 
   // Initialize APIs after contexts are available
   $effect(() => {
@@ -88,6 +91,7 @@ export function provideEvaluationManager(
       gearEvaluationAPI = useGearEvaluation();
       skillEvaluationAPI = useSkillEvaluation();
       relicEvaluationAPI = useRelicEvaluation();
+      constellationEvaluationAPI = useConstellationEvaluation();
     } catch {
       // APIs not available yet
     }
@@ -108,6 +112,7 @@ export function provideEvaluationManager(
       gearEvaluationAPI &&
       skillEvaluationAPI &&
       relicEvaluationAPI &&
+      constellationEvaluationAPI &&
       actor &&
       sheet &&
       !statEvaluation.result &&
@@ -118,24 +123,27 @@ export function provideEvaluationManager(
     }
   });
 
-  // Reactive evaluation when gear, skills, or relics change
+  // Reactive evaluation when gear, skills, relics, or constellations change
   $effect(() => {
-    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI)
+    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI || !constellationEvaluationAPI)
       return;
 
     const currentGearHash = gearEvaluationAPI.gearHash;
     const currentSkillHash = skillEvaluationAPI.skillHash;
     const currentRelicHash = relicEvaluationAPI.relicHash;
+    const currentConstellationHash = constellationEvaluationAPI.constellationHash;
 
     // Check if equipment has changed
     if (
       currentGearHash !== lastGearHash ||
       currentSkillHash !== lastSkillHash ||
-      currentRelicHash !== lastRelicHash
+      currentRelicHash !== lastRelicHash ||
+      currentConstellationHash !== lastConstellationHash
     ) {
       lastGearHash = currentGearHash;
       lastSkillHash = currentSkillHash;
       lastRelicHash = currentRelicHash;
+      lastConstellationHash = currentConstellationHash;
 
       // Invalidate actor cache and trigger evaluation
       actorBuilt = false;
@@ -169,16 +177,17 @@ export function provideEvaluationManager(
       throw new Error("Engine and sheet are required");
     }
 
-    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI) {
-      throw new Error("Gear, Skill, and Relic evaluation APIs are required");
+    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI || !constellationEvaluationAPI) {
+      throw new Error("Gear, Skill, Relic, and Constellation evaluation APIs are required");
     }
 
     await buildActor();
 
-    // Collect modifications from gear, skills, and relics
+    // Collect modifications from gear, skills, relics, and constellations
     const gearMods = gearEvaluationAPI.getGearMods();
     const skillMods = skillEvaluationAPI.getSkillMods();
     const relicMods = relicEvaluationAPI.getRelicMods();
+    const constellationMods = constellationEvaluationAPI.getConstellationMods();
 
     // Merge all modifications into unified collection
     const allMods: UnifiedModCollection = {};
@@ -232,6 +241,30 @@ export function provideEvaluationManager(
           id: source.meta.id,
           slot: source.meta.position, // Use position as slot for relics
           affixType: source.meta.affixType,
+          value: source.meta.value,
+        },
+      }));
+
+      if (statName in allMods) {
+        allMods[statName] = [...allMods[statName], ...unifiedSources];
+      } else {
+        allMods[statName] = unifiedSources;
+      }
+    });
+
+    // Add constellation mods, merging with existing gear, skill, and relic mods
+    Object.entries(constellationMods).forEach(([statName, sources]) => {
+      const unifiedSources = sources.map((source) => ({
+        source: source.source,
+        amount: source.amount,
+        layer: source.layer,
+        meta: {
+          type: source.meta.type,
+          id: source.meta.constellationId,
+          slot: source.meta.nodeId,
+          constellationId: source.meta.constellationId,
+          nodeId: source.meta.nodeId,
+          level: source.meta.level,
           value: source.meta.value,
         },
       }));

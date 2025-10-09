@@ -37,6 +37,8 @@
 		"wrangler": "^4.31.0"
 	},
 	"dependencies": {
-		"daisyui": "^5.0.50"
+		"daisyui": "^5.0.50",
+		"pixi-viewport": "^6.0.3",
+		"pixi.js": "^8.14.0"
 	}
 }
