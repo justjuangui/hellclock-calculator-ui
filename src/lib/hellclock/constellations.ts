@@ -1,6 +1,10 @@
 import { translate, type LangText } from "$lib/hellclock/lang";
 import type { StatModifierType, StatsHelper } from "$lib/hellclock/stats";
-import { parseRGBA01ToCss, type TooltipLine } from "$lib/hellclock/utils";
+import {
+  formatIndexed,
+  parseRGBA01ToCss,
+  type TooltipLine,
+} from "$lib/hellclock/utils";
 import { formatStatModNumber } from "./formats";
 import type { SkillsHelper } from "./skills";
 
@@ -476,6 +480,7 @@ export class ConstellationsHelper {
     const devotionConfig = this.getDevotionConfigByCategory(
       constellation.eDevotionCategory as any,
     );
+
     // First constellation Name
     const constellationName = translate(constellation.nameKey, lang);
     lines.push({
@@ -537,6 +542,19 @@ export class ConstellationsHelper {
             );
             affixText = `${formattedValue} ${statLabel}`;
           }
+        } else if (affix.type === "DevotionIncrementNodeAffixDefinition") {
+          const devotionAffix = affix as DevotionIncrementNodeAffixDefinition;
+          const devotionConfig = this.getDevotionConfigByCategory(
+            devotionAffix.eDevotionCategory as any,
+          );
+          const valueText = `+${devotionAffix.valuePerLevel * (allocatedLevel === 0 ? 1 : allocatedLevel)}`;
+          affixText = formatIndexed(
+            translate(devotionAffix.description, lang),
+            devotionConfig
+              ? `${translate(devotionConfig.nameKey, lang)} Devotion`
+              : "",
+            valueText,
+          );
         } else {
           affixText = affix.name;
         }
@@ -545,28 +563,6 @@ export class ConstellationsHelper {
           text: affixText,
           type: "affix",
         });
-      }
-    }
-
-    // Requirements section
-    if (node.edges.length > 0 && !node.isRoot) {
-      lines.push({ text: "", type: "divider" });
-      lines.push({
-        text: "Requirements:",
-        type: "info",
-      });
-
-      for (const edge of node.edges) {
-        const requiredNode = constellation.nodes.find(
-          (n) => n.name === edge.requiredNode.name,
-        );
-        if (requiredNode) {
-          const reqNodeName = translate(requiredNode.nameLocalizationKey);
-          lines.push({
-            text: `${reqNodeName}: ${edge.pointsToUnlock} ${edge.pointsToUnlock === 1 ? "point" : "points"}`,
-            type: "info",
-          });
-        }
       }
     }
 
