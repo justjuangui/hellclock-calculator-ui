@@ -6,7 +6,9 @@
   import { parseRGBA01ToCss, spriteUrl } from "$lib/hellclock/utils";
 
   const constellationEquippedApi = useConstellationEquipped();
-  const constellationsHelper = getContext<ConstellationsHelper>("constellationsHelper");
+  const constellationsHelper = getContext<ConstellationsHelper>(
+    "constellationsHelper",
+  );
   const lang = getContext<string>("lang") || "en";
 
   let isExpanded = $state(false);
@@ -31,7 +33,9 @@
         iconUrl: spriteUrl(config.icon),
         color: parseRGBA01ToCss(config.nodeColor),
         iconColor: parseRGBA01ToCss(config.iconColor),
-        points: 0, // TODO: Calculate actual points from allocated nodes
+        points: constellationEquippedApi.getCurrentDevotionCategoryPoints(
+          config.eDevotionCategory,
+        ),
       }));
   });
 
@@ -67,12 +71,20 @@
           class:justify-center={!isExpanded}
         >
           {#if path.iconUrl}
-            <img
-              src={path.iconUrl}
-              alt={path.name}
-              class="w-8 h-8"
-              style="filter: drop-shadow(0 0 4px {path.iconColor});"
-            />
+            <div class="indicator">
+              {#if !isExpanded}
+                <span
+                  class="indicator-item badge badge-soft badge-accent badge-sm"
+                  >{path.points}</span
+                >
+              {/if}
+              <img
+                src={path.iconUrl}
+                alt={path.name}
+                class="w-8 h-8"
+                style="filter: drop-shadow(0 0 4px {path.iconColor});"
+              />
+            </div>
           {:else}
             <div
               class="w-8 h-8 rounded-full"

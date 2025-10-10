@@ -27,7 +27,7 @@
     <!-- Points Display -->
     <div class="flex items-center gap-2 px-3 py-1 bg-base-200/50 rounded">
       <span class="text-sm font-semibold">Points:</span>
-      <span class="text-lg font-bold">{availablePoints}</span>
+      <span class="text-lg font-bold">{totalDevotionSpent}/{availablePoints}</span>
       <span class="text-yellow-500">★</span>
     </div>
 

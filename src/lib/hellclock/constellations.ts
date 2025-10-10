@@ -13,7 +13,8 @@ export type NodeAffixType =
   | "UnlockSkillNodeAffixDefinition"
   | "SkillModifierNodeAffixDefinition"
   | "AttributeNodeAffixDefinition"
-  | "StatusNodeAffixDefinition";
+  | "StatusNodeAffixDefinition"
+  | "DevotionIncrementNodeAffixDefinition";
 
 export interface NodeAffixBase {
   name: string;
@@ -62,12 +63,19 @@ export interface StatusNodeAffixDefinition extends NodeAffixBase {
   duration: number;
 }
 
+export interface DevotionIncrementNodeAffixDefinition extends NodeAffixBase {
+  type: "DevotionIncrementNodeAffixDefinition";
+  valuePerLevel: number;
+  eDevotionCategory: string; // e.g., "Red", "Green", "Blue"
+}
+
 export type NodeAffix =
   | StatModifierNodeAffixDefinition
   | UnlockSkillNodeAffixDefinition
   | SkillModifierNodeAffixDefinition
   | AttributeNodeAffixDefinition
-  | StatusNodeAffixDefinition;
+  | StatusNodeAffixDefinition
+  | DevotionIncrementNodeAffixDefinition;
 
 // Edge definition for node dependencies
 export interface SkillTreeNodeEdgeData {
@@ -93,12 +101,20 @@ export interface SkillTreeNodeDefinition {
   Position: NodePosition; // [x, y] coordinates
 }
 
+export interface ConditionConfig {
+  type: "ConditionConfig";
+  targetValue: string;
+  negate: boolean;
+  condition: string;
+  required_devotion: string;
+}
+
 // Constellation definition
 export interface ConstellationSkillTreeDefinition {
   name: string;
   id: number;
   type: "ConstellationSkillTreeDefinition";
-  conditions: any[]; // Unlock conditions (can be expanded later)
+  conditions: ConditionConfig[]; // Unlock conditions (can be expanded later)
   masteredDevotionGranted: Record<string, any>; // Mastery bonuses
   nameKey: LangText[];
   illustrationLine: string; // Background image for constellation
@@ -223,6 +239,81 @@ export class ConstellationsHelper {
     );
   }
 
+  // Check if a node has a valid path to an allocated root node
+  hasPathToAllocatedRoot(
+    constellationId: number,
+    nodeId: string,
+    allocatedNodes: AllocatedNodesMap,
+    visited: Set<string> = new Set(),
+  ): boolean {
+    // Prevent infinite loops
+    if (visited.has(nodeId)) return false;
+    visited.add(nodeId);
+
+    const node = this.getNodeById(constellationId, nodeId);
+    if (!node) return false;
+
+    // Base case: if this is a root node, path is valid
+    if (node.isRoot) return true;
+
+    // Case 1: Node has edges (explicit dependencies)
+    if (node.edges.length > 0) {
+      // Check if ANY edge is satisfied and leads to root
+      for (const edge of node.edges) {
+        const requiredNodeId = edge.requiredNode.name;
+        const allocatedKey = `${constellationId}:${requiredNodeId}`;
+        const allocatedNode = allocatedNodes.get(allocatedKey);
+
+        // Edge is satisfied if allocated with sufficient level
+        if (allocatedNode && allocatedNode.level >= edge.pointsToUnlock) {
+          // Recursively check if parent has path to root
+          if (
+            this.hasPathToAllocatedRoot(
+              constellationId,
+              requiredNodeId,
+              allocatedNodes,
+              visited,
+            )
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // Case 2: Node has NO edges - find parent nodes via reverse lookup
+    const constellation = this.getConstellationById(constellationId);
+    if (!constellation) return false;
+
+    // Find nodes that have this node as a required dependency
+    for (const potentialParent of constellation.nodes) {
+      const hasThisAsRequirement = potentialParent.edges.some(
+        (edge) => edge.requiredNode.name === nodeId,
+      );
+
+      if (hasThisAsRequirement) {
+        const parentKey = `${constellationId}:${potentialParent.name}`;
+        const parentAllocated = allocatedNodes.get(parentKey);
+
+        if (parentAllocated) {
+          // Parent is allocated, recursively check if it has path to root
+          if (
+            this.hasPathToAllocatedRoot(
+              constellationId,
+              potentialParent.name,
+              allocatedNodes,
+              visited,
+            )
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   // Check if a node's dependencies are satisfied
   canAllocateNode(
     constellationId: number,
@@ -239,28 +330,97 @@ export class ConstellationsHelper {
       return { canAllocate: true };
     }
 
-    // Check all edge dependencies
-    for (const edge of node.edges) {
-      const requiredNodeId = edge.requiredNode.name;
-      const allocatedKey = `${constellationId}:${requiredNodeId}`;
-      const allocatedNode = allocatedNodes.get(allocatedKey);
+    if (!this.hasPathToAllocatedRoot(constellationId, nodeId, allocatedNodes)) {
+      return { canAllocate: false, reason: "No path to allocated root node" };
+    }
+    return { canAllocate: true };
+  }
 
-      if (!allocatedNode) {
-        return {
-          canAllocate: false,
-          reason: `Required node ${requiredNodeId} not allocated`,
-        };
-      }
+  // Get all nodes that should be cascade-deallocated due to constellation becoming locked
+  getCascadeDeallocations(
+    allocatedNodes: AllocatedNodesMap,
+    devotionCategoryPoints: Map<string, number>,
+  ): Set<string> {
+    const nodesToDeallocate = new Set<string>();
 
-      if (allocatedNode.level < edge.pointsToUnlock) {
-        return {
-          canAllocate: false,
-          reason: `Required node needs ${edge.pointsToUnlock} points, has ${allocatedNode.level}`,
-        };
+    // Check each allocated constellation
+    const constellationIds = new Set(
+      Array.from(allocatedNodes.values()).map((n) => n.constellationId),
+    );
+
+    for (const constellationId of constellationIds) {
+      const constellation = this.getConstellationById(constellationId);
+      if (!constellation) continue;
+
+      // Check if constellation is still unlocked
+      if (constellation.conditions && constellation.conditions.length > 0) {
+        const isUnlocked = constellation.conditions.every((condition) => {
+          const currentPoints =
+            devotionCategoryPoints.get(condition.required_devotion) || 0;
+          return currentPoints >= parseInt(condition.targetValue);
+        });
+
+        // If constellation is now locked, mark all its nodes for deallocation
+        if (!isUnlocked) {
+          for (const [key, allocated] of allocatedNodes.entries()) {
+            if (allocated.constellationId === constellationId) {
+              nodesToDeallocate.add(key);
+            }
+          }
+        }
       }
     }
 
-    return { canAllocate: true };
+    return nodesToDeallocate;
+  }
+
+  // Check if a node can be deallocated without orphaning other nodes
+  canDeallocateNode(
+    constellationId: number,
+    nodeId: string,
+    allocatedNodes: AllocatedNodesMap,
+  ): { canDeallocate: boolean; orphanedNodes?: string[] } {
+    const node = this.getNodeById(constellationId, nodeId);
+    if (!node) {
+      return { canDeallocate: false, orphanedNodes: [] };
+    }
+
+    // Create simulated allocatedNodes without this node
+    const simulatedNodes = new Map(allocatedNodes);
+    const key = `${constellationId}:${nodeId}`;
+    simulatedNodes.delete(key);
+
+    // Find all nodes in this constellation that would remain allocated
+    const orphanedNodes: string[] = [];
+
+    for (const [allocKey, allocated] of simulatedNodes.entries()) {
+      // Only check nodes in the same constellation
+      if (allocated.constellationId !== constellationId) continue;
+
+      // Skip root nodes (always valid)
+      const allocNode = this.getNodeById(
+        allocated.constellationId,
+        allocated.nodeId,
+      );
+      if (allocNode?.isRoot) continue;
+
+      // Check if this node would still have path to root
+      if (
+        !this.hasPathToAllocatedRoot(
+          allocated.constellationId,
+          allocated.nodeId,
+          simulatedNodes,
+        )
+      ) {
+        orphanedNodes.push(allocated.nodeId);
+      }
+    }
+
+    if (orphanedNodes.length > 0) {
+      return { canDeallocate: false, orphanedNodes };
+    }
+
+    return { canDeallocate: true };
   }
 
   // Get total devotion points spent in a constellation
@@ -269,39 +429,12 @@ export class ConstellationsHelper {
     allocatedNodes: AllocatedNodesMap,
   ): number {
     let total = 0;
-    for (const [key, allocated] of allocatedNodes.entries()) {
+    for (const [_, allocated] of allocatedNodes.entries()) {
       if (allocated.constellationId === constellationId) {
         total += allocated.level;
       }
     }
     return total;
-  }
-
-  // Get all stat modifiers from allocated nodes
-  getStatModifiersFromAllocatedNodes(
-    allocatedNodes: AllocatedNodesMap,
-  ): StatModifierNodeAffixDefinition[] {
-    const modifiers: StatModifierNodeAffixDefinition[] = [];
-
-    for (const [key, allocated] of allocatedNodes.entries()) {
-      if (allocated.level === 0) continue;
-
-      const node = this.getNodeById(
-        allocated.constellationId,
-        allocated.nodeId,
-      );
-      if (!node) continue;
-
-      // Collect stat modifier affixes
-      for (const affix of node.affixes) {
-        if (affix.type === "StatModifierNodeAffixDefinition") {
-          // Apply level multiplier if needed (some nodes may scale with level)
-          modifiers.push(affix);
-        }
-      }
-    }
-
-    return modifiers;
   }
 
   // Get important nodes (keystones, notable passives, etc.)
@@ -360,7 +493,7 @@ export class ConstellationsHelper {
       text: nodeName,
       type: node.importantNode ? "header" : "info",
       color: node.importantNode ? "#fbbf24" : undefined, // Yellow for important nodes
-      icon: node.sprite
+      icon: node.sprite,
     });
 
     // Level info if applicable

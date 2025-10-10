@@ -18,11 +18,10 @@
     DevotionConfig,
   } from "$lib/hellclock/constellations";
   import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
-  import { translate } from "$lib/hellclock/lang";
   import { spriteUrl, parseRGBA01ToPixiHex } from "$lib/hellclock/utils";
   import GameTooltip from "$lib/ui/GameTooltip.svelte";
-    import type { StatsHelper } from "$lib/hellclock/stats";
-    import type { SkillsHelper } from "$lib/hellclock/skills";
+  import type { StatsHelper } from "$lib/hellclock/stats";
+  import type { SkillsHelper } from "$lib/hellclock/skills";
 
   let {
     onNodeClick,
@@ -122,10 +121,8 @@
 
   async function drawAllConstellations(container: Container) {
     const constellations = constellationsHelper.getAllConstellations();
-    // Preload all assets first
-    const textures = await Assets.load(
-      constellations.map((c) => spriteUrl(c.definition.illustrationLine)),
-    );
+    // Assets are already preloaded by AssetPreloader in +layout.svelte
+    // Just draw constellations using cached assets
     for (const constellationDetails of constellations) {
       await drawConstellation(container, constellationDetails);
     }
@@ -196,22 +193,37 @@
     container.addChild(constellationContainer);
     constellationContainer.position.set(pos[0], pos[1]);
 
-    const texture = Assets.get(
-      spriteUrl(constellationDetails.definition.illustrationLine)!,
-    );
+    const constellationIsUnlocked =
+      constellationEquippedApi.constellationUnlocked(constellation.id);
 
-    // Apply devotion-specific colors to sprite
-    const spriteColors = parseRGBA01ToPixiHex(config.illustrationBaseColor);
-    const sprite = Sprite.from(texture);
-    sprite.tint = spriteColors.color;
-    sprite.alpha = spriteColors.alpha;
-    constellationContainer.addChild(sprite);
-    fitSprite(
-      sprite,
-      constellationDetails.width * constellationDetails.nodeViewScale[0],
-      constellationDetails.height * constellationDetails.nodeViewScale[1],
-      "contain",
-    );
+    if (constellationIsUnlocked) {
+      const currentDevotionPoints =
+        constellationEquippedApi.getTotalDevotionSpent(constellation.id);
+      const totalNodes = constellation.nodes.length;
+
+      const texture = Assets.get(
+        spriteUrl(constellationDetails.definition.illustrationLine)!,
+      );
+
+      const sprite = Sprite.from(texture);
+      sprite.alpha = 0.6;
+
+      if (currentDevotionPoints === totalNodes) {
+        const spriteColors = parseRGBA01ToPixiHex(
+          config.illustrationMasteredColor,
+        );
+        sprite.tint = spriteColors.color;
+        sprite.alpha = spriteColors.alpha;
+      }
+
+      constellationContainer.addChild(sprite);
+      fitSprite(
+        sprite,
+        constellationDetails.width * constellationDetails.nodeViewScale[0],
+        constellationDetails.height * constellationDetails.nodeViewScale[1],
+        "contain",
+      );
+    }
 
     // Draw edges first (behind nodes)
     drawEdges(
@@ -331,9 +343,9 @@
       ).canAllocate;
 
       // Determine node color using devotion config
-      let fillColor = nodeColor.color;
-      let glowColor = nodeColor.color;
-      let strokeColor = nodeColor.color;
+      let fillColor = 0x1a1a2e;
+      let glowColor = 0x44444;
+      let strokeColor = 0x888888;
       let strokeWidth = 2;
       let glowAlpha = 0.2;
 
@@ -341,18 +353,13 @@
         // Selected nodes: use nodeColor fill with appliedConnectionColor border
         fillColor = nodeColor.color;
         glowColor = appliedColor.color;
-        strokeColor = appliedColor.color;
+        // strokeColor = appliedColor.color;
         strokeWidth = 3;
-        glowAlpha = 0.4;
+        glowAlpha = 0.8;
       } else if (canAllocate) {
-        fillColor = nodeColor.color;
         glowColor = nodeColor.color;
         strokeColor = nodeColor.color;
-      } else {
-        // Unallocated and not available
-        fillColor = 0x1a1a2e;
-        glowColor = 0x444444;
-        strokeColor = 0x888888;
+        glowAlpha = 0.4;
       }
 
       // Outer glow
@@ -368,23 +375,9 @@
       circle.stroke({
         width: strokeWidth,
         color: strokeColor,
-        alpha: 0.8,
+        alpha: 1,
       });
       nodeContainer.addChild(circle);
-
-      // Level indicator
-      if (isAllocated && node.maxLevel > 1) {
-        const levelText = new Text({
-          text: `${level}`,
-          style: new TextStyle({
-            fontSize: 12,
-            fill: 0xffffff,
-            fontWeight: "bold",
-          }),
-        });
-        levelText.anchor.set(0.5);
-        nodeContainer.addChild(levelText);
-      }
 
       // Make interactive
       nodeContainer.eventMode = "static";
@@ -493,7 +486,7 @@
 
   onDestroy(() => {
     if (app) {
-      app.destroy(true, { children: true, texture: true });
+      app.destroy(true, { children: true });
       app = null;
     }
   });
@@ -523,9 +516,7 @@
     style="left: {hoveredNode.screenX + 20}px; top: {hoveredNode.screenY +
       20}px;"
   >
-    <div
-      class="bg-base-100 border border-base-300 rounded-lg shadow-xl p-3"
-    >
+    <div class="bg-base-100 border border-base-300 rounded-lg shadow-xl p-3">
       <GameTooltip lines={tooltipLines} />
     </div>
   </div>

@@ -37,6 +37,7 @@
   import { provideRelicInventory } from "$lib/context/relicequipped.svelte";
   import { provideConstellationEquipped } from "$lib/context/constellationequipped.svelte";
   import { provideConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
+  import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
   providedEquipped(ESlotsType.TrinkedGear);
@@ -134,6 +135,7 @@
   let skillsHelper = $state<SkillsHelper | null>(null);
   let relicsHelper = $state<RelicsHelper | null>(null);
   let constellationsHelper = $state<ConstellationsHelper | null>(null);
+  let assetPreloader = $state<AssetPreloader | null>(null);
 
   $effect(() => {
     setContext("gamepack", pack);
@@ -143,6 +145,7 @@
     setContext("skillsHelper", skillsHelper);
     setContext("relicsHelper", relicsHelper);
     setContext("constellationsHelper", constellationsHelper);
+    setContext("assetPreloader", assetPreloader);
     setContext("lang", "en");
     if (
       statsHelper &&
@@ -151,7 +154,8 @@
       gearsHelper &&
       skillsHelper &&
       relicsHelper &&
-      constellationsHelper
+      constellationsHelper &&
+      assetPreloader
     ) {
       ready = true;
     }
@@ -209,6 +213,13 @@
       constellationsHelper = new ConstellationsHelper(
         pack["Constellations"] as ConstellationsConfig,
       );
+
+      label = "Preloading PixiJS assets";
+      assetPreloader = new AssetPreloader();
+      await assetPreloader.init(constellationsHelper, (pct, lbl) => {
+        progress = 90 + (pct * 0.1); // 90-100%
+        label = lbl;
+      });
 
       label = "Ready";
       progress = 100;

@@ -3,19 +3,13 @@ import type {
   ConstellationsHelper,
   AllocatedNodesMap,
   AllocatedNode,
-  SkillTreeNodeDefinition,
 } from "$lib/hellclock/constellations";
 import { SvelteMap } from "svelte/reactivity";
 
 export type ConstellationEquippedAPI = {
   // Current state
   allocatedNodes: AllocatedNodesMap;
-  selectedConstellationId: number | null;
   availableDevotionPoints: number;
-
-  // Constellation selection
-  selectConstellation: (constellationId: number) => void;
-  clearConstellationSelection: () => void;
 
   // Node allocation
   allocateNode: (
@@ -42,8 +36,12 @@ export type ConstellationEquippedAPI = {
     constellationId: number,
     nodeId: string,
   ) => { canAllocate: boolean; reason?: string };
+
   getTotalDevotionSpent: (constellationId: number) => number;
   getTotalDevotionSpentAll: () => number;
+  constellationUnlocked: (constellationId: number) => boolean;
+
+  getCurrentDevotionCategoryPoints: (category: string) => number;
 
   // Utility
   clear: () => void;
@@ -57,11 +55,106 @@ export function provideConstellationEquipped(
   initialDevotionPoints: number = 100,
 ): ConstellationEquippedAPI {
   const allocatedNodes = new SvelteMap<string, AllocatedNode>();
-  let selectedConstellationId = $state<number | null>(null);
+  const devotionCategoryPoints = new SvelteMap<string, number>();
   let availableDevotionPoints = $state(initialDevotionPoints);
 
+  // Reactive effect to recalculate devotion category points whenever nodes change
+  $effect(() => {
+    if (!constellationsHelper) return;
+
+    // Calculate new category points
+    const newCategoryPoints = new Map<string, number>();
+
+    // Track which constellations we've seen (for mastery checking)
+    const constellationTotalSpent = new Map<number, number>();
+    const constellationMaxPossible = new Map<number, number>();
+
+    // Iterate through all allocated nodes
+    for (const allocated of allocatedNodes.values()) {
+      const node = constellationsHelper.getNodeById(
+        allocated.constellationId,
+        allocated.nodeId,
+      );
+      if (!node) continue;
+
+      // Track devotion spent for mastery calculation
+      const currentSpent = constellationTotalSpent.get(allocated.constellationId) || 0;
+      constellationTotalSpent.set(allocated.constellationId, currentSpent + allocated.level);
+
+      // Track max possible devotion for this constellation
+      if (!constellationMaxPossible.has(allocated.constellationId)) {
+        const constellation = constellationsHelper.getConstellationById(allocated.constellationId);
+        if (constellation) {
+          const maxDevotion = constellation.nodes.reduce((sum, n) => sum + n.maxLevel, 0);
+          constellationMaxPossible.set(allocated.constellationId, maxDevotion);
+        }
+      }
+
+      // Process node affixes to find DevotionIncrementNodeAffixDefinition
+      for (const affix of node.affixes) {
+        if (affix.type === "DevotionIncrementNodeAffixDefinition") {
+          const category = affix.eDevotionCategory;
+          const pointsToAdd = affix.valuePerLevel * allocated.level;
+          const currentPoints = newCategoryPoints.get(category) || 0;
+          newCategoryPoints.set(category, currentPoints + pointsToAdd);
+        }
+      }
+    }
+
+    // Check for mastered constellations and add their bonuses
+    for (const [constellationId, spentPoints] of constellationTotalSpent.entries()) {
+      const constellation = constellationsHelper.getConstellationById(constellationId);
+      if (!constellation) continue;
+
+      const maxPoints = constellationMaxPossible.get(constellationId);
+
+      if (maxPoints && spentPoints >= maxPoints) {
+        // Check if constellation is unlocked
+        const isUnlocked =
+          !constellation.conditions?.length ||
+          constellation.conditions.every((condition) => {
+            const requiredPoints =
+              newCategoryPoints.get(condition.required_devotion) || 0;
+            return requiredPoints >= parseInt(condition.targetValue);
+          });
+
+        // Check if ALL nodes are allocated at max level
+        const allNodesAllocated = constellation.nodes.every((node) => {
+          const key = `${constellationId}:${node.name}`;
+          const allocated = allocatedNodes.get(key);
+          return allocated && allocated.level >= node.maxLevel;
+        });
+
+        // Only grant mastery bonus if unlocked AND fully allocated
+        if (
+          isUnlocked &&
+          allNodesAllocated &&
+          constellation.masteredDevotionGranted
+        ) {
+          for (const [category, bonus] of Object.entries(
+            constellation.masteredDevotionGranted,
+          )) {
+            if (typeof bonus === "number") {
+              const currentPoints = newCategoryPoints.get(category) || 0;
+              newCategoryPoints.set(category, currentPoints + bonus);
+            }
+          }
+        }
+      }
+    }
+
+    // Update the SvelteMap with new values
+    devotionCategoryPoints.clear();
+    for (const [category, points] of newCategoryPoints.entries()) {
+      devotionCategoryPoints.set(category, points);
+    }
+  });
+
   // Helper function to create allocation key
-  const getAllocationKey = (constellationId: number, nodeId: string): string => {
+  const getAllocationKey = (
+    constellationId: number,
+    nodeId: string,
+  ): string => {
     return `${constellationId}:${nodeId}`;
   };
 
@@ -72,7 +165,10 @@ export function provideConstellationEquipped(
   };
 
   // Check if node is allocated
-  const isNodeAllocated = (constellationId: number, nodeId: string): boolean => {
+  const isNodeAllocated = (
+    constellationId: number,
+    nodeId: string,
+  ): boolean => {
     return getNodeLevel(constellationId, nodeId) > 0;
   };
 
@@ -94,13 +190,45 @@ export function provideConstellationEquipped(
     return total;
   };
 
+  const constellationUnlocked = (constellationId: number): boolean => {
+    if (!constellationsHelper) {
+      return false;
+    }
+
+    // check if already have constellation's condition meet
+    const constellation =
+      constellationsHelper.getConstellationById(constellationId);
+    if (!constellation) {
+      return false;
+    }
+    if (!constellation.conditions?.length) {
+      return true;
+    }
+    for (const condition of constellation.conditions) {
+      const currentPoints =
+        devotionCategoryPoints.get(condition.required_devotion) ?? 0;
+      if (currentPoints < parseInt(condition.targetValue)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   // Check if a node can be allocated
   const canAllocateNode = (
     constellationId: number,
     nodeId: string,
   ): { canAllocate: boolean; reason?: string } => {
     if (!constellationsHelper) {
-      return { canAllocate: false, reason: "Constellations helper not available" };
+      return {
+        canAllocate: false,
+        reason: "Constellations helper not available",
+      };
+    }
+
+    if (!constellationUnlocked(constellationId)) {
+      return { canAllocate: false, reason: "Constellation not unlocked" };
     }
 
     const node = constellationsHelper.getNodeById(constellationId, nodeId);
@@ -162,11 +290,101 @@ export function provideConstellationEquipped(
     return { success: true };
   };
 
+  // Helper function to simulate devotion calculation after deallocation
+  const simulateDevotionPoints = (
+    tempAllocatedNodes: AllocatedNodesMap,
+  ): Map<string, number> => {
+    if (!constellationsHelper) return new Map();
+
+    const simulatedDevotionPoints = new Map<string, number>();
+    const constellationTotalSpent = new Map<number, number>();
+    const constellationMaxPossible = new Map<number, number>();
+
+    // Calculate devotion points from node affixes
+    for (const allocated of tempAllocatedNodes.values()) {
+      const node = constellationsHelper.getNodeById(
+        allocated.constellationId,
+        allocated.nodeId,
+      );
+      if (!node) continue;
+
+      // Track for mastery
+      const currentSpent =
+        constellationTotalSpent.get(allocated.constellationId) || 0;
+      constellationTotalSpent.set(
+        allocated.constellationId,
+        currentSpent + allocated.level,
+      );
+
+      if (!constellationMaxPossible.has(allocated.constellationId)) {
+        const constellation = constellationsHelper.getConstellationById(
+          allocated.constellationId,
+        );
+        if (constellation) {
+          const maxDevotion = constellation.nodes.reduce(
+            (sum, n) => sum + n.maxLevel,
+            0,
+          );
+          constellationMaxPossible.set(allocated.constellationId, maxDevotion);
+        }
+      }
+
+      // Add devotion from affixes
+      for (const affix of node.affixes) {
+        if (affix.type === "DevotionIncrementNodeAffixDefinition") {
+          const category = affix.eDevotionCategory;
+          const pointsToAdd = affix.valuePerLevel * allocated.level;
+          const currentPoints = simulatedDevotionPoints.get(category) || 0;
+          simulatedDevotionPoints.set(category, currentPoints + pointsToAdd);
+        }
+      }
+    }
+
+    // Add mastery bonuses
+    for (const [constId, spentPoints] of constellationTotalSpent.entries()) {
+      const maxPoints = constellationMaxPossible.get(constId);
+      const constellation = constellationsHelper.getConstellationById(constId);
+
+      if (maxPoints && spentPoints >= maxPoints && constellation) {
+        const isUnlocked =
+          !constellation.conditions?.length ||
+          constellation.conditions.every((condition) => {
+            const requiredPoints =
+              simulatedDevotionPoints.get(condition.required_devotion) || 0;
+            return requiredPoints >= parseInt(condition.targetValue);
+          });
+
+        const allNodesAllocated = constellation.nodes.every((n) => {
+          const k = `${constId}:${n.name}`;
+          const alloc = tempAllocatedNodes.get(k);
+          return alloc && alloc.level >= n.maxLevel;
+        });
+
+        if (
+          isUnlocked &&
+          allNodesAllocated &&
+          constellation.masteredDevotionGranted
+        ) {
+          for (const [category, bonus] of Object.entries(
+            constellation.masteredDevotionGranted,
+          )) {
+            if (typeof bonus === "number") {
+              const currentPoints = simulatedDevotionPoints.get(category) || 0;
+              simulatedDevotionPoints.set(category, currentPoints + bonus);
+            }
+          }
+        }
+      }
+    }
+
+    return simulatedDevotionPoints;
+  };
+
   // Deallocate a node completely
   const deallocateNode = (
     constellationId: number,
     nodeId: string,
-  ): { success: boolean; error?: string } => {
+  ): { success: boolean; error?: string; cascadedNodes?: number } => {
     if (!constellationsHelper) {
       return { success: false, error: "Constellations helper not available" };
     }
@@ -176,22 +394,46 @@ export function provideConstellationEquipped(
       return { success: false, error: "Node not allocated" };
     }
 
-    // Check if any other nodes depend on this one
-    const dependentNodes = constellationsHelper.getDependentNodes(
+    // Check if deallocation would orphan other nodes (in same constellation)
+    const canDeallocate = constellationsHelper.canDeallocateNode(
       constellationId,
       nodeId,
+      allocatedNodes,
     );
-    for (const dependent of dependentNodes) {
-      if (isNodeAllocated(constellationId, dependent.name)) {
-        return {
-          success: false,
-          error: "Cannot deallocate: other nodes depend on this one",
-        };
+
+    if (!canDeallocate.canDeallocate) {
+      const orphanCount = canDeallocate.orphanedNodes?.length || 0;
+      return {
+        success: false,
+        error: `Cannot deallocate: ${orphanCount} node(s) would lose path to root`,
+      };
+    }
+
+    // Perform the deallocation
+    allocatedNodes.delete(key);
+
+    // Simulate devotion points after this deallocation
+    const simulatedDevotionPoints = simulateDevotionPoints(allocatedNodes);
+
+    // Check for cascade deallocations
+    const cascadeKeys = constellationsHelper.getCascadeDeallocations(
+      allocatedNodes,
+      simulatedDevotionPoints,
+    );
+
+    // Perform cascade deallocations
+    let cascadedCount = 0;
+    for (const cascadeKey of cascadeKeys) {
+      if (allocatedNodes.has(cascadeKey)) {
+        allocatedNodes.delete(cascadeKey);
+        cascadedCount++;
       }
     }
 
-    allocatedNodes.delete(key);
-    return { success: true };
+    return {
+      success: true,
+      cascadedNodes: cascadedCount > 0 ? cascadedCount : undefined,
+    };
   };
 
   // Increment node level by 1
@@ -232,19 +474,10 @@ export function provideConstellationEquipped(
     return { success: true };
   };
 
-  // Select a constellation to view
-  const selectConstellation = (constellationId: number): void => {
-    selectedConstellationId = constellationId;
-  };
-
-  // Clear constellation selection
-  const clearConstellationSelection = (): void => {
-    selectedConstellationId = null;
-  };
-
   // Clear all allocations
   const clear = (): void => {
     allocatedNodes.clear();
+    devotionCategoryPoints.clear();
   };
 
   // Clear all allocations for a specific constellation
@@ -258,18 +491,17 @@ export function provideConstellationEquipped(
     keysToDelete.forEach((key) => allocatedNodes.delete(key));
   };
 
+  const getCurrentDevotionCategoryPoints = (category: string): number => {
+    return devotionCategoryPoints.get(category) ?? 0;
+  };
+
   const api: ConstellationEquippedAPI = {
     get allocatedNodes() {
       return allocatedNodes;
     },
-    get selectedConstellationId() {
-      return selectedConstellationId;
-    },
     get availableDevotionPoints() {
       return availableDevotionPoints;
     },
-    selectConstellation,
-    clearConstellationSelection,
     allocateNode,
     deallocateNode,
     incrementNodeLevel,
@@ -281,6 +513,8 @@ export function provideConstellationEquipped(
     getTotalDevotionSpentAll,
     clear,
     clearConstellation,
+    getCurrentDevotionCategoryPoints,
+    constellationUnlocked,
   };
 
   setContext(constellationEquippedKey, api);
