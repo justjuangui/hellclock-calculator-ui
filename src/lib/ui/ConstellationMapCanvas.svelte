@@ -45,9 +45,12 @@
   const constellationEquippedApi = useConstellationEquipped();
   const statsHelper = getContext<StatsHelper>("statsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
+  const assetPreloader = getContext<any>("assetPreloader");
   let canvasContainer: HTMLDivElement;
   let app: Application | null = null;
   let viewport: Viewport | null = null;
+  let isLoadingAssets = $state(true);
+  let loadingError = $state<string | null>(null);
 
   // Tooltip state
   let hoveredNode = $state<{
@@ -63,43 +66,69 @@
   async function initPixi() {
     if (!canvasContainer) return;
 
-    // Create Pixi application
-    app = new Application();
-    await app.init({
-      width: canvasContainer.clientWidth,
-      height: canvasContainer.clientHeight,
-      backgroundColor: 0x0a0a0f,
-      antialias: true,
-      resolution: window.devicePixelRatio || 1,
-    });
+    try {
+      // Wait for assets to be fully loaded
+      if (assetPreloader && !assetPreloader.isLoaded()) {
+        console.log("Waiting for assets to finish loading...");
+        // Wait up to 10 seconds for assets to load
+        const startTime = Date.now();
+        while (!assetPreloader.isLoaded() && Date.now() - startTime < 10000) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
 
-    canvasContainer.appendChild(app.canvas);
+        if (!assetPreloader.isLoaded()) {
+          throw new Error("Asset loading timeout");
+        }
+      }
 
-    // Create viewport for pan/zoom
-    viewport = new Viewport({
-      screenWidth: canvasContainer.clientWidth,
-      screenHeight: canvasContainer.clientHeight,
-      worldWidth: 4000,
-      worldHeight: 4000,
-      events: app.renderer.events,
-    });
+      // Create Pixi application
+      app = new Application();
+      await app.init({
+        width: canvasContainer.clientWidth,
+        height: canvasContainer.clientHeight,
+        backgroundColor: 0x0a0a0f,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+      });
 
-    app.stage.addChild(viewport);
+      canvasContainer.appendChild(app.canvas);
 
-    // Activate plugins
-    viewport.drag().pinch().wheel().decelerate().clampZoom({
-      minScale: 0.3,
-      maxScale: 10,
-    });
+      // Create viewport for pan/zoom
+      viewport = new Viewport({
+        screenWidth: canvasContainer.clientWidth,
+        screenHeight: canvasContainer.clientHeight,
+        worldWidth: 4000,
+        worldHeight: 4000,
+        events: app.renderer.events,
+      });
 
-    // Draw starfield background
-    drawStarfield(viewport);
+      app.stage.addChild(viewport);
 
-    // Draw all constellations
-    await drawAllConstellations(viewport);
+      // Activate plugins
+      viewport.drag().pinch().wheel().decelerate().clampZoom({
+        minScale: 0.3,
+        maxScale: 10,
+      });
 
-    // Center viewport
-    viewport.moveCenter(0, 0);
+      // Draw starfield background
+      drawStarfield(viewport);
+
+      // Draw all constellations
+      await drawAllConstellations(viewport);
+
+      // Center viewport
+      viewport.moveCenter(0, 0);
+
+      // Mark loading complete
+      isLoadingAssets = false;
+    } catch (error) {
+      console.error("Failed to initialize Pixi:", error);
+      loadingError =
+        error instanceof Error
+          ? error.message
+          : "Failed to load constellation map";
+      isLoadingAssets = false;
+    }
   }
 
   function drawStarfield(container: Container) {
@@ -201,28 +230,39 @@
         constellationEquippedApi.getTotalDevotionSpent(constellation.id);
       const totalNodes = constellation.nodes.length;
 
-      const texture = Assets.get(
-        spriteUrl(constellationDetails.definition.illustrationLine)!,
+      const textureUrl = spriteUrl(
+        constellationDetails.definition.illustrationLine,
       );
+      if (textureUrl) {
+        try {
+          const texture = Assets.get(textureUrl);
 
-      const sprite = Sprite.from(texture);
-      sprite.alpha = 0.6;
+          // Verify texture is valid before creating sprite
+          const sprite = Sprite.from(texture);
+          sprite.alpha = 0.6;
 
-      if (currentDevotionPoints === totalNodes) {
-        const spriteColors = parseRGBA01ToPixiHex(
-          config.illustrationMasteredColor,
-        );
-        sprite.tint = spriteColors.color;
-        sprite.alpha = spriteColors.alpha;
+          if (currentDevotionPoints === totalNodes) {
+            const spriteColors = parseRGBA01ToPixiHex(
+              config.illustrationMasteredColor,
+            );
+            sprite.tint = spriteColors.color;
+            sprite.alpha = spriteColors.alpha;
+          }
+
+          constellationContainer.addChild(sprite);
+          fitSprite(
+            sprite,
+            constellationDetails.width * constellationDetails.nodeViewScale[0],
+            constellationDetails.height * constellationDetails.nodeViewScale[1],
+            "contain",
+          );
+        } catch (error) {
+          console.error(
+            `Failed to load texture for constellation ${constellation.id}:`,
+            error,
+          );
+        }
       }
-
-      constellationContainer.addChild(sprite);
-      fitSprite(
-        sprite,
-        constellationDetails.width * constellationDetails.nodeViewScale[0],
-        constellationDetails.height * constellationDetails.nodeViewScale[1],
-        "contain",
-      );
     }
 
     // Draw edges first (behind nodes)
@@ -496,6 +536,37 @@
   bind:this={canvasContainer}
   class="constellation-map-canvas w-full h-full"
 ></div>
+
+<!-- Loading Overlay -->
+{#if isLoadingAssets}
+  <div
+    class="absolute inset-0 flex items-center justify-center bg-base-300/90 backdrop-blur-sm z-50"
+  >
+    <div class="text-center">
+      {#if loadingError}
+        <div class="alert alert-error max-w-md">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{loadingError}</span>
+        </div>
+      {:else}
+        <div class="loading loading-spinner loading-lg text-primary"></div>
+        <p class="mt-4 text-base-content/70">Preparing constellation map...</p>
+      {/if}
+    </div>
+  </div>
+{/if}
 
 <!-- Tooltip Overlay -->
 {#if hoveredNode}

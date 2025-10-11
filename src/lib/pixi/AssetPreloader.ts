@@ -65,7 +65,16 @@ export class AssetPreloader {
       // Preload all assets
       if (assetUrls.length > 0) {
         onProgress?.(50, "Preloading textures...", "ui");
-        await Assets.load(assetUrls);
+
+        // Wrap Assets.load with promise that waits for full completion
+        await new Promise<void>((resolve, reject) => {
+          Assets.load(assetUrls, (progress) => {
+            onProgress?.(75,`Asset loading progress: ${(progress*100).toFixed(2)}`, "ui");
+            if (progress === 1) {
+              resolve();
+            }
+          }).catch(reject);
+        });
       }
 
       onProgress?.(100, "Assets loaded", "ui");

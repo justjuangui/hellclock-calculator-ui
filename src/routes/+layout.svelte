@@ -215,11 +215,12 @@
       );
 
       label = "Preloading PixiJS assets";
-      assetPreloader = new AssetPreloader();
-      await assetPreloader.init(constellationsHelper, (pct, lbl) => {
-        progress = 90 + (pct * 0.1); // 90-100%
+      let tmpAsset = new AssetPreloader();
+      await tmpAsset.init(constellationsHelper, (pct, lbl) => {
+        progress = 90 + pct * 0.1; // 90-100%
         label = lbl;
       });
+      assetPreloader = tmpAsset;
 
       label = "Ready";
       progress = 100;
