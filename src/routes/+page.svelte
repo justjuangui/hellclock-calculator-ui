@@ -24,14 +24,9 @@
   import type { RelicItem } from "$lib/hellclock/relics";
   import { useRelicInventory } from "$lib/context/relicequipped.svelte";
   import ConstellationMap from "$lib/ui/ConstellationMap.svelte";
-  import type { ConstellationsHelper } from "$lib/hellclock/constellations";
-  import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
 
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
-  const constellationsHelper = getContext<ConstellationsHelper>(
-    "constellationsHelper",
-  );
 
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
   const skillSlotsApi = useSkillEquipped();

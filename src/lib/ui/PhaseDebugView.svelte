@@ -58,6 +58,27 @@
     };
 
     const findPhases = (node: EvaluationNode) => {
+      if (node.type && node.type.includes("phase_")) {
+        const phaseName = node.type;
+
+        const displayName = node.name
+          .split("_")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+
+        phases.push({
+          id: `phase-${phaseCounter++}`,
+          name: phaseName,
+          displayName: displayName,
+          value: node.value,
+          contributions: findContributionsRecursively(node),
+          color:
+            phaseColors[phaseName as keyof typeof phaseColors] ||
+            "badge-neutral",
+        });
+
+        return;
+      }
       // Check if this node represents a phase (contains "phase_" in name)
       if (node.name && node.name.includes("phase_")) {
         const phaseName = node.name.replace("phase_", "");

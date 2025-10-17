@@ -125,11 +125,10 @@ export class Engine {
     return this.call({ type: "loadPack", payload: pack }, opts);
   }
   build(
-    actor: unknown,
-    target: unknown,
+    entities: unknown,
     opts?: { timeoutMs?: number; signal?: AbortSignal },
   ) {
-    return this.call({ type: "build", payload: { actor, target } }, opts);
+    return this.call({ type: "build", payload: { entities } }, opts);
   }
   eval(payload: unknown, opts?: { timeoutMs?: number; signal?: AbortSignal }) {
     return this.call({ type: "eval", payload }, opts);

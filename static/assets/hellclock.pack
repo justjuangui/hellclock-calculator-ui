@@ -100,6 +100,790 @@ pack "hellclock" {
       }
     }
   }
+  damage_flows {
+    PrayerOfHealthSkillDefinition {
+      primary: Fire
+      base_damage: BaseDamage * skill_PrayerOfHealthSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_PrayerOfHealthSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_PrayerOfHealthSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_PrayerOfHealthSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_PrayerOfHealthSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_PrayerOfHealthSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_PrayerOfHealthSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_PrayerOfHealthSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_PrayerOfHealthSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    DoubleKnivesSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_DoubleKnivesSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_DoubleKnivesSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_DoubleKnivesSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_DoubleKnivesSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_DoubleKnivesSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_DoubleKnivesSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_DoubleKnivesSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_DoubleKnivesSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_DoubleKnivesSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    FeitorsLashSkillDefinition {
+      primary: Fire
+      base_damage: BaseDamage * skill_FeitorsLashSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_FeitorsLashSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_FeitorsLashSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_FeitorsLashSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_FeitorsLashSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_FeitorsLashSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_FeitorsLashSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_FeitorsLashSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_FeitorsLashSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    UsePotionSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_UsePotionSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_UsePotionSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_UsePotionSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_UsePotionSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_UsePotionSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_UsePotionSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_UsePotionSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_UsePotionSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_UsePotionSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    HolyRosarySkillDefinition {
+      primary: Lightning
+      base_damage: BaseDamage * skill_HolyRosarySkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_HolyRosarySkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_HolyRosarySkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_HolyRosarySkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_HolyRosarySkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_HolyRosarySkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_HolyRosarySkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_HolyRosarySkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_HolyRosarySkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    SummonMarksmenSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_SummonMarksmenSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_SummonMarksmenSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_SummonMarksmenSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_SummonMarksmenSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_SummonMarksmenSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_SummonMarksmenSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_SummonMarksmenSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    PassageSkillDefinition {
+      primary: Lightning
+      base_damage: BaseDamage * skill_PassageSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_PassageSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_PassageSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_PassageSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_PassageSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_PassageSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_PassageSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_PassageSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_PassageSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    BasicAttackDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_BasicAttackDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_BasicAttackDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_BasicAttackDefinition_LightningDamageConversionModifier
+      	Plague: skill_BasicAttackDefinition_PlagueDamageConversionModifier
+      	Fire: skill_BasicAttackDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_BasicAttackDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_BasicAttackDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_BasicAttackDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_BasicAttackDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    ReflexesDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_ReflexesDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_ReflexesDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_ReflexesDefinition_LightningDamageConversionModifier
+      	Plague: skill_ReflexesDefinition_PlagueDamageConversionModifier
+      	Fire: skill_ReflexesDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_ReflexesDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_ReflexesDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_ReflexesDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_ReflexesDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    PrayerOfVengeanceSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_PrayerOfVengeanceSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_PrayerOfVengeanceSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_PrayerOfVengeanceSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_PrayerOfVengeanceSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_PrayerOfVengeanceSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_PrayerOfVengeanceSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_PrayerOfVengeanceSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_PrayerOfVengeanceSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_PrayerOfVengeanceSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    TheOldBellSkillDefinition {
+      primary: Plague
+      base_damage: BaseDamage * skill_TheOldBellSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_TheOldBellSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_TheOldBellSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_TheOldBellSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_TheOldBellSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_TheOldBellSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_TheOldBellSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_TheOldBellSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_TheOldBellSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    BombardmentSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_BombardmentSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_BombardmentSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_BombardmentSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_BombardmentSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_BombardmentSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_BombardmentSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_BombardmentSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_BombardmentSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_BombardmentSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    MatadeiraSkillDefinition {
+      primary: Fire
+      base_damage: BaseDamage * skill_MatadeiraSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_MatadeiraSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_MatadeiraSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_MatadeiraSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_MatadeiraSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_MatadeiraSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_MatadeiraSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_MatadeiraSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_MatadeiraSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    SlowTimeSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_SlowTimeSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_SlowTimeSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_SlowTimeSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_SlowTimeSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_SlowTimeSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_SlowTimeSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_SlowTimeSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_SlowTimeSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_SlowTimeSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    SummonTheGuardSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_SummonTheGuardSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_SummonTheGuardSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_SummonTheGuardSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_SummonTheGuardSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_SummonTheGuardSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_SummonTheGuardSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_SummonTheGuardSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    VeilofQuilsSkillDefinition {
+      primary: Plague
+      base_damage: BaseDamage * skill_VeilofQuilsSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_VeilofQuilsSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_VeilofQuilsSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_VeilofQuilsSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_VeilofQuilsSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_VeilofQuilsSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_VeilofQuilsSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_VeilofQuilsSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_VeilofQuilsSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    LassoSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_LassoSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_LassoSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_LassoSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_LassoSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_LassoSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_LassoSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_LassoSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_LassoSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_LassoSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    SplitshotDefinition {
+      primary: Fire
+      base_damage: BaseDamage * skill_SplitshotDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_SplitshotDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_SplitshotDefinition_LightningDamageConversionModifier
+      	Plague: skill_SplitshotDefinition_PlagueDamageConversionModifier
+      	Fire: skill_SplitshotDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_SplitshotDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_SplitshotDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_SplitshotDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_SplitshotDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    ShadowDashDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_ShadowDashDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_ShadowDashDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_ShadowDashDefinition_LightningDamageConversionModifier
+      	Plague: skill_ShadowDashDefinition_PlagueDamageConversionModifier
+      	Fire: skill_ShadowDashDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_ShadowDashDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_ShadowDashDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_ShadowDashDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_ShadowDashDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    RepeaterDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_RepeaterDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_RepeaterDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_RepeaterDefinition_LightningDamageConversionModifier
+      	Plague: skill_RepeaterDefinition_PlagueDamageConversionModifier
+      	Fire: skill_RepeaterDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_RepeaterDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_RepeaterDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_RepeaterDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_RepeaterDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    JudgementDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_JudgementDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_JudgementDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_JudgementDefinition_LightningDamageConversionModifier
+      	Plague: skill_JudgementDefinition_PlagueDamageConversionModifier
+      	Fire: skill_JudgementDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_JudgementDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_JudgementDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_JudgementDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_JudgementDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    ClosedBodySkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_ClosedBodySkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_ClosedBodySkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_ClosedBodySkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_ClosedBodySkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_ClosedBodySkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_ClosedBodySkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_ClosedBodySkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_ClosedBodySkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_ClosedBodySkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+    SummonBruteSkillDefinition {
+      primary: Physical
+      base_damage: BaseDamage * skill_SummonBruteSkillDefinition_DamageModifier
+      skill_conversions {
+      	Physical->Lightning: PhysicalDamageConvertedAsLightning
+      	Physical->Plague: PhysicalDamageConvertedAsPlague
+      	Physical->Fire: PhysicalDamageConvertedAsFire
+      	Lightning->Physical: LightningDamageConvertedAsPhysical
+      	Lightning->Plague: LightningDamageConvertedAsPlague
+      	Lightning->Fire: LightningDamageConvertedAsFire
+      	Plague->Physical: PlagueDamageConvertedAsPhysical
+      	Plague->Lightning: PlagueDamageConvertedAsLightning
+      	Plague->Fire: PlagueDamageConvertedAsFire
+      	Fire->Physical: FireDamageConvertedAsPhysical
+      	Fire->Lightning: FireDamageConvertedAsLightning
+      	Fire->Plague: FireDamageConvertedAsPlague
+      }
+      distribution {
+      	Physical: skill_SummonBruteSkillDefinition_PhysicalDamageConversionModifier
+      	Lightning: skill_SummonBruteSkillDefinition_LightningDamageConversionModifier
+      	Plague: skill_SummonBruteSkillDefinition_PlagueDamageConversionModifier
+      	Fire: skill_SummonBruteSkillDefinition_FireDamageConversionModifier
+      }
+      additional {
+      	Physical: skill_SummonBruteSkillDefinition_AdditionalPhysicalDamageModifier
+      	Lightning: skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier
+      	Plague: skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier
+      	Fire: skill_SummonBruteSkillDefinition_AdditionalFireDamageModifier
+      }
+      critical {
+      	chance: CriticalChance
+      	multiplier: CriticalDamage
+      }
+    }
+  }
   stats {
     BaseDamage: BaseDamage.DEFAULT using common
     CriticalChance: CriticalChance.PERCENTAGE using common
@@ -231,6 +1015,15 @@ pack "hellclock" {
     HellClockTimeDropChanceBonus: HellClockTimeDropChanceBonus.PERCENTAGE using common
     MinimumAttackSpeed: MinimumAttackSpeed.PERCENTAGE using common
     MinimumMovementSpeed: MinimumMovementSpeed.PERCENTAGE using common
+    skill_BasicAttackDefinition_Dmg_Total: skill_BasicAttackDefinition_Dmg_Total.skill using common
+    skill_BasicAttackDefinition_Dmg_Physical: skill_BasicAttackDefinition_Dmg_Physical.skill using common
+    skill_BasicAttackDefinition_Dst_Physical: skill_BasicAttackDefinition_Dst_Physical.skill using common
+    skill_BasicAttackDefinition_Dmg_Lightning: skill_BasicAttackDefinition_Dmg_Lightning.skill using common
+    skill_BasicAttackDefinition_Dst_Lightning: skill_BasicAttackDefinition_Dst_Lightning.skill using common
+    skill_BasicAttackDefinition_Dmg_Plague: skill_BasicAttackDefinition_Dmg_Plague.skill using common
+    skill_BasicAttackDefinition_Dst_Plague: skill_BasicAttackDefinition_Dst_Plague.skill using common
+    skill_BasicAttackDefinition_Dmg_Fire: skill_BasicAttackDefinition_Dmg_Fire.skill using common
+    skill_BasicAttackDefinition_Dst_Fire: skill_BasicAttackDefinition_Dst_Fire.skill using common
     skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using common
     skill_BasicAttackDefinition_SkillSpeedModifier: skill_BasicAttackDefinition_SkillSpeedModifier.skill using common
     skill_BasicAttackDefinition_CooldownModifier: skill_BasicAttackDefinition_CooldownModifier.skill using common
@@ -251,6 +1044,15 @@ pack "hellclock" {
     skill_BasicAttackDefinition_PierceDamageModifier: skill_BasicAttackDefinition_PierceDamageModifier.skill using common
     skill_BasicAttackDefinition_BulletCountModifier: skill_BasicAttackDefinition_BulletCountModifier.skill using BulletCountModifier
     skill_BasicAttackDefinition_BounceAmountModifier: skill_BasicAttackDefinition_BounceAmountModifier.skill using common
+    skill_SplitshotDefinition_Dmg_Total: skill_SplitshotDefinition_Dmg_Total.skill using common
+    skill_SplitshotDefinition_Dmg_Physical: skill_SplitshotDefinition_Dmg_Physical.skill using common
+    skill_SplitshotDefinition_Dst_Physical: skill_SplitshotDefinition_Dst_Physical.skill using common
+    skill_SplitshotDefinition_Dmg_Lightning: skill_SplitshotDefinition_Dmg_Lightning.skill using common
+    skill_SplitshotDefinition_Dst_Lightning: skill_SplitshotDefinition_Dst_Lightning.skill using common
+    skill_SplitshotDefinition_Dmg_Plague: skill_SplitshotDefinition_Dmg_Plague.skill using common
+    skill_SplitshotDefinition_Dst_Plague: skill_SplitshotDefinition_Dst_Plague.skill using common
+    skill_SplitshotDefinition_Dmg_Fire: skill_SplitshotDefinition_Dmg_Fire.skill using common
+    skill_SplitshotDefinition_Dst_Fire: skill_SplitshotDefinition_Dst_Fire.skill using common
     skill_SplitshotDefinition_DamageModifier: skill_SplitshotDefinition_DamageModifier.skill using common
     skill_SplitshotDefinition_SkillSpeedModifier: skill_SplitshotDefinition_SkillSpeedModifier.skill using common
     skill_SplitshotDefinition_CooldownModifier: skill_SplitshotDefinition_CooldownModifier.skill using common
@@ -275,6 +1077,15 @@ pack "hellclock" {
     skill_SplitshotDefinition_ProjectileWidthModifier: skill_SplitshotDefinition_ProjectileWidthModifier.skill using common
     skill_SplitshotDefinition_ChargedShotEnabledModifier: skill_SplitshotDefinition_ChargedShotEnabledModifier.skill using common
     skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier: skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier.skill using common
+    skill_ShadowDashDefinition_Dmg_Total: skill_ShadowDashDefinition_Dmg_Total.skill using common
+    skill_ShadowDashDefinition_Dmg_Physical: skill_ShadowDashDefinition_Dmg_Physical.skill using common
+    skill_ShadowDashDefinition_Dst_Physical: skill_ShadowDashDefinition_Dst_Physical.skill using common
+    skill_ShadowDashDefinition_Dmg_Lightning: skill_ShadowDashDefinition_Dmg_Lightning.skill using common
+    skill_ShadowDashDefinition_Dst_Lightning: skill_ShadowDashDefinition_Dst_Lightning.skill using common
+    skill_ShadowDashDefinition_Dmg_Plague: skill_ShadowDashDefinition_Dmg_Plague.skill using common
+    skill_ShadowDashDefinition_Dst_Plague: skill_ShadowDashDefinition_Dst_Plague.skill using common
+    skill_ShadowDashDefinition_Dmg_Fire: skill_ShadowDashDefinition_Dmg_Fire.skill using common
+    skill_ShadowDashDefinition_Dst_Fire: skill_ShadowDashDefinition_Dst_Fire.skill using common
     skill_ShadowDashDefinition_DamageModifier: skill_ShadowDashDefinition_DamageModifier.skill using common
     skill_ShadowDashDefinition_SkillSpeedModifier: skill_ShadowDashDefinition_SkillSpeedModifier.skill using common
     skill_ShadowDashDefinition_CooldownModifier: skill_ShadowDashDefinition_CooldownModifier.skill using common
@@ -294,6 +1105,15 @@ pack "hellclock" {
     skill_ShadowDashDefinition_DistanceModifier: skill_ShadowDashDefinition_DistanceModifier.skill using common
     skill_ShadowDashDefinition_RadiusModifier: skill_ShadowDashDefinition_RadiusModifier.skill using RadiusModifier
     skill_ShadowDashDefinition_DashSpeedModifier: skill_ShadowDashDefinition_DashSpeedModifier.skill using common
+    skill_RepeaterDefinition_Dmg_Total: skill_RepeaterDefinition_Dmg_Total.skill using common
+    skill_RepeaterDefinition_Dmg_Physical: skill_RepeaterDefinition_Dmg_Physical.skill using common
+    skill_RepeaterDefinition_Dst_Physical: skill_RepeaterDefinition_Dst_Physical.skill using common
+    skill_RepeaterDefinition_Dmg_Lightning: skill_RepeaterDefinition_Dmg_Lightning.skill using common
+    skill_RepeaterDefinition_Dst_Lightning: skill_RepeaterDefinition_Dst_Lightning.skill using common
+    skill_RepeaterDefinition_Dmg_Plague: skill_RepeaterDefinition_Dmg_Plague.skill using common
+    skill_RepeaterDefinition_Dst_Plague: skill_RepeaterDefinition_Dst_Plague.skill using common
+    skill_RepeaterDefinition_Dmg_Fire: skill_RepeaterDefinition_Dmg_Fire.skill using common
+    skill_RepeaterDefinition_Dst_Fire: skill_RepeaterDefinition_Dst_Fire.skill using common
     skill_RepeaterDefinition_DamageModifier: skill_RepeaterDefinition_DamageModifier.skill using common
     skill_RepeaterDefinition_SkillSpeedModifier: skill_RepeaterDefinition_SkillSpeedModifier.skill using common
     skill_RepeaterDefinition_CooldownModifier: skill_RepeaterDefinition_CooldownModifier.skill using common
@@ -315,6 +1135,15 @@ pack "hellclock" {
     skill_RepeaterDefinition_CanPierceModifier: skill_RepeaterDefinition_CanPierceModifier.skill using common
     skill_RepeaterDefinition_PierceDamageModifier: skill_RepeaterDefinition_PierceDamageModifier.skill using common
     skill_RepeaterDefinition_BounceAmountModifier: skill_RepeaterDefinition_BounceAmountModifier.skill using common
+    skill_ReflexesDefinition_Dmg_Total: skill_ReflexesDefinition_Dmg_Total.skill using common
+    skill_ReflexesDefinition_Dmg_Physical: skill_ReflexesDefinition_Dmg_Physical.skill using common
+    skill_ReflexesDefinition_Dst_Physical: skill_ReflexesDefinition_Dst_Physical.skill using common
+    skill_ReflexesDefinition_Dmg_Lightning: skill_ReflexesDefinition_Dmg_Lightning.skill using common
+    skill_ReflexesDefinition_Dst_Lightning: skill_ReflexesDefinition_Dst_Lightning.skill using common
+    skill_ReflexesDefinition_Dmg_Plague: skill_ReflexesDefinition_Dmg_Plague.skill using common
+    skill_ReflexesDefinition_Dst_Plague: skill_ReflexesDefinition_Dst_Plague.skill using common
+    skill_ReflexesDefinition_Dmg_Fire: skill_ReflexesDefinition_Dmg_Fire.skill using common
+    skill_ReflexesDefinition_Dst_Fire: skill_ReflexesDefinition_Dst_Fire.skill using common
     skill_ReflexesDefinition_DamageModifier: skill_ReflexesDefinition_DamageModifier.skill using common
     skill_ReflexesDefinition_SkillSpeedModifier: skill_ReflexesDefinition_SkillSpeedModifier.skill using common
     skill_ReflexesDefinition_CooldownModifier: skill_ReflexesDefinition_CooldownModifier.skill using common
@@ -343,6 +1172,15 @@ pack "hellclock" {
     skill_ReflexesDefinition_BounceToAnotherTargetModifier: skill_ReflexesDefinition_BounceToAnotherTargetModifier.skill using common
     skill_ReflexesDefinition_BounceAmountModifier: skill_ReflexesDefinition_BounceAmountModifier.skill using common
     skill_ReflexesDefinition_StatusIntervalModifier: skill_ReflexesDefinition_StatusIntervalModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dmg_Total: skill_PrayerOfHealthSkillDefinition_Dmg_Total.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dmg_Physical: skill_PrayerOfHealthSkillDefinition_Dmg_Physical.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dst_Physical: skill_PrayerOfHealthSkillDefinition_Dst_Physical.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dmg_Lightning: skill_PrayerOfHealthSkillDefinition_Dmg_Lightning.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dst_Lightning: skill_PrayerOfHealthSkillDefinition_Dst_Lightning.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dmg_Plague: skill_PrayerOfHealthSkillDefinition_Dmg_Plague.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dst_Plague: skill_PrayerOfHealthSkillDefinition_Dst_Plague.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dmg_Fire: skill_PrayerOfHealthSkillDefinition_Dmg_Fire.skill using common
+    skill_PrayerOfHealthSkillDefinition_Dst_Fire: skill_PrayerOfHealthSkillDefinition_Dst_Fire.skill using common
     skill_PrayerOfHealthSkillDefinition_DamageModifier: skill_PrayerOfHealthSkillDefinition_DamageModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier: skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_CooldownModifier: skill_PrayerOfHealthSkillDefinition_CooldownModifier.skill using common
@@ -366,6 +1204,15 @@ pack "hellclock" {
     skill_PrayerOfHealthSkillDefinition_RadiusModifier: skill_PrayerOfHealthSkillDefinition_RadiusModifier.skill using RadiusModifier
     skill_PrayerOfHealthSkillDefinition_EnableLifeDrainModifier: skill_PrayerOfHealthSkillDefinition_EnableLifeDrainModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_LifeDrainIntensityModifier: skill_PrayerOfHealthSkillDefinition_LifeDrainIntensityModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Total: skill_PrayerOfVengeanceSkillDefinition_Dmg_Total.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Physical: skill_PrayerOfVengeanceSkillDefinition_Dmg_Physical.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Physical: skill_PrayerOfVengeanceSkillDefinition_Dst_Physical.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Lightning: skill_PrayerOfVengeanceSkillDefinition_Dmg_Lightning.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Lightning: skill_PrayerOfVengeanceSkillDefinition_Dst_Lightning.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Plague: skill_PrayerOfVengeanceSkillDefinition_Dmg_Plague.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Plague: skill_PrayerOfVengeanceSkillDefinition_Dst_Plague.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire: skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Fire: skill_PrayerOfVengeanceSkillDefinition_Dst_Fire.skill using common
     skill_PrayerOfVengeanceSkillDefinition_DamageModifier: skill_PrayerOfVengeanceSkillDefinition_DamageModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier: skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_CooldownModifier: skill_PrayerOfVengeanceSkillDefinition_CooldownModifier.skill using common
@@ -383,6 +1230,15 @@ pack "hellclock" {
     skill_PrayerOfVengeanceSkillDefinition_LifeCostModifier: skill_PrayerOfVengeanceSkillDefinition_LifeCostModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_CanUseNegativeManaModifier: skill_PrayerOfVengeanceSkillDefinition_CanUseNegativeManaModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_ActivationBuffDurationModifier: skill_PrayerOfVengeanceSkillDefinition_ActivationBuffDurationModifier.skill using common
+    skill_TheOldBellSkillDefinition_Dmg_Total: skill_TheOldBellSkillDefinition_Dmg_Total.skill using common
+    skill_TheOldBellSkillDefinition_Dmg_Physical: skill_TheOldBellSkillDefinition_Dmg_Physical.skill using common
+    skill_TheOldBellSkillDefinition_Dst_Physical: skill_TheOldBellSkillDefinition_Dst_Physical.skill using common
+    skill_TheOldBellSkillDefinition_Dmg_Lightning: skill_TheOldBellSkillDefinition_Dmg_Lightning.skill using common
+    skill_TheOldBellSkillDefinition_Dst_Lightning: skill_TheOldBellSkillDefinition_Dst_Lightning.skill using common
+    skill_TheOldBellSkillDefinition_Dmg_Plague: skill_TheOldBellSkillDefinition_Dmg_Plague.skill using common
+    skill_TheOldBellSkillDefinition_Dst_Plague: skill_TheOldBellSkillDefinition_Dst_Plague.skill using common
+    skill_TheOldBellSkillDefinition_Dmg_Fire: skill_TheOldBellSkillDefinition_Dmg_Fire.skill using common
+    skill_TheOldBellSkillDefinition_Dst_Fire: skill_TheOldBellSkillDefinition_Dst_Fire.skill using common
     skill_TheOldBellSkillDefinition_DamageModifier: skill_TheOldBellSkillDefinition_DamageModifier.skill using common
     skill_TheOldBellSkillDefinition_SkillSpeedModifier: skill_TheOldBellSkillDefinition_SkillSpeedModifier.skill using common
     skill_TheOldBellSkillDefinition_CooldownModifier: skill_TheOldBellSkillDefinition_CooldownModifier.skill using common
@@ -400,6 +1256,15 @@ pack "hellclock" {
     skill_TheOldBellSkillDefinition_LifeCostModifier: skill_TheOldBellSkillDefinition_LifeCostModifier.skill using common
     skill_TheOldBellSkillDefinition_CanUseNegativeManaModifier: skill_TheOldBellSkillDefinition_CanUseNegativeManaModifier.skill using common
     skill_TheOldBellSkillDefinition_RadiusModifier: skill_TheOldBellSkillDefinition_RadiusModifier.skill using RadiusModifier
+    skill_JudgementDefinition_Dmg_Total: skill_JudgementDefinition_Dmg_Total.skill using common
+    skill_JudgementDefinition_Dmg_Physical: skill_JudgementDefinition_Dmg_Physical.skill using common
+    skill_JudgementDefinition_Dst_Physical: skill_JudgementDefinition_Dst_Physical.skill using common
+    skill_JudgementDefinition_Dmg_Lightning: skill_JudgementDefinition_Dmg_Lightning.skill using common
+    skill_JudgementDefinition_Dst_Lightning: skill_JudgementDefinition_Dst_Lightning.skill using common
+    skill_JudgementDefinition_Dmg_Plague: skill_JudgementDefinition_Dmg_Plague.skill using common
+    skill_JudgementDefinition_Dst_Plague: skill_JudgementDefinition_Dst_Plague.skill using common
+    skill_JudgementDefinition_Dmg_Fire: skill_JudgementDefinition_Dmg_Fire.skill using common
+    skill_JudgementDefinition_Dst_Fire: skill_JudgementDefinition_Dst_Fire.skill using common
     skill_JudgementDefinition_DamageModifier: skill_JudgementDefinition_DamageModifier.skill using common
     skill_JudgementDefinition_SkillSpeedModifier: skill_JudgementDefinition_SkillSpeedModifier.skill using common
     skill_JudgementDefinition_CooldownModifier: skill_JudgementDefinition_CooldownModifier.skill using common
@@ -423,6 +1288,15 @@ pack "hellclock" {
     skill_JudgementDefinition_IntensityModifier: skill_JudgementDefinition_IntensityModifier.skill using common
     skill_JudgementDefinition_IntervalModifier: skill_JudgementDefinition_IntervalModifier.skill using common
     skill_JudgementDefinition_StatusDurationModifier: skill_JudgementDefinition_StatusDurationModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_Dmg_Total: skill_DoubleKnivesSkillDefinition_Dmg_Total.skill using common
+    skill_DoubleKnivesSkillDefinition_Dmg_Physical: skill_DoubleKnivesSkillDefinition_Dmg_Physical.skill using common
+    skill_DoubleKnivesSkillDefinition_Dst_Physical: skill_DoubleKnivesSkillDefinition_Dst_Physical.skill using common
+    skill_DoubleKnivesSkillDefinition_Dmg_Lightning: skill_DoubleKnivesSkillDefinition_Dmg_Lightning.skill using common
+    skill_DoubleKnivesSkillDefinition_Dst_Lightning: skill_DoubleKnivesSkillDefinition_Dst_Lightning.skill using common
+    skill_DoubleKnivesSkillDefinition_Dmg_Plague: skill_DoubleKnivesSkillDefinition_Dmg_Plague.skill using common
+    skill_DoubleKnivesSkillDefinition_Dst_Plague: skill_DoubleKnivesSkillDefinition_Dst_Plague.skill using common
+    skill_DoubleKnivesSkillDefinition_Dmg_Fire: skill_DoubleKnivesSkillDefinition_Dmg_Fire.skill using common
+    skill_DoubleKnivesSkillDefinition_Dst_Fire: skill_DoubleKnivesSkillDefinition_Dst_Fire.skill using common
     skill_DoubleKnivesSkillDefinition_DamageModifier: skill_DoubleKnivesSkillDefinition_DamageModifier.skill using common
     skill_DoubleKnivesSkillDefinition_SkillSpeedModifier: skill_DoubleKnivesSkillDefinition_SkillSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_CooldownModifier: skill_DoubleKnivesSkillDefinition_CooldownModifier.skill using common
@@ -443,6 +1317,15 @@ pack "hellclock" {
     skill_DoubleKnivesSkillDefinition_SpinSpeedModifier: skill_DoubleKnivesSkillDefinition_SpinSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_MoveSpeedModifier: skill_DoubleKnivesSkillDefinition_MoveSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier: skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier.skill using common
+    skill_PassageSkillDefinition_Dmg_Total: skill_PassageSkillDefinition_Dmg_Total.skill using common
+    skill_PassageSkillDefinition_Dmg_Physical: skill_PassageSkillDefinition_Dmg_Physical.skill using common
+    skill_PassageSkillDefinition_Dst_Physical: skill_PassageSkillDefinition_Dst_Physical.skill using common
+    skill_PassageSkillDefinition_Dmg_Lightning: skill_PassageSkillDefinition_Dmg_Lightning.skill using common
+    skill_PassageSkillDefinition_Dst_Lightning: skill_PassageSkillDefinition_Dst_Lightning.skill using common
+    skill_PassageSkillDefinition_Dmg_Plague: skill_PassageSkillDefinition_Dmg_Plague.skill using common
+    skill_PassageSkillDefinition_Dst_Plague: skill_PassageSkillDefinition_Dst_Plague.skill using common
+    skill_PassageSkillDefinition_Dmg_Fire: skill_PassageSkillDefinition_Dmg_Fire.skill using common
+    skill_PassageSkillDefinition_Dst_Fire: skill_PassageSkillDefinition_Dst_Fire.skill using common
     skill_PassageSkillDefinition_DamageModifier: skill_PassageSkillDefinition_DamageModifier.skill using common
     skill_PassageSkillDefinition_SkillSpeedModifier: skill_PassageSkillDefinition_SkillSpeedModifier.skill using common
     skill_PassageSkillDefinition_CooldownModifier: skill_PassageSkillDefinition_CooldownModifier.skill using common
@@ -469,6 +1352,15 @@ pack "hellclock" {
     skill_PassageSkillDefinition_DamageModModifier: skill_PassageSkillDefinition_DamageModModifier.skill using common
     skill_PassageSkillDefinition_BaseDamageOverrideModifier: skill_PassageSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_PassageSkillDefinition_EDamageTypeModifier: skill_PassageSkillDefinition_EDamageTypeModifier.skill using common
+    skill_LassoSkillDefinition_Dmg_Total: skill_LassoSkillDefinition_Dmg_Total.skill using common
+    skill_LassoSkillDefinition_Dmg_Physical: skill_LassoSkillDefinition_Dmg_Physical.skill using common
+    skill_LassoSkillDefinition_Dst_Physical: skill_LassoSkillDefinition_Dst_Physical.skill using common
+    skill_LassoSkillDefinition_Dmg_Lightning: skill_LassoSkillDefinition_Dmg_Lightning.skill using common
+    skill_LassoSkillDefinition_Dst_Lightning: skill_LassoSkillDefinition_Dst_Lightning.skill using common
+    skill_LassoSkillDefinition_Dmg_Plague: skill_LassoSkillDefinition_Dmg_Plague.skill using common
+    skill_LassoSkillDefinition_Dst_Plague: skill_LassoSkillDefinition_Dst_Plague.skill using common
+    skill_LassoSkillDefinition_Dmg_Fire: skill_LassoSkillDefinition_Dmg_Fire.skill using common
+    skill_LassoSkillDefinition_Dst_Fire: skill_LassoSkillDefinition_Dst_Fire.skill using common
     skill_LassoSkillDefinition_DamageModifier: skill_LassoSkillDefinition_DamageModifier.skill using common
     skill_LassoSkillDefinition_SkillSpeedModifier: skill_LassoSkillDefinition_SkillSpeedModifier.skill using common
     skill_LassoSkillDefinition_CooldownModifier: skill_LassoSkillDefinition_CooldownModifier.skill using common
@@ -490,6 +1382,15 @@ pack "hellclock" {
     skill_LassoSkillDefinition_ChanceToBleedModifier: skill_LassoSkillDefinition_ChanceToBleedModifier.skill using common
     skill_LassoSkillDefinition_BleedDurationModifier: skill_LassoSkillDefinition_BleedDurationModifier.skill using common
     skill_LassoSkillDefinition_BleedIntensityModifier: skill_LassoSkillDefinition_BleedIntensityModifier.skill using common
+    skill_FeitorsLashSkillDefinition_Dmg_Total: skill_FeitorsLashSkillDefinition_Dmg_Total.skill using common
+    skill_FeitorsLashSkillDefinition_Dmg_Physical: skill_FeitorsLashSkillDefinition_Dmg_Physical.skill using common
+    skill_FeitorsLashSkillDefinition_Dst_Physical: skill_FeitorsLashSkillDefinition_Dst_Physical.skill using common
+    skill_FeitorsLashSkillDefinition_Dmg_Lightning: skill_FeitorsLashSkillDefinition_Dmg_Lightning.skill using common
+    skill_FeitorsLashSkillDefinition_Dst_Lightning: skill_FeitorsLashSkillDefinition_Dst_Lightning.skill using common
+    skill_FeitorsLashSkillDefinition_Dmg_Plague: skill_FeitorsLashSkillDefinition_Dmg_Plague.skill using common
+    skill_FeitorsLashSkillDefinition_Dst_Plague: skill_FeitorsLashSkillDefinition_Dst_Plague.skill using common
+    skill_FeitorsLashSkillDefinition_Dmg_Fire: skill_FeitorsLashSkillDefinition_Dmg_Fire.skill using common
+    skill_FeitorsLashSkillDefinition_Dst_Fire: skill_FeitorsLashSkillDefinition_Dst_Fire.skill using common
     skill_FeitorsLashSkillDefinition_DamageModifier: skill_FeitorsLashSkillDefinition_DamageModifier.skill using common
     skill_FeitorsLashSkillDefinition_SkillSpeedModifier: skill_FeitorsLashSkillDefinition_SkillSpeedModifier.skill using common
     skill_FeitorsLashSkillDefinition_CooldownModifier: skill_FeitorsLashSkillDefinition_CooldownModifier.skill using common
@@ -507,6 +1408,15 @@ pack "hellclock" {
     skill_FeitorsLashSkillDefinition_LifeCostModifier: skill_FeitorsLashSkillDefinition_LifeCostModifier.skill using common
     skill_FeitorsLashSkillDefinition_CanUseNegativeManaModifier: skill_FeitorsLashSkillDefinition_CanUseNegativeManaModifier.skill using common
     skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier: skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier.skill using common
+    skill_SlowTimeSkillDefinition_Dmg_Total: skill_SlowTimeSkillDefinition_Dmg_Total.skill using common
+    skill_SlowTimeSkillDefinition_Dmg_Physical: skill_SlowTimeSkillDefinition_Dmg_Physical.skill using common
+    skill_SlowTimeSkillDefinition_Dst_Physical: skill_SlowTimeSkillDefinition_Dst_Physical.skill using common
+    skill_SlowTimeSkillDefinition_Dmg_Lightning: skill_SlowTimeSkillDefinition_Dmg_Lightning.skill using common
+    skill_SlowTimeSkillDefinition_Dst_Lightning: skill_SlowTimeSkillDefinition_Dst_Lightning.skill using common
+    skill_SlowTimeSkillDefinition_Dmg_Plague: skill_SlowTimeSkillDefinition_Dmg_Plague.skill using common
+    skill_SlowTimeSkillDefinition_Dst_Plague: skill_SlowTimeSkillDefinition_Dst_Plague.skill using common
+    skill_SlowTimeSkillDefinition_Dmg_Fire: skill_SlowTimeSkillDefinition_Dmg_Fire.skill using common
+    skill_SlowTimeSkillDefinition_Dst_Fire: skill_SlowTimeSkillDefinition_Dst_Fire.skill using common
     skill_SlowTimeSkillDefinition_DamageModifier: skill_SlowTimeSkillDefinition_DamageModifier.skill using common
     skill_SlowTimeSkillDefinition_SkillSpeedModifier: skill_SlowTimeSkillDefinition_SkillSpeedModifier.skill using common
     skill_SlowTimeSkillDefinition_CooldownModifier: skill_SlowTimeSkillDefinition_CooldownModifier.skill using common
@@ -530,6 +1440,15 @@ pack "hellclock" {
     skill_SlowTimeSkillDefinition_IntensityModifier: skill_SlowTimeSkillDefinition_IntensityModifier.skill using common
     skill_SlowTimeSkillDefinition_IntervalModifier: skill_SlowTimeSkillDefinition_IntervalModifier.skill using common
     skill_SlowTimeSkillDefinition_StatusDurationModifier: skill_SlowTimeSkillDefinition_StatusDurationModifier.skill using common
+    skill_UsePotionSkillDefinition_Dmg_Total: skill_UsePotionSkillDefinition_Dmg_Total.skill using common
+    skill_UsePotionSkillDefinition_Dmg_Physical: skill_UsePotionSkillDefinition_Dmg_Physical.skill using common
+    skill_UsePotionSkillDefinition_Dst_Physical: skill_UsePotionSkillDefinition_Dst_Physical.skill using common
+    skill_UsePotionSkillDefinition_Dmg_Lightning: skill_UsePotionSkillDefinition_Dmg_Lightning.skill using common
+    skill_UsePotionSkillDefinition_Dst_Lightning: skill_UsePotionSkillDefinition_Dst_Lightning.skill using common
+    skill_UsePotionSkillDefinition_Dmg_Plague: skill_UsePotionSkillDefinition_Dmg_Plague.skill using common
+    skill_UsePotionSkillDefinition_Dst_Plague: skill_UsePotionSkillDefinition_Dst_Plague.skill using common
+    skill_UsePotionSkillDefinition_Dmg_Fire: skill_UsePotionSkillDefinition_Dmg_Fire.skill using common
+    skill_UsePotionSkillDefinition_Dst_Fire: skill_UsePotionSkillDefinition_Dst_Fire.skill using common
     skill_UsePotionSkillDefinition_DamageModifier: skill_UsePotionSkillDefinition_DamageModifier.skill using common
     skill_UsePotionSkillDefinition_SkillSpeedModifier: skill_UsePotionSkillDefinition_SkillSpeedModifier.skill using common
     skill_UsePotionSkillDefinition_CooldownModifier: skill_UsePotionSkillDefinition_CooldownModifier.skill using common
@@ -550,6 +1469,15 @@ pack "hellclock" {
     skill_UsePotionSkillDefinition_BarrierRegenModifier: skill_UsePotionSkillDefinition_BarrierRegenModifier.skill using common
     skill_UsePotionSkillDefinition_ManaRegenModifier: skill_UsePotionSkillDefinition_ManaRegenModifier.skill using common
     skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier: skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier.skill using common
+    skill_ClosedBodySkillDefinition_Dmg_Total: skill_ClosedBodySkillDefinition_Dmg_Total.skill using common
+    skill_ClosedBodySkillDefinition_Dmg_Physical: skill_ClosedBodySkillDefinition_Dmg_Physical.skill using common
+    skill_ClosedBodySkillDefinition_Dst_Physical: skill_ClosedBodySkillDefinition_Dst_Physical.skill using common
+    skill_ClosedBodySkillDefinition_Dmg_Lightning: skill_ClosedBodySkillDefinition_Dmg_Lightning.skill using common
+    skill_ClosedBodySkillDefinition_Dst_Lightning: skill_ClosedBodySkillDefinition_Dst_Lightning.skill using common
+    skill_ClosedBodySkillDefinition_Dmg_Plague: skill_ClosedBodySkillDefinition_Dmg_Plague.skill using common
+    skill_ClosedBodySkillDefinition_Dst_Plague: skill_ClosedBodySkillDefinition_Dst_Plague.skill using common
+    skill_ClosedBodySkillDefinition_Dmg_Fire: skill_ClosedBodySkillDefinition_Dmg_Fire.skill using common
+    skill_ClosedBodySkillDefinition_Dst_Fire: skill_ClosedBodySkillDefinition_Dst_Fire.skill using common
     skill_ClosedBodySkillDefinition_DamageModifier: skill_ClosedBodySkillDefinition_DamageModifier.skill using common
     skill_ClosedBodySkillDefinition_SkillSpeedModifier: skill_ClosedBodySkillDefinition_SkillSpeedModifier.skill using common
     skill_ClosedBodySkillDefinition_CooldownModifier: skill_ClosedBodySkillDefinition_CooldownModifier.skill using common
@@ -569,6 +1497,15 @@ pack "hellclock" {
     skill_ClosedBodySkillDefinition_BaseConvictionPercentageModifier: skill_ClosedBodySkillDefinition_BaseConvictionPercentageModifier.skill using common
     skill_ClosedBodySkillDefinition_RetaliationAuraDurationModifier: skill_ClosedBodySkillDefinition_RetaliationAuraDurationModifier.skill using common
     skill_ClosedBodySkillDefinition_RetaliationAuraDecayResistanceModifier: skill_ClosedBodySkillDefinition_RetaliationAuraDecayResistanceModifier.skill using common
+    skill_BombardmentSkillDefinition_Dmg_Total: skill_BombardmentSkillDefinition_Dmg_Total.skill using common
+    skill_BombardmentSkillDefinition_Dmg_Physical: skill_BombardmentSkillDefinition_Dmg_Physical.skill using common
+    skill_BombardmentSkillDefinition_Dst_Physical: skill_BombardmentSkillDefinition_Dst_Physical.skill using common
+    skill_BombardmentSkillDefinition_Dmg_Lightning: skill_BombardmentSkillDefinition_Dmg_Lightning.skill using common
+    skill_BombardmentSkillDefinition_Dst_Lightning: skill_BombardmentSkillDefinition_Dst_Lightning.skill using common
+    skill_BombardmentSkillDefinition_Dmg_Plague: skill_BombardmentSkillDefinition_Dmg_Plague.skill using common
+    skill_BombardmentSkillDefinition_Dst_Plague: skill_BombardmentSkillDefinition_Dst_Plague.skill using common
+    skill_BombardmentSkillDefinition_Dmg_Fire: skill_BombardmentSkillDefinition_Dmg_Fire.skill using common
+    skill_BombardmentSkillDefinition_Dst_Fire: skill_BombardmentSkillDefinition_Dst_Fire.skill using common
     skill_BombardmentSkillDefinition_DamageModifier: skill_BombardmentSkillDefinition_DamageModifier.skill using common
     skill_BombardmentSkillDefinition_SkillSpeedModifier: skill_BombardmentSkillDefinition_SkillSpeedModifier.skill using common
     skill_BombardmentSkillDefinition_CooldownModifier: skill_BombardmentSkillDefinition_CooldownModifier.skill using common
@@ -604,6 +1541,15 @@ pack "hellclock" {
     skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier.skill using common
     skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier.skill using common
     skill_SummonTheGuardSkillDefinition_RangeModifier: skill_SummonTheGuardSkillDefinition_RangeModifier.skill using RangeModifier
+    skill_MatadeiraSkillDefinition_Dmg_Total: skill_MatadeiraSkillDefinition_Dmg_Total.skill using common
+    skill_MatadeiraSkillDefinition_Dmg_Physical: skill_MatadeiraSkillDefinition_Dmg_Physical.skill using common
+    skill_MatadeiraSkillDefinition_Dst_Physical: skill_MatadeiraSkillDefinition_Dst_Physical.skill using common
+    skill_MatadeiraSkillDefinition_Dmg_Lightning: skill_MatadeiraSkillDefinition_Dmg_Lightning.skill using common
+    skill_MatadeiraSkillDefinition_Dst_Lightning: skill_MatadeiraSkillDefinition_Dst_Lightning.skill using common
+    skill_MatadeiraSkillDefinition_Dmg_Plague: skill_MatadeiraSkillDefinition_Dmg_Plague.skill using common
+    skill_MatadeiraSkillDefinition_Dst_Plague: skill_MatadeiraSkillDefinition_Dst_Plague.skill using common
+    skill_MatadeiraSkillDefinition_Dmg_Fire: skill_MatadeiraSkillDefinition_Dmg_Fire.skill using common
+    skill_MatadeiraSkillDefinition_Dst_Fire: skill_MatadeiraSkillDefinition_Dst_Fire.skill using common
     skill_MatadeiraSkillDefinition_DamageModifier: skill_MatadeiraSkillDefinition_DamageModifier.skill using common
     skill_MatadeiraSkillDefinition_SkillSpeedModifier: skill_MatadeiraSkillDefinition_SkillSpeedModifier.skill using common
     skill_MatadeiraSkillDefinition_CooldownModifier: skill_MatadeiraSkillDefinition_CooldownModifier.skill using common
@@ -678,5 +1624,283 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier.skill using common
     skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier: skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier.skill using common
     skill_SummonMarksmenSkillDefinition_RangeModifier: skill_SummonMarksmenSkillDefinition_RangeModifier.skill using RangeModifier
+  }
+  formulas {
+    // =====================================
+    // BasicAttackDefinition CONVERSION FORMULA
+    // =====================================
+    skill_BasicAttackDefinition_Dmg_Total = damage_flow("BasicAttackDefinition")
+    skill_BasicAttackDefinition_Dmg_Physical = damage_flow("BasicAttackDefinition", "PhysicalDamage")
+    skill_BasicAttackDefinition_Dst_Physical = damage_flow("BasicAttackDefinition", "PhysicalDistribution")
+    skill_BasicAttackDefinition_Dmg_Lightning = damage_flow("BasicAttackDefinition", "LightningDamage")
+    skill_BasicAttackDefinition_Dst_Lightning = damage_flow("BasicAttackDefinition", "LightningDistribution")
+    skill_BasicAttackDefinition_Dmg_Plague = damage_flow("BasicAttackDefinition", "PlagueDamage")
+    skill_BasicAttackDefinition_Dst_Plague = damage_flow("BasicAttackDefinition", "PlagueDistribution")
+    skill_BasicAttackDefinition_Dmg_Fire = damage_flow("BasicAttackDefinition", "FireDamage")
+    skill_BasicAttackDefinition_Dst_Fire = damage_flow("BasicAttackDefinition", "FireDistribution")
+    // =====================================
+    // SplitshotDefinition CONVERSION FORMULA
+    // =====================================
+    skill_SplitshotDefinition_Dmg_Total = damage_flow("SplitshotDefinition")
+    skill_SplitshotDefinition_Dmg_Physical = damage_flow("SplitshotDefinition", "PhysicalDamage")
+    skill_SplitshotDefinition_Dst_Physical = damage_flow("SplitshotDefinition", "PhysicalDistribution")
+    skill_SplitshotDefinition_Dmg_Lightning = damage_flow("SplitshotDefinition", "LightningDamage")
+    skill_SplitshotDefinition_Dst_Lightning = damage_flow("SplitshotDefinition", "LightningDistribution")
+    skill_SplitshotDefinition_Dmg_Plague = damage_flow("SplitshotDefinition", "PlagueDamage")
+    skill_SplitshotDefinition_Dst_Plague = damage_flow("SplitshotDefinition", "PlagueDistribution")
+    skill_SplitshotDefinition_Dmg_Fire = damage_flow("SplitshotDefinition", "FireDamage")
+    skill_SplitshotDefinition_Dst_Fire = damage_flow("SplitshotDefinition", "FireDistribution")
+    // =====================================
+    // ShadowDashDefinition CONVERSION FORMULA
+    // =====================================
+    skill_ShadowDashDefinition_Dmg_Total = damage_flow("ShadowDashDefinition")
+    skill_ShadowDashDefinition_Dmg_Physical = damage_flow("ShadowDashDefinition", "PhysicalDamage")
+    skill_ShadowDashDefinition_Dst_Physical = damage_flow("ShadowDashDefinition", "PhysicalDistribution")
+    skill_ShadowDashDefinition_Dmg_Lightning = damage_flow("ShadowDashDefinition", "LightningDamage")
+    skill_ShadowDashDefinition_Dst_Lightning = damage_flow("ShadowDashDefinition", "LightningDistribution")
+    skill_ShadowDashDefinition_Dmg_Plague = damage_flow("ShadowDashDefinition", "PlagueDamage")
+    skill_ShadowDashDefinition_Dst_Plague = damage_flow("ShadowDashDefinition", "PlagueDistribution")
+    skill_ShadowDashDefinition_Dmg_Fire = damage_flow("ShadowDashDefinition", "FireDamage")
+    skill_ShadowDashDefinition_Dst_Fire = damage_flow("ShadowDashDefinition", "FireDistribution")
+    // =====================================
+    // RepeaterDefinition CONVERSION FORMULA
+    // =====================================
+    skill_RepeaterDefinition_Dmg_Total = damage_flow("RepeaterDefinition")
+    skill_RepeaterDefinition_Dmg_Physical = damage_flow("RepeaterDefinition", "PhysicalDamage")
+    skill_RepeaterDefinition_Dst_Physical = damage_flow("RepeaterDefinition", "PhysicalDistribution")
+    skill_RepeaterDefinition_Dmg_Lightning = damage_flow("RepeaterDefinition", "LightningDamage")
+    skill_RepeaterDefinition_Dst_Lightning = damage_flow("RepeaterDefinition", "LightningDistribution")
+    skill_RepeaterDefinition_Dmg_Plague = damage_flow("RepeaterDefinition", "PlagueDamage")
+    skill_RepeaterDefinition_Dst_Plague = damage_flow("RepeaterDefinition", "PlagueDistribution")
+    skill_RepeaterDefinition_Dmg_Fire = damage_flow("RepeaterDefinition", "FireDamage")
+    skill_RepeaterDefinition_Dst_Fire = damage_flow("RepeaterDefinition", "FireDistribution")
+    // =====================================
+    // ReflexesDefinition CONVERSION FORMULA
+    // =====================================
+    skill_ReflexesDefinition_Dmg_Total = damage_flow("ReflexesDefinition")
+    skill_ReflexesDefinition_Dmg_Physical = damage_flow("ReflexesDefinition", "PhysicalDamage")
+    skill_ReflexesDefinition_Dst_Physical = damage_flow("ReflexesDefinition", "PhysicalDistribution")
+    skill_ReflexesDefinition_Dmg_Lightning = damage_flow("ReflexesDefinition", "LightningDamage")
+    skill_ReflexesDefinition_Dst_Lightning = damage_flow("ReflexesDefinition", "LightningDistribution")
+    skill_ReflexesDefinition_Dmg_Plague = damage_flow("ReflexesDefinition", "PlagueDamage")
+    skill_ReflexesDefinition_Dst_Plague = damage_flow("ReflexesDefinition", "PlagueDistribution")
+    skill_ReflexesDefinition_Dmg_Fire = damage_flow("ReflexesDefinition", "FireDamage")
+    skill_ReflexesDefinition_Dst_Fire = damage_flow("ReflexesDefinition", "FireDistribution")
+    // =====================================
+    // PrayerOfHealthSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_PrayerOfHealthSkillDefinition_Dmg_Total = damage_flow("PrayerOfHealthSkillDefinition")
+    skill_PrayerOfHealthSkillDefinition_Dmg_Physical = damage_flow("PrayerOfHealthSkillDefinition", "PhysicalDamage")
+    skill_PrayerOfHealthSkillDefinition_Dst_Physical = damage_flow("PrayerOfHealthSkillDefinition", "PhysicalDistribution")
+    skill_PrayerOfHealthSkillDefinition_Dmg_Lightning = damage_flow("PrayerOfHealthSkillDefinition", "LightningDamage")
+    skill_PrayerOfHealthSkillDefinition_Dst_Lightning = damage_flow("PrayerOfHealthSkillDefinition", "LightningDistribution")
+    skill_PrayerOfHealthSkillDefinition_Dmg_Plague = damage_flow("PrayerOfHealthSkillDefinition", "PlagueDamage")
+    skill_PrayerOfHealthSkillDefinition_Dst_Plague = damage_flow("PrayerOfHealthSkillDefinition", "PlagueDistribution")
+    skill_PrayerOfHealthSkillDefinition_Dmg_Fire = damage_flow("PrayerOfHealthSkillDefinition", "FireDamage")
+    skill_PrayerOfHealthSkillDefinition_Dst_Fire = damage_flow("PrayerOfHealthSkillDefinition", "FireDistribution")
+    // =====================================
+    // PrayerOfVengeanceSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Total = damage_flow("PrayerOfVengeanceSkillDefinition")
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Physical = damage_flow("PrayerOfVengeanceSkillDefinition", "PhysicalDamage")
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Physical = damage_flow("PrayerOfVengeanceSkillDefinition", "PhysicalDistribution")
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Lightning = damage_flow("PrayerOfVengeanceSkillDefinition", "LightningDamage")
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Lightning = damage_flow("PrayerOfVengeanceSkillDefinition", "LightningDistribution")
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Plague = damage_flow("PrayerOfVengeanceSkillDefinition", "PlagueDamage")
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Plague = damage_flow("PrayerOfVengeanceSkillDefinition", "PlagueDistribution")
+    skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire = damage_flow("PrayerOfVengeanceSkillDefinition", "FireDamage")
+    skill_PrayerOfVengeanceSkillDefinition_Dst_Fire = damage_flow("PrayerOfVengeanceSkillDefinition", "FireDistribution")
+    // =====================================
+    // TheOldBellSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_TheOldBellSkillDefinition_Dmg_Total = damage_flow("TheOldBellSkillDefinition")
+    skill_TheOldBellSkillDefinition_Dmg_Physical = damage_flow("TheOldBellSkillDefinition", "PhysicalDamage")
+    skill_TheOldBellSkillDefinition_Dst_Physical = damage_flow("TheOldBellSkillDefinition", "PhysicalDistribution")
+    skill_TheOldBellSkillDefinition_Dmg_Lightning = damage_flow("TheOldBellSkillDefinition", "LightningDamage")
+    skill_TheOldBellSkillDefinition_Dst_Lightning = damage_flow("TheOldBellSkillDefinition", "LightningDistribution")
+    skill_TheOldBellSkillDefinition_Dmg_Plague = damage_flow("TheOldBellSkillDefinition", "PlagueDamage")
+    skill_TheOldBellSkillDefinition_Dst_Plague = damage_flow("TheOldBellSkillDefinition", "PlagueDistribution")
+    skill_TheOldBellSkillDefinition_Dmg_Fire = damage_flow("TheOldBellSkillDefinition", "FireDamage")
+    skill_TheOldBellSkillDefinition_Dst_Fire = damage_flow("TheOldBellSkillDefinition", "FireDistribution")
+    // =====================================
+    // JudgementDefinition CONVERSION FORMULA
+    // =====================================
+    skill_JudgementDefinition_Dmg_Total = damage_flow("JudgementDefinition")
+    skill_JudgementDefinition_Dmg_Physical = damage_flow("JudgementDefinition", "PhysicalDamage")
+    skill_JudgementDefinition_Dst_Physical = damage_flow("JudgementDefinition", "PhysicalDistribution")
+    skill_JudgementDefinition_Dmg_Lightning = damage_flow("JudgementDefinition", "LightningDamage")
+    skill_JudgementDefinition_Dst_Lightning = damage_flow("JudgementDefinition", "LightningDistribution")
+    skill_JudgementDefinition_Dmg_Plague = damage_flow("JudgementDefinition", "PlagueDamage")
+    skill_JudgementDefinition_Dst_Plague = damage_flow("JudgementDefinition", "PlagueDistribution")
+    skill_JudgementDefinition_Dmg_Fire = damage_flow("JudgementDefinition", "FireDamage")
+    skill_JudgementDefinition_Dst_Fire = damage_flow("JudgementDefinition", "FireDistribution")
+    // =====================================
+    // DoubleKnivesSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_DoubleKnivesSkillDefinition_Dmg_Total = damage_flow("DoubleKnivesSkillDefinition")
+    skill_DoubleKnivesSkillDefinition_Dmg_Physical = damage_flow("DoubleKnivesSkillDefinition", "PhysicalDamage")
+    skill_DoubleKnivesSkillDefinition_Dst_Physical = damage_flow("DoubleKnivesSkillDefinition", "PhysicalDistribution")
+    skill_DoubleKnivesSkillDefinition_Dmg_Lightning = damage_flow("DoubleKnivesSkillDefinition", "LightningDamage")
+    skill_DoubleKnivesSkillDefinition_Dst_Lightning = damage_flow("DoubleKnivesSkillDefinition", "LightningDistribution")
+    skill_DoubleKnivesSkillDefinition_Dmg_Plague = damage_flow("DoubleKnivesSkillDefinition", "PlagueDamage")
+    skill_DoubleKnivesSkillDefinition_Dst_Plague = damage_flow("DoubleKnivesSkillDefinition", "PlagueDistribution")
+    skill_DoubleKnivesSkillDefinition_Dmg_Fire = damage_flow("DoubleKnivesSkillDefinition", "FireDamage")
+    skill_DoubleKnivesSkillDefinition_Dst_Fire = damage_flow("DoubleKnivesSkillDefinition", "FireDistribution")
+    // =====================================
+    // PassageSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_PassageSkillDefinition_Dmg_Total = damage_flow("PassageSkillDefinition")
+    skill_PassageSkillDefinition_Dmg_Physical = damage_flow("PassageSkillDefinition", "PhysicalDamage")
+    skill_PassageSkillDefinition_Dst_Physical = damage_flow("PassageSkillDefinition", "PhysicalDistribution")
+    skill_PassageSkillDefinition_Dmg_Lightning = damage_flow("PassageSkillDefinition", "LightningDamage")
+    skill_PassageSkillDefinition_Dst_Lightning = damage_flow("PassageSkillDefinition", "LightningDistribution")
+    skill_PassageSkillDefinition_Dmg_Plague = damage_flow("PassageSkillDefinition", "PlagueDamage")
+    skill_PassageSkillDefinition_Dst_Plague = damage_flow("PassageSkillDefinition", "PlagueDistribution")
+    skill_PassageSkillDefinition_Dmg_Fire = damage_flow("PassageSkillDefinition", "FireDamage")
+    skill_PassageSkillDefinition_Dst_Fire = damage_flow("PassageSkillDefinition", "FireDistribution")
+    // =====================================
+    // LassoSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_LassoSkillDefinition_Dmg_Total = damage_flow("LassoSkillDefinition")
+    skill_LassoSkillDefinition_Dmg_Physical = damage_flow("LassoSkillDefinition", "PhysicalDamage")
+    skill_LassoSkillDefinition_Dst_Physical = damage_flow("LassoSkillDefinition", "PhysicalDistribution")
+    skill_LassoSkillDefinition_Dmg_Lightning = damage_flow("LassoSkillDefinition", "LightningDamage")
+    skill_LassoSkillDefinition_Dst_Lightning = damage_flow("LassoSkillDefinition", "LightningDistribution")
+    skill_LassoSkillDefinition_Dmg_Plague = damage_flow("LassoSkillDefinition", "PlagueDamage")
+    skill_LassoSkillDefinition_Dst_Plague = damage_flow("LassoSkillDefinition", "PlagueDistribution")
+    skill_LassoSkillDefinition_Dmg_Fire = damage_flow("LassoSkillDefinition", "FireDamage")
+    skill_LassoSkillDefinition_Dst_Fire = damage_flow("LassoSkillDefinition", "FireDistribution")
+    // =====================================
+    // FeitorsLashSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_FeitorsLashSkillDefinition_Dmg_Total = damage_flow("FeitorsLashSkillDefinition")
+    skill_FeitorsLashSkillDefinition_Dmg_Physical = damage_flow("FeitorsLashSkillDefinition", "PhysicalDamage")
+    skill_FeitorsLashSkillDefinition_Dst_Physical = damage_flow("FeitorsLashSkillDefinition", "PhysicalDistribution")
+    skill_FeitorsLashSkillDefinition_Dmg_Lightning = damage_flow("FeitorsLashSkillDefinition", "LightningDamage")
+    skill_FeitorsLashSkillDefinition_Dst_Lightning = damage_flow("FeitorsLashSkillDefinition", "LightningDistribution")
+    skill_FeitorsLashSkillDefinition_Dmg_Plague = damage_flow("FeitorsLashSkillDefinition", "PlagueDamage")
+    skill_FeitorsLashSkillDefinition_Dst_Plague = damage_flow("FeitorsLashSkillDefinition", "PlagueDistribution")
+    skill_FeitorsLashSkillDefinition_Dmg_Fire = damage_flow("FeitorsLashSkillDefinition", "FireDamage")
+    skill_FeitorsLashSkillDefinition_Dst_Fire = damage_flow("FeitorsLashSkillDefinition", "FireDistribution")
+    // =====================================
+    // SlowTimeSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_SlowTimeSkillDefinition_Dmg_Total = damage_flow("SlowTimeSkillDefinition")
+    skill_SlowTimeSkillDefinition_Dmg_Physical = damage_flow("SlowTimeSkillDefinition", "PhysicalDamage")
+    skill_SlowTimeSkillDefinition_Dst_Physical = damage_flow("SlowTimeSkillDefinition", "PhysicalDistribution")
+    skill_SlowTimeSkillDefinition_Dmg_Lightning = damage_flow("SlowTimeSkillDefinition", "LightningDamage")
+    skill_SlowTimeSkillDefinition_Dst_Lightning = damage_flow("SlowTimeSkillDefinition", "LightningDistribution")
+    skill_SlowTimeSkillDefinition_Dmg_Plague = damage_flow("SlowTimeSkillDefinition", "PlagueDamage")
+    skill_SlowTimeSkillDefinition_Dst_Plague = damage_flow("SlowTimeSkillDefinition", "PlagueDistribution")
+    skill_SlowTimeSkillDefinition_Dmg_Fire = damage_flow("SlowTimeSkillDefinition", "FireDamage")
+    skill_SlowTimeSkillDefinition_Dst_Fire = damage_flow("SlowTimeSkillDefinition", "FireDistribution")
+    // =====================================
+    // UsePotionSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_UsePotionSkillDefinition_Dmg_Total = damage_flow("UsePotionSkillDefinition")
+    skill_UsePotionSkillDefinition_Dmg_Physical = damage_flow("UsePotionSkillDefinition", "PhysicalDamage")
+    skill_UsePotionSkillDefinition_Dst_Physical = damage_flow("UsePotionSkillDefinition", "PhysicalDistribution")
+    skill_UsePotionSkillDefinition_Dmg_Lightning = damage_flow("UsePotionSkillDefinition", "LightningDamage")
+    skill_UsePotionSkillDefinition_Dst_Lightning = damage_flow("UsePotionSkillDefinition", "LightningDistribution")
+    skill_UsePotionSkillDefinition_Dmg_Plague = damage_flow("UsePotionSkillDefinition", "PlagueDamage")
+    skill_UsePotionSkillDefinition_Dst_Plague = damage_flow("UsePotionSkillDefinition", "PlagueDistribution")
+    skill_UsePotionSkillDefinition_Dmg_Fire = damage_flow("UsePotionSkillDefinition", "FireDamage")
+    skill_UsePotionSkillDefinition_Dst_Fire = damage_flow("UsePotionSkillDefinition", "FireDistribution")
+    // =====================================
+    // ClosedBodySkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_ClosedBodySkillDefinition_Dmg_Total = damage_flow("ClosedBodySkillDefinition")
+    skill_ClosedBodySkillDefinition_Dmg_Physical = damage_flow("ClosedBodySkillDefinition", "PhysicalDamage")
+    skill_ClosedBodySkillDefinition_Dst_Physical = damage_flow("ClosedBodySkillDefinition", "PhysicalDistribution")
+    skill_ClosedBodySkillDefinition_Dmg_Lightning = damage_flow("ClosedBodySkillDefinition", "LightningDamage")
+    skill_ClosedBodySkillDefinition_Dst_Lightning = damage_flow("ClosedBodySkillDefinition", "LightningDistribution")
+    skill_ClosedBodySkillDefinition_Dmg_Plague = damage_flow("ClosedBodySkillDefinition", "PlagueDamage")
+    skill_ClosedBodySkillDefinition_Dst_Plague = damage_flow("ClosedBodySkillDefinition", "PlagueDistribution")
+    skill_ClosedBodySkillDefinition_Dmg_Fire = damage_flow("ClosedBodySkillDefinition", "FireDamage")
+    skill_ClosedBodySkillDefinition_Dst_Fire = damage_flow("ClosedBodySkillDefinition", "FireDistribution")
+    // =====================================
+    // BombardmentSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_BombardmentSkillDefinition_Dmg_Total = damage_flow("BombardmentSkillDefinition")
+    skill_BombardmentSkillDefinition_Dmg_Physical = damage_flow("BombardmentSkillDefinition", "PhysicalDamage")
+    skill_BombardmentSkillDefinition_Dst_Physical = damage_flow("BombardmentSkillDefinition", "PhysicalDistribution")
+    skill_BombardmentSkillDefinition_Dmg_Lightning = damage_flow("BombardmentSkillDefinition", "LightningDamage")
+    skill_BombardmentSkillDefinition_Dst_Lightning = damage_flow("BombardmentSkillDefinition", "LightningDistribution")
+    skill_BombardmentSkillDefinition_Dmg_Plague = damage_flow("BombardmentSkillDefinition", "PlagueDamage")
+    skill_BombardmentSkillDefinition_Dst_Plague = damage_flow("BombardmentSkillDefinition", "PlagueDistribution")
+    skill_BombardmentSkillDefinition_Dmg_Fire = damage_flow("BombardmentSkillDefinition", "FireDamage")
+    skill_BombardmentSkillDefinition_Dst_Fire = damage_flow("BombardmentSkillDefinition", "FireDistribution")
+    // =====================================
+    // SummonTheGuardSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_SummonTheGuardSkillDefinition_Dmg_Total = damage_flow("SummonTheGuardSkillDefinition")
+    skill_SummonTheGuardSkillDefinition_Dmg_Physical = damage_flow("SummonTheGuardSkillDefinition", "PhysicalDamage")
+    skill_SummonTheGuardSkillDefinition_Dst_Physical = damage_flow("SummonTheGuardSkillDefinition", "PhysicalDistribution")
+    skill_SummonTheGuardSkillDefinition_Dmg_Lightning = damage_flow("SummonTheGuardSkillDefinition", "LightningDamage")
+    skill_SummonTheGuardSkillDefinition_Dst_Lightning = damage_flow("SummonTheGuardSkillDefinition", "LightningDistribution")
+    skill_SummonTheGuardSkillDefinition_Dmg_Plague = damage_flow("SummonTheGuardSkillDefinition", "PlagueDamage")
+    skill_SummonTheGuardSkillDefinition_Dst_Plague = damage_flow("SummonTheGuardSkillDefinition", "PlagueDistribution")
+    skill_SummonTheGuardSkillDefinition_Dmg_Fire = damage_flow("SummonTheGuardSkillDefinition", "FireDamage")
+    skill_SummonTheGuardSkillDefinition_Dst_Fire = damage_flow("SummonTheGuardSkillDefinition", "FireDistribution")
+    // =====================================
+    // MatadeiraSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_MatadeiraSkillDefinition_Dmg_Total = damage_flow("MatadeiraSkillDefinition")
+    skill_MatadeiraSkillDefinition_Dmg_Physical = damage_flow("MatadeiraSkillDefinition", "PhysicalDamage")
+    skill_MatadeiraSkillDefinition_Dst_Physical = damage_flow("MatadeiraSkillDefinition", "PhysicalDistribution")
+    skill_MatadeiraSkillDefinition_Dmg_Lightning = damage_flow("MatadeiraSkillDefinition", "LightningDamage")
+    skill_MatadeiraSkillDefinition_Dst_Lightning = damage_flow("MatadeiraSkillDefinition", "LightningDistribution")
+    skill_MatadeiraSkillDefinition_Dmg_Plague = damage_flow("MatadeiraSkillDefinition", "PlagueDamage")
+    skill_MatadeiraSkillDefinition_Dst_Plague = damage_flow("MatadeiraSkillDefinition", "PlagueDistribution")
+    skill_MatadeiraSkillDefinition_Dmg_Fire = damage_flow("MatadeiraSkillDefinition", "FireDamage")
+    skill_MatadeiraSkillDefinition_Dst_Fire = damage_flow("MatadeiraSkillDefinition", "FireDistribution")
+    // =====================================
+    // HolyRosarySkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_HolyRosarySkillDefinition_Dmg_Total = damage_flow("HolyRosarySkillDefinition")
+    skill_HolyRosarySkillDefinition_Dmg_Physical = damage_flow("HolyRosarySkillDefinition", "PhysicalDamage")
+    skill_HolyRosarySkillDefinition_Dst_Physical = damage_flow("HolyRosarySkillDefinition", "PhysicalDistribution")
+    skill_HolyRosarySkillDefinition_Dmg_Lightning = damage_flow("HolyRosarySkillDefinition", "LightningDamage")
+    skill_HolyRosarySkillDefinition_Dst_Lightning = damage_flow("HolyRosarySkillDefinition", "LightningDistribution")
+    skill_HolyRosarySkillDefinition_Dmg_Plague = damage_flow("HolyRosarySkillDefinition", "PlagueDamage")
+    skill_HolyRosarySkillDefinition_Dst_Plague = damage_flow("HolyRosarySkillDefinition", "PlagueDistribution")
+    skill_HolyRosarySkillDefinition_Dmg_Fire = damage_flow("HolyRosarySkillDefinition", "FireDamage")
+    skill_HolyRosarySkillDefinition_Dst_Fire = damage_flow("HolyRosarySkillDefinition", "FireDistribution")
+    // =====================================
+    // VeilofQuilsSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_VeilofQuilsSkillDefinition_Dmg_Total = damage_flow("VeilofQuilsSkillDefinition")
+    skill_VeilofQuilsSkillDefinition_Dmg_Physical = damage_flow("VeilofQuilsSkillDefinition", "PhysicalDamage")
+    skill_VeilofQuilsSkillDefinition_Dst_Physical = damage_flow("VeilofQuilsSkillDefinition", "PhysicalDistribution")
+    skill_VeilofQuilsSkillDefinition_Dmg_Lightning = damage_flow("VeilofQuilsSkillDefinition", "LightningDamage")
+    skill_VeilofQuilsSkillDefinition_Dst_Lightning = damage_flow("VeilofQuilsSkillDefinition", "LightningDistribution")
+    skill_VeilofQuilsSkillDefinition_Dmg_Plague = damage_flow("VeilofQuilsSkillDefinition", "PlagueDamage")
+    skill_VeilofQuilsSkillDefinition_Dst_Plague = damage_flow("VeilofQuilsSkillDefinition", "PlagueDistribution")
+    skill_VeilofQuilsSkillDefinition_Dmg_Fire = damage_flow("VeilofQuilsSkillDefinition", "FireDamage")
+    skill_VeilofQuilsSkillDefinition_Dst_Fire = damage_flow("VeilofQuilsSkillDefinition", "FireDistribution")
+    // =====================================
+    // SummonBruteSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_SummonBruteSkillDefinition_Dmg_Total = damage_flow("SummonBruteSkillDefinition")
+    skill_SummonBruteSkillDefinition_Dmg_Physical = damage_flow("SummonBruteSkillDefinition", "PhysicalDamage")
+    skill_SummonBruteSkillDefinition_Dst_Physical = damage_flow("SummonBruteSkillDefinition", "PhysicalDistribution")
+    skill_SummonBruteSkillDefinition_Dmg_Lightning = damage_flow("SummonBruteSkillDefinition", "LightningDamage")
+    skill_SummonBruteSkillDefinition_Dst_Lightning = damage_flow("SummonBruteSkillDefinition", "LightningDistribution")
+    skill_SummonBruteSkillDefinition_Dmg_Plague = damage_flow("SummonBruteSkillDefinition", "PlagueDamage")
+    skill_SummonBruteSkillDefinition_Dst_Plague = damage_flow("SummonBruteSkillDefinition", "PlagueDistribution")
+    skill_SummonBruteSkillDefinition_Dmg_Fire = damage_flow("SummonBruteSkillDefinition", "FireDamage")
+    skill_SummonBruteSkillDefinition_Dst_Fire = damage_flow("SummonBruteSkillDefinition", "FireDistribution")
+    // =====================================
+    // SummonMarksmenSkillDefinition CONVERSION FORMULA
+    // =====================================
+    skill_SummonMarksmenSkillDefinition_Dmg_Total = damage_flow("SummonMarksmenSkillDefinition")
+    skill_SummonMarksmenSkillDefinition_Dmg_Physical = damage_flow("SummonMarksmenSkillDefinition", "PhysicalDamage")
+    skill_SummonMarksmenSkillDefinition_Dst_Physical = damage_flow("SummonMarksmenSkillDefinition", "PhysicalDistribution")
+    skill_SummonMarksmenSkillDefinition_Dmg_Lightning = damage_flow("SummonMarksmenSkillDefinition", "LightningDamage")
+    skill_SummonMarksmenSkillDefinition_Dst_Lightning = damage_flow("SummonMarksmenSkillDefinition", "LightningDistribution")
+    skill_SummonMarksmenSkillDefinition_Dmg_Plague = damage_flow("SummonMarksmenSkillDefinition", "PlagueDamage")
+    skill_SummonMarksmenSkillDefinition_Dst_Plague = damage_flow("SummonMarksmenSkillDefinition", "PlagueDistribution")
+    skill_SummonMarksmenSkillDefinition_Dmg_Fire = damage_flow("SummonMarksmenSkillDefinition", "FireDamage")
+    skill_SummonMarksmenSkillDefinition_Dst_Fire = damage_flow("SummonMarksmenSkillDefinition", "FireDistribution")
   }
 }

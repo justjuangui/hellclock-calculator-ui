@@ -83,7 +83,9 @@ export function provideEvaluationManager(
   let gearEvaluationAPI: ReturnType<typeof useGearEvaluation> | null = null;
   let skillEvaluationAPI: ReturnType<typeof useSkillEvaluation> | null = null;
   let relicEvaluationAPI: ReturnType<typeof useRelicEvaluation> | null = null;
-  let constellationEvaluationAPI: ReturnType<typeof useConstellationEvaluation> | null = null;
+  let constellationEvaluationAPI: ReturnType<
+    typeof useConstellationEvaluation
+  > | null = null;
 
   // Initialize APIs after contexts are available
   $effect(() => {
@@ -125,13 +127,19 @@ export function provideEvaluationManager(
 
   // Reactive evaluation when gear, skills, relics, or constellations change
   $effect(() => {
-    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI || !constellationEvaluationAPI)
+    if (
+      !gearEvaluationAPI ||
+      !skillEvaluationAPI ||
+      !relicEvaluationAPI ||
+      !constellationEvaluationAPI
+    )
       return;
 
     const currentGearHash = gearEvaluationAPI.gearHash;
     const currentSkillHash = skillEvaluationAPI.skillHash;
     const currentRelicHash = relicEvaluationAPI.relicHash;
-    const currentConstellationHash = constellationEvaluationAPI.constellationHash;
+    const currentConstellationHash =
+      constellationEvaluationAPI.constellationHash;
 
     // Check if equipment has changed
     if (
@@ -162,7 +170,7 @@ export function provideEvaluationManager(
 
     if (actorBuilt) return true;
 
-    const resActor = await engine.build(actor, target, { timeoutMs: 5000 });
+    const resActor = await engine.build(actor, { timeoutMs: 5000 });
 
     if ((resActor as any)?.error) {
       throw new Error((resActor as any).error);
@@ -177,8 +185,15 @@ export function provideEvaluationManager(
       throw new Error("Engine and sheet are required");
     }
 
-    if (!gearEvaluationAPI || !skillEvaluationAPI || !relicEvaluationAPI || !constellationEvaluationAPI) {
-      throw new Error("Gear, Skill, Relic, and Constellation evaluation APIs are required");
+    if (
+      !gearEvaluationAPI ||
+      !skillEvaluationAPI ||
+      !relicEvaluationAPI ||
+      !constellationEvaluationAPI
+    ) {
+      throw new Error(
+        "Gear, Skill, Relic, and Constellation evaluation APIs are required",
+      );
     }
 
     await buildActor();
@@ -276,12 +291,19 @@ export function provideEvaluationManager(
       }
     });
 
+    // TODO: From now Only Player stats is setted, need to add target stats if any and Summons
     const payload = {
-      set: allMods,
-      outputs: Object.values(sheet?.displayedStats ?? {}).flatMap(
-        (v): string[] =>
-          Array.isArray(v) ? v : typeof v === "string" ? [v] : [],
-      ),
+      setEntity: {
+        player: {
+          stats: allMods,
+        },
+      },
+      outputs: {
+        player: Object.values(sheet?.displayedStats ?? {}).flatMap(
+          (v): string[] =>
+            Array.isArray(v) ? v : typeof v === "string" ? [v] : [],
+        ),
+      },
     };
 
     console.debug("Evaluating stats with payload:", payload);
@@ -292,7 +314,7 @@ export function provideEvaluationManager(
       throw new Error((result as any).error);
     }
 
-    return result as EvaluationResult;
+    return (result as any)["player"] as EvaluationResult;
   }
 
   async function evaluateAll(): Promise<void> {
@@ -310,14 +332,20 @@ export function provideEvaluationManager(
     }
   }
 
-  async function explain(stat: string): Promise<ExplainPayload> {
+  async function explain(
+    stat: string,
+    entity: string = "player",
+  ): Promise<ExplainPayload> {
     if (!engine) {
       throw new Error("Engine is required for explanation");
     }
 
     await buildActor();
 
-    const result = await engine.explain(stat, { timeoutMs: 5000 });
+    const result = await engine.explain(
+      { entityId: entity, output: stat },
+      { timeoutMs: 5000 },
+    );
 
     if ((result as any)?.error) {
       throw new Error((result as any).error);
@@ -341,18 +369,20 @@ export function provideEvaluationManager(
     const outputs = baseValueMods.map(
       (baseValMod: any) => `skill_${skill.skill.name}_${baseValMod.id}`,
     );
-    const payload = { set: {}, outputs };
+    const payload = { setEntity: {}, outputs: { player: outputs } };
 
     console.log(
       "Evaluating skill via EvaluationManager",
       skill.skill.name,
       payload,
     );
-    const result = await engine.eval(payload, { timeoutMs: 5000 });
+    const resultOutputs = await engine.eval(payload, { timeoutMs: 5000 });
 
-    if ((result as any)?.error) {
-      throw new Error((result as any).error);
+    if ((resultOutputs as any)?.error) {
+      throw new Error((resultOutputs as any).error);
     }
+
+    const result = (resultOutputs as any)["player"] || {};
 
     return {
       skill,

@@ -66,6 +66,9 @@ export function provideSkillEvaluation(
       }
 
       for (const baseValMod of baseValMods) {
+        if (baseValMod.value.startsWith("IGNORE")) {
+          continue;
+        }
         const skillGroup = `skill_${skill.skill.name}_${baseValMod.id}`;
         if (!(skillGroup in mods)) {
           mods[skillGroup] = [];

@@ -42,7 +42,7 @@ self.onmessage = async (e) => {
     const res = self.LoadGamePack(toU8(payload));
     reply({ type: "loaded", payload: fromU8(res), request: payload });
   } else if (type === "build") {
-    const res = self.BuildGraph(toU8(payload.actor), toU8(payload.target));
+    const res = self.BuildGraph(toU8(payload.entities));
     reply({ type: "built", payload: fromU8(res) });
   } else if (type === "eval") {
     const res = self.Evaluate(toU8(payload));
@@ -51,7 +51,7 @@ self.onmessage = async (e) => {
       payload: fromU8(res),
     });
   } else if (type === "explain") {
-    const res = self.Explain(payload);
+    const res = self.Explain(payload.entityId, payload.output);
     reply({
       type: "explained",
       payload: fromU8(res),
