@@ -28,6 +28,7 @@
   let selectedSize = $state<RelicSize | null>(null);
   let selectedRarity = $state<RelicRarity | null>(null);
   let selectedTier = $state<number>(1);
+  let selectedRank = $state<number>(0);
   let selectedImbuedType = $state<RelicImbuedType>("None");
   let search = $state("");
 
@@ -83,7 +84,12 @@
 
   // Available relics for selected size and rarity
   const availableRelicDefs = $derived.by(() => {
-    if (!selectedSize || !selectedRarity || !relicsHelper || !selectedTier)
+    if (
+      !selectedSize ||
+      !selectedRarity ||
+      !relicsHelper ||
+      !selectedTier
+    )
       return [];
 
     let relics = relicsHelper.getRelicDefinitionsBySize(selectedSize);
@@ -181,6 +187,7 @@
           selectedRelicDef,
           selectedRarity,
           selectedTier,
+          selectedRank,
         ) || null;
     }
   });
@@ -195,6 +202,7 @@
         relicDef,
         selectedRarity!,
         selectedTier,
+        selectedRank,
       ) || null;
   }
 
@@ -214,6 +222,7 @@
       id: `relic-${selectedRelicDef.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       name: getRelicDisplayName(selectedRelicDef, relicConfiguration),
       size: selectedSize!,
+      rank: selectedRank,
       tier: relicConfiguration.tier,
       imbuedType: selectedImbuedType,
       rarity: relicConfiguration.rarity,
@@ -290,11 +299,7 @@
       } else {
         // Add affix (only one allowed)
         relicConfiguration.selectedCorruptionAffix = affix;
-        const [_, max] = relicsHelper.getAffixValueRange(
-          affix.id,
-          selectedTier,
-        ) || [0, 0];
-        relicConfiguration.implicitAffixValues[affix.id] = max;
+        relicConfiguration.implicitAffixValues[affix.id] = 1;
       }
       return;
     }
@@ -307,11 +312,7 @@
       } else {
         // Add affix (only one allowed)
         relicConfiguration.selectedDevotionAffix = affix;
-        const [_, max] = relicsHelper.getAffixValueRange(
-          affix.id,
-          selectedTier,
-        ) || [0, 0];
-        relicConfiguration.implicitAffixValues[affix.id] = max;
+        relicConfiguration.implicitAffixValues[affix.id] = 1;
       }
       return;
     }
@@ -324,11 +325,7 @@
       } else {
         // Add affix (only one allowed)
         relicConfiguration.selectedSpecialAffix = affix;
-        const [_, max] = relicsHelper.getAffixValueRange(
-          affix.id,
-          selectedTier,
-        ) || [0, 0];
-        relicConfiguration.specialAffixValues[affix.id] = max;
+        relicConfiguration.specialAffixValues[affix.id] = 1;
       }
       return;
     }
@@ -359,15 +356,10 @@
 
       if (affixArray.length < maxCount) {
         affixArray.push(affix);
-        const [_, max] = relicsHelper.getAffixValueRange(
-          affix.id,
-          selectedTier,
-        ) || [0, 0];
-
         if (type === "primary") {
-          relicConfiguration.primaryAffixValues[affix.id] = max;
+          relicConfiguration.primaryAffixValues[affix.id] = 1;
         } else {
-          relicConfiguration.secondaryAffixValues[affix.id] = max;
+          relicConfiguration.secondaryAffixValues[affix.id] = 1;
         }
       }
     }
@@ -502,6 +494,26 @@
         />
         <div class="flex justify-between text-xs opacity-50 mt-1">
           <span>1</span><span>2</span><span>3</span><span>4</span>
+        </div>
+      </div>
+    {/if}
+
+    <!-- Step 4: Rank Selection -->
+    {#if selectedSize && selectedRarity}
+      <div class="mb-4">
+        <div class="text-xs font-medium mb-2 flex items-center">
+          <span class="badge badge-primary badge-xs mr-2">4</span>
+          Select Rank: {selectedRank}
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="5"
+          bind:value={selectedRank}
+          class="range range-xs w-full"
+        />
+        <div class="flex justify-between text-xs opacity-50 mt-1">
+          <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
         </div>
       </div>
     {/if}
@@ -649,6 +661,7 @@
             affixValues={relicConfiguration.primaryAffixValues}
             maxAffixes={relicConfiguration.maxPrimaryAffixes}
             tier={selectedTier}
+            rank={selectedRank}
             onToggleAffix={(affix) => toggleAffix(affix, "primary")}
             onUpdateValue={(affixId, value) =>
               updateAffixValue(affixId, value, "primary")}
@@ -661,6 +674,7 @@
             affixValues={relicConfiguration.secondaryAffixValues}
             maxAffixes={relicConfiguration.maxSecondaryAffixes}
             tier={selectedTier}
+            rank={selectedRank}
             onToggleAffix={(affix) => toggleAffix(affix, "secondary")}
             onUpdateValue={(affixId, value) =>
               updateAffixValue(affixId, value, "secondary")}
@@ -675,6 +689,7 @@
             affixValues={relicConfiguration.implicitAffixValues}
             maxAffixes={relicConfiguration.maxCorruptionAffixes}
             tier={selectedTier}
+            rank={selectedRank}
             onToggleAffix={(affix) => toggleAffix(affix, "corrupted")}
             onUpdateValue={(affixId, value) =>
               updateAffixValue(affixId, value, "corrupted")}
@@ -689,6 +704,7 @@
             affixValues={relicConfiguration.specialAffixValues}
             maxAffixes={1}
             tier={selectedTier}
+            rank={selectedRank}
             canRemove={relicConfiguration.rarity !== "Unique"}
             onToggleAffix={(affix) => toggleAffix(affix, "special")}
             onUpdateValue={(affixId, value) =>
@@ -729,6 +745,7 @@
               affixValues={relicConfiguration.implicitAffixValues}
               maxAffixes={relicConfiguration.maxDevotionAffixes}
               tier={selectedTier}
+              rank={selectedRank}
               onToggleAffix={(affix) => toggleAffix(affix, "imbuement")}
               onUpdateValue={(affixId, value) =>
                 updateAffixValue(affixId, value, "implicit")}

@@ -49,6 +49,19 @@ export function formatStatNumber(
   return `${symbol}${Math.round(value).toFixed(0)}`;
 }
 
+export function normalizedValueFromRange(
+  from: number,
+  fromMin: number,
+  fromMax: number,
+  toMin: number,
+  toMax: number,
+) {
+  let num = from - fromMin;
+  let num2 = fromMax - fromMin;
+  let num3 = num / num2;
+  return (toMax - toMin) * num3 + toMin;
+}
+
 export function normalizedValue(from: number, fromMin = 0.0, fromMax = 1.0) {
   return Math.min(Math.max(from, fromMin), fromMax);
 }
@@ -106,13 +119,14 @@ export function formatSkillEffectVariableModNumber(
     variableFormat === "Multiplicative" ||
     variableFormat === "MultiplicativeAdditive"
   ) {
-    return formatStatNumber(
+    return (
+      formatStatNumber(
         value,
         "PERCENTAGE",
         ESingType.Never,
         EComplementType.Decrement,
       ) + (variableFormat === "Multiplicative" ? "[x]" : "[+]")
-;
+    );
   } else if (variableFormat === "Percentage") {
     return formatStatNumber(
       value,

@@ -11,6 +11,7 @@
   import {
     formatSkillEffectVariableModNumber,
     formatStatModNumber,
+    normalizedValueFromRange,
   } from "$lib/hellclock/formats";
   import { formatHCStyle, formatIndexed } from "$lib/hellclock/utils";
 
@@ -20,6 +21,7 @@
     affixValues: Record<number, number>;
     maxAffixes: number;
     tier: number;
+    rank: number;
     relicSize: RelicSize;
     canRemove?: boolean;
     onToggleAffix: (affix: RelicAffix) => void;
@@ -37,6 +39,7 @@
     affixValues,
     maxAffixes,
     tier,
+    rank,
     relicSize,
     canRemove = true,
     onToggleAffix,
@@ -44,12 +47,21 @@
   }: Props = $props();
 
   function getAffixDisplayValue(affix: RelicAffix, value: number): string {
+    let range = relicsHelper.getAffixValueRange(affix.id, tier, rank);
+    let fromNormalized = normalizedValueFromRange(
+      value,
+      0,
+      1,
+      range[0],
+      range[1],
+    );
+
     if (affix.type === "StatModifierAffixDefinition") {
       const statDef = statsHelper.getStatByName(affix.eStatDefinition!);
-      if (!statDef) return String(value);
+      if (!statDef) return String(fromNormalized);
       const clampvalue = statsHelper.getValueForStat(
         affix.eStatDefinition!,
-        value,
+        fromNormalized,
       );
 
       return formatStatModNumber(
@@ -62,18 +74,18 @@
       );
     } else if (affix.type === "SkillBehaviorAffixDefinition") {
       return formatSkillEffectVariableModNumber(
-        value,
+        fromNormalized,
         affix.behaviorData!.variables.variables[0].eSkillEffectVariableFormat,
       );
     } else if (
       affix.type === "SkillLevelAffixDefinition" ||
       affix.type === "StatusMaxStacksAffixDefinition"
     ) {
-      return `+${value}`;
+      return `+${fromNormalized}`;
     } else if (affix.type === "RegenOnKillAffixDefinition") {
       const statDef = statsHelper.getStatByName(affix.eStatRegen!);
-      if (!statDef) return String(value);
-      const clampvalue = statsHelper.getValueForStat(affix.eStatRegen!, value);
+      if (!statDef) return String(fromNormalized);
+      const clampvalue = statsHelper.getValueForStat(affix.eStatRegen!, fromNormalized);
 
       return formatStatModNumber(
         clampvalue,
@@ -162,9 +174,7 @@
     {#each affixes as affix}
       {@const isSelected = selectedAffixes.some((a) => a.id === affix.id)}
       {@const tags = getTagsAffix(affix)}
-      {@const [min, max] = relicsHelper?.getAffixValueRange(affix.id, tier) || [
-        0, 0,
-      ]}
+      {@const [min, max] = [0, 1.2]}
       {@const currentValue = affixValues[affix.id] || 0}
 
       <div

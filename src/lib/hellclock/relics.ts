@@ -7,6 +7,7 @@ import type {
 import {
   formatSkillEffectVariableModNumber,
   formatStatModNumber,
+  normalizedValueFromRange,
 } from "$lib/hellclock/formats";
 import {
   formatHCStyle,
@@ -303,6 +304,7 @@ export type RelicAffix = {
   descriptionValuePrefix?: string;
   additionalLocalizationVariables?: SkillBehaviorLocalizationVariable[];
   behaviorData?: SkillBehaviorData;
+  relicUpgradeModifierConfig?: RelicUpgradeModifierConfig;
 };
 
 export type RelicSizeConfig = {
@@ -664,6 +666,7 @@ export class RelicsHelper {
     baseDefinition: RelicBaseDefinition,
     rarity: RelicRarity = "Common",
     tier: number = 1,
+    rank: number = 0,
   ): Omit<RelicItem, "position"> {
     const sizeConfig = this.getRelicSizeConfig(baseDefinition.eRelicSize);
     const tierConfig = this.getRelicTierConfig(tier);
@@ -673,6 +676,7 @@ export class RelicsHelper {
       name: baseDefinition.name,
       size: baseDefinition.eRelicSize,
       tier,
+      rank,
       rarity,
       sprite:
         tierConfig?.spritePerSize[baseDefinition.eRelicSize] ||
@@ -745,12 +749,31 @@ export class RelicsHelper {
   /**
    * Get affix value range for a specific tier
    */
-  getAffixValueRange(affixId: number, tier: number): [number, number] {
+  getAffixValueRange(
+    affixId: number,
+    tier: number,
+    rank: number,
+  ): [number, number] {
     const affix = this.getRelicAffixById(affixId);
     if (!affix) return [0, 0];
 
+    let rankModifier = 1.0;
+    if (
+      affix.relicUpgradeModifierConfig &&
+      affix.relicUpgradeModifierConfig.upgradeModifier &&
+      affix.relicUpgradeModifierConfig.upgradeModifier[rank]
+    ) {
+      rankModifier = affix.relicUpgradeModifierConfig.upgradeModifier[rank];
+    }
     const tierRange = affix.tierRollRanges.find((range) => range.tier === tier);
-    return tierRange?.rollRange || [0, 0];
+    if (tierRange) {
+      return [
+        tierRange.rollRange[0] * rankModifier,
+        tierRange.rollRange[1] * rankModifier,
+      ];
+    }
+
+    return [0, 0];
   }
 
   /**
@@ -789,6 +812,7 @@ export class RelicsHelper {
     baseDefinition: RelicBaseDefinition,
     rarity: RelicRarity = "Common",
     tier: number = 1,
+    rankModifier: number = 1,
   ): RelicConfiguration {
     const corruptedAffixes = this.getImplicitAffixesForSize(
       baseDefinition.eRelicSize,
@@ -845,6 +869,7 @@ export class RelicsHelper {
     return {
       rarity,
       tier,
+      rankModifier,
       maxPrimaryAffixes: maxCounts.primary,
       maxSecondaryAffixes: maxCounts.secondary,
       maxDevotionAffixes: 1,
@@ -915,6 +940,8 @@ export class RelicsHelper {
         text: this.formatRelicAffix(
           relic.selectedSpecialAffix,
           value,
+          relic.tier,
+          relic.rank,
           lang,
           statsHelper,
           skillsHelper,
@@ -937,6 +964,8 @@ export class RelicsHelper {
         text: this.formatRelicAffix(
           relic.selectedCorruptionAffix,
           value,
+          relic.tier,
+          relic.rank,
           lang,
           statsHelper,
           skillsHelper,
@@ -957,6 +986,8 @@ export class RelicsHelper {
         text: this.formatRelicAffix(
           relic.selectedDevotionAffix,
           value,
+          relic.tier,
+          relic.rank,
           lang,
           statsHelper,
           skillsHelper,
@@ -980,7 +1011,14 @@ export class RelicsHelper {
       for (const affix of relic.selectedPrimaryAffixes) {
         const value = relic.primaryAffixValues?.[affix.id];
         lines.push({
-          text: this.formatRelicAffix(affix, value, lang, statsHelper),
+          text: this.formatRelicAffix(
+            affix,
+            value,
+            relic.tier,
+            relic.rank,
+            lang,
+            statsHelper,
+          ),
           icon: affixIcons.defaultIcon,
           type: "affix",
         });
@@ -992,7 +1030,14 @@ export class RelicsHelper {
       for (const affix of relic.selectedSecondaryAffixes) {
         const value = relic.secondaryAffixValues?.[affix.id];
         lines.push({
-          text: this.formatRelicAffix(affix, value, lang, statsHelper),
+          text: this.formatRelicAffix(
+            affix,
+            value,
+            relic.tier,
+            relic.rank,
+            lang,
+            statsHelper,
+          ),
           icon: affixIcons.defaultIcon,
           type: "affix",
         });
@@ -1041,7 +1086,9 @@ export class RelicsHelper {
    */
   private formatRelicAffix(
     affix: RelicAffix,
-    value: number | undefined,
+    valueNormalized: number | undefined,
+    tier: number,
+    rank: number,
     lang: string,
     statsHelper?: StatsHelper,
     skillsHelper?: SkillsHelper,
@@ -1049,9 +1096,18 @@ export class RelicsHelper {
     // Get the localized name
     const affixName = translate(affix.nameLocalizationKey, lang) || affix.name;
 
-    if (value === undefined) {
+    if (valueNormalized === undefined) {
       return affixName;
     }
+
+    let range = this.getAffixValueRange(affix.id, tier, rank);
+    let value = normalizedValueFromRange(
+      valueNormalized,
+      0,
+      1,
+      range[0],
+      range[1],
+    );
 
     // Format based on affix type
     switch (affix.type) {
@@ -1079,8 +1135,18 @@ export class RelicsHelper {
         return `${value} ${affixName}`;
 
       case "RegenOnKillAffixDefinition":
-        const statsLabel = statsHelper!.getLabelForStat(affix.eStatRegen!, lang);
-        const formattedRegen = formatStatModNumber(value, affix.flatRegen ? "DEFAULT" : "PERCENTAGE", "Additive", 1, 0, 1);
+        const statsLabel = statsHelper!.getLabelForStat(
+          affix.eStatRegen!,
+          lang,
+        );
+        const formattedRegen = formatStatModNumber(
+          value,
+          affix.flatRegen ? "DEFAULT" : "PERCENTAGE",
+          "Additive",
+          1,
+          0,
+          1,
+        );
         return `${formattedRegen} ${statsLabel} on Kill`;
 
       case "SkillLevelAffixDefinition":
@@ -1136,6 +1202,7 @@ export class RelicsHelper {
 export type RelicConfiguration = {
   rarity: RelicRarity;
   tier: number;
+  rankModifier: number;
   imbuedType?: RelicImbuedType;
   maxPrimaryAffixes: number;
   maxSecondaryAffixes: number;
@@ -1166,6 +1233,7 @@ export type RelicItem = {
   name: string;
   size: RelicSize;
   tier: number;
+  rank: number;
   rarity: string;
   sprite: string;
   width: number;

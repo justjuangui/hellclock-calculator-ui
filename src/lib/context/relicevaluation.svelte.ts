@@ -5,7 +5,10 @@ import type {
 } from "$lib/hellclock/relics";
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
-import { getValueFromMultiplier } from "$lib/hellclock/formats";
+import {
+  getValueFromMultiplier,
+  normalizedValueFromRange,
+} from "$lib/hellclock/formats";
 import { fmtValue } from "$lib/hellclock/utils";
 import { getContext, setContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
@@ -91,6 +94,9 @@ export function provideRelicEvaluation(
             relicName,
             positionKey,
             "primary",
+            relic.tier,
+            relic.rank,
+            relicsHelper!,
             mods,
           );
         }
@@ -105,6 +111,9 @@ export function provideRelicEvaluation(
             relicName,
             positionKey,
             "secondary",
+            relic.tier,
+            relic.rank,
+            relicsHelper!,
             mods,
           );
         }
@@ -118,6 +127,9 @@ export function provideRelicEvaluation(
           relicName,
           positionKey,
           "devotion",
+          relic.tier,
+          relic.rank,
+          relicsHelper!,
           mods,
         );
       }
@@ -130,6 +142,9 @@ export function provideRelicEvaluation(
           relicName,
           positionKey,
           "corrupted",
+          relic.tier,
+          relic.rank,
+          relicsHelper!,
           mods,
         );
       }
@@ -142,6 +157,9 @@ export function provideRelicEvaluation(
           relicName,
           positionKey,
           "Special",
+          relic.tier,
+          relic.rank,
+          relicsHelper!,
           mods,
         );
       }
@@ -152,12 +170,24 @@ export function provideRelicEvaluation(
 
   function processAffix(
     affix: RelicAffix,
-    value: number,
+    valueNormalized: number,
     relicName: string,
     positionKey: string,
     affixType: string,
+    tier: number,
+    rank: number,
+    relicHelper: RelicsHelper,
     mods: RelicModCollection,
   ): void {
+    let range = relicHelper.getAffixValueRange(affix.id, tier, rank);
+    let value = normalizedValueFromRange(
+      valueNormalized,
+      0,
+      1,
+      range[0],
+      range[1],
+    );
+
     if (affix.type === "StatModifierAffixDefinition") {
       processStatModifierAffix(
         affix,
