@@ -214,7 +214,7 @@ export function provideRelicEvaluation(
 
           let valueToUse = value;
 
-          if (modifier.value.valueOrName !== "Roll") {
+          if (affix.rollVariableName !== modifier.value.valueOrName) {
             // Search for variable if exists and get the baseValue
             const varValue = affix.behaviorData.variables.variables.find(
               (v) => v.name === modifier.value.valueOrName,
