@@ -69,7 +69,7 @@ export function provideSkillEvaluation(
         if (baseValMod.value.startsWith("IGNORE")) {
           continue;
         }
-        const skillGroup = `skill_${skill.skill.name}_${baseValMod.id}`;
+        const skillGroup = `skill_${skill.skill.name}_${baseValMod.id}`.replaceAll(" ", "");
         if (!(skillGroup in mods)) {
           mods[skillGroup] = [];
         }
@@ -110,7 +110,7 @@ export function provideSkillEvaluation(
           continue;
         }
         const [statInfo, layer] = mapSkillModForEval(modifier).split(".");
-        const statName = `skill_${skill.skill.name}_${statInfo}`;
+        const statName = `skill_${skill.skill.name}_${statInfo}`.replaceAll(" ", "");
         if (!(statName in mods)) {
           mods[statName] = [];
         }
