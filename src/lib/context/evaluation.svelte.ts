@@ -366,8 +366,8 @@ export function provideEvaluationManager(
     const baseValueMods = skillsHelper.getSkillBaseValueModsById(
       skill.skill.name,
     );
-    const outputs = baseValueMods.map(
-      (baseValMod: any) => `skill_${skill.skill.name}_${baseValMod.id}`,
+    const outputs = baseValueMods.map((baseValMod: any) =>
+      `skill_${skill.skill.name}_${baseValMod.id}`.replaceAll(" ", ""),
     );
     const payload = { setEntity: {}, outputs: { player: outputs } };
 

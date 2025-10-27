@@ -236,7 +236,7 @@ export function provideRelicEvaluation(
           } else if (modifierType === "multiplicativeadditive") {
             layer = "multadd";
           }
-          const statName = `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`;
+          const statName = `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`.replaceAll(" ","");
 
           if (!(statName in mods)) {
             mods[statName] = [];

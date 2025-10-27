@@ -77,9 +77,20 @@ export function provideSkillEvaluation(
         let amount = 0;
         if (baseValMod.value.startsWith("CONST:N")) {
           let [, , val] = baseValMod.value.split(":");
-          amount = Number(val) || 0;
+          amount = Number(val) ?? 0;
+        } else if (baseValMod.value.startsWith("RANDOM:")) {
+          let [_, valRange] = baseValMod.value.split(":");
+          const range = (skill.skill as any)[valRange] ?? [0,0];
+          amount = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0]
+        } else if (baseValMod.value.startsWith("DEEP:")) {
+          const deepEval = baseValMod.value.replace("DEEP:", "").split(":");
+          let val;
+          for (const part of deepEval) {
+            val = val ? val[part] : (skill.skill as any)[part];
+          }
+          amount = Number(val) ?? 0;
         } else {
-          amount = Number((skill.skill as any)[baseValMod.value]) || 0;
+          amount = Number((skill.skill as any)[baseValMod.value]) ?? 0;
         }
         mods[skillGroup].push({
           source: `Skill ${translate(skill.skill.localizedName, lang)}`,
