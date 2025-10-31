@@ -76,6 +76,7 @@
   let explainTitle = $state<string>("");
   let explainData = $state<ExplainPayload | null>(null);
   let activeExplainTab = $state<"phases" | "debug">("phases");
+  let expandAll = $state<boolean | null>(null);
 
   let showGearSelector = $state(false);
   let gearSelectorIsBlessed = $state(true);
@@ -351,8 +352,24 @@
 
         <!-- Debug View -->
         {#if activeExplainTab === "debug"}
-          <div class="overflow-y-auto max-h-96">
-            <XNodeTree node={explainData.debug} />
+          <div class="space-y-2">
+            <div class="flex gap-2">
+              <button
+                class="btn btn-sm btn-outline"
+                onclick={() => (expandAll = true)}
+              >
+                Expand All
+              </button>
+              <button
+                class="btn btn-sm btn-outline"
+                onclick={() => (expandAll = false)}
+              >
+                Collapse All
+              </button>
+            </div>
+            <div class="overflow-y-auto max-h-96">
+              <XNodeTree node={explainData.debug} {expandAll} />
+            </div>
           </div>
         {/if}
       </div>
