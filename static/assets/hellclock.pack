@@ -1291,761 +1291,944 @@ pack "hellclock" {
   damage_flows {
     BasicAttackDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_BasicAttackDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_BasicAttackDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_BasicAttackDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_BasicAttackDefinition_LightningDamageConversionModifier
     		Plague: skill_BasicAttackDefinition_PlagueDamageConversionModifier
     		Fire: skill_BasicAttackDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_BasicAttackDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_BasicAttackDefinition_AdditionalLightningDamageModifier
     		Plague: skill_BasicAttackDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_BasicAttackDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     SplitshotDefinition {
     	primary: Fire
-    	base_damage: BaseDamage * skill_SplitshotDefinition_DamageModifier 
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_SplitshotDefinition_DamageModifier 
     		* (
     			skill_SplitshotDefinition_ChargedShotEnabledModifier ?
     			skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier * skill_SplitshotDefinition_BulletCountModifier :
     			1
     		)
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	initial_distribution {
     		Physical: skill_SplitshotDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_SplitshotDefinition_LightningDamageConversionModifier
     		Plague: skill_SplitshotDefinition_PlagueDamageConversionModifier
     		Fire: skill_SplitshotDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_SplitshotDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_SplitshotDefinition_AdditionalLightningDamageModifier
     		Plague: skill_SplitshotDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_SplitshotDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     ShadowDashDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_ShadowDashDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_ShadowDashDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_ShadowDashDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_ShadowDashDefinition_LightningDamageConversionModifier
     		Plague: skill_ShadowDashDefinition_PlagueDamageConversionModifier
     		Fire: skill_ShadowDashDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_ShadowDashDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_ShadowDashDefinition_AdditionalLightningDamageModifier
     		Plague: skill_ShadowDashDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_ShadowDashDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     RepeaterDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_RepeaterDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_RepeaterDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_RepeaterDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_RepeaterDefinition_LightningDamageConversionModifier
     		Plague: skill_RepeaterDefinition_PlagueDamageConversionModifier
     		Fire: skill_RepeaterDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_RepeaterDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_RepeaterDefinition_AdditionalLightningDamageModifier
     		Plague: skill_RepeaterDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_RepeaterDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     ReflexesDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_ReflexesDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_ReflexesDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_ReflexesDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_ReflexesDefinition_LightningDamageConversionModifier
     		Plague: skill_ReflexesDefinition_PlagueDamageConversionModifier
     		Fire: skill_ReflexesDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_ReflexesDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_ReflexesDefinition_AdditionalLightningDamageModifier
     		Plague: skill_ReflexesDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_ReflexesDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     PrayerOfHealthSkillDefinition {
     	primary: Fire
-    	base_damage: BaseDamage * skill_PrayerOfHealthSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_PrayerOfHealthSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_PrayerOfHealthSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_PrayerOfHealthSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_PrayerOfHealthSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_PrayerOfHealthSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_PrayerOfHealthSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_PrayerOfHealthSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_PrayerOfHealthSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_PrayerOfHealthSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     PrayerOfVengeanceSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_PrayerOfVengeanceSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_PrayerOfVengeanceSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_PrayerOfVengeanceSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_PrayerOfVengeanceSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_PrayerOfVengeanceSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_PrayerOfVengeanceSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_PrayerOfVengeanceSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_PrayerOfVengeanceSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_PrayerOfVengeanceSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_PrayerOfVengeanceSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     TheOldBellSkillDefinition {
     	primary: Plague
-    	base_damage: BaseDamage * skill_TheOldBellSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_TheOldBellSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_TheOldBellSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_TheOldBellSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_TheOldBellSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_TheOldBellSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_TheOldBellSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_TheOldBellSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_TheOldBellSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_TheOldBellSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     JudgementDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_JudgementDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_JudgementDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_JudgementDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_JudgementDefinition_LightningDamageConversionModifier
     		Plague: skill_JudgementDefinition_PlagueDamageConversionModifier
     		Fire: skill_JudgementDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_JudgementDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_JudgementDefinition_AdditionalLightningDamageModifier
     		Plague: skill_JudgementDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_JudgementDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     DoubleKnivesSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_DoubleKnivesSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_DoubleKnivesSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_DoubleKnivesSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_DoubleKnivesSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_DoubleKnivesSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_DoubleKnivesSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_DoubleKnivesSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_DoubleKnivesSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_DoubleKnivesSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_DoubleKnivesSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     PassageSkillDefinition {
     	primary: Lightning
-    	base_damage: BaseDamage * skill_PassageSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_PassageSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_PassageSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_PassageSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_PassageSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_PassageSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_PassageSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_PassageSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_PassageSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_PassageSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     LassoSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_LassoSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_LassoSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_LassoSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_LassoSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_LassoSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_LassoSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_LassoSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_LassoSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_LassoSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_LassoSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     FeitorsLashSkillDefinition {
     	primary: Fire
-    	base_damage: BaseDamage * skill_FeitorsLashSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_FeitorsLashSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_FeitorsLashSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_FeitorsLashSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_FeitorsLashSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_FeitorsLashSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_FeitorsLashSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_FeitorsLashSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_FeitorsLashSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_FeitorsLashSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     SlowTimeSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_SlowTimeSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_SlowTimeSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_SlowTimeSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_SlowTimeSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_SlowTimeSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_SlowTimeSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_SlowTimeSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_SlowTimeSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_SlowTimeSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_SlowTimeSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     UsePotionSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_UsePotionSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_UsePotionSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_UsePotionSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_UsePotionSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_UsePotionSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_UsePotionSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_UsePotionSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_UsePotionSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_UsePotionSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_UsePotionSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     ClosedBodySkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_ClosedBodySkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_ClosedBodySkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_ClosedBodySkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_ClosedBodySkillDefinition_LightningDamageConversionModifier
     		Plague: skill_ClosedBodySkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_ClosedBodySkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_ClosedBodySkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_ClosedBodySkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_ClosedBodySkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_ClosedBodySkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     BombardmentSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_BombardmentSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_BombardmentSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_BombardmentSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_BombardmentSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_BombardmentSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_BombardmentSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_BombardmentSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_BombardmentSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_BombardmentSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_BombardmentSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     SummonTheGuardSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_SummonTheGuardSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_SummonTheGuardSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_SummonTheGuardSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_SummonTheGuardSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_SummonTheGuardSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_SummonTheGuardSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_SummonTheGuardSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_SummonTheGuardSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_SummonTheGuardSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_SummonTheGuardSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     MatadeiraSkillDefinition {
     	primary: Fire
-    	base_damage: BaseDamage * skill_MatadeiraSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_MatadeiraSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_MatadeiraSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_MatadeiraSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_MatadeiraSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_MatadeiraSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_MatadeiraSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_MatadeiraSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_MatadeiraSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_MatadeiraSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     HolyRosarySkillDefinition {
     	primary: Lightning
-    	base_damage: BaseDamage * skill_HolyRosarySkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_HolyRosarySkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_HolyRosarySkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_HolyRosarySkillDefinition_LightningDamageConversionModifier
     		Plague: skill_HolyRosarySkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_HolyRosarySkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_HolyRosarySkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_HolyRosarySkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_HolyRosarySkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_HolyRosarySkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     VeilofQuilsSkillDefinition {
     	primary: Plague
-    	base_damage: BaseDamage * skill_VeilofQuilsSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_VeilofQuilsSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_VeilofQuilsSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_VeilofQuilsSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_VeilofQuilsSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_VeilofQuilsSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_VeilofQuilsSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_VeilofQuilsSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_VeilofQuilsSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_VeilofQuilsSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     SummonBruteSkillDefinition {
     	primary: Physical
-    	base_damage: BaseDamage * skill_SummonBruteSkillDefinition_DamageModifier
-    	skill_conversions {
-    		Physical->Lightning: PhysicalDamageConvertedAsLightning
-    		Physical->Plague: PhysicalDamageConvertedAsPlague
-    		Physical->Fire: PhysicalDamageConvertedAsFire
-    		Lightning->Physical: LightningDamageConvertedAsPhysical
-    		Lightning->Plague: LightningDamageConvertedAsPlague
-    		Lightning->Fire: LightningDamageConvertedAsFire
-    		Plague->Physical: PlagueDamageConvertedAsPhysical
-    		Plague->Lightning: PlagueDamageConvertedAsLightning
-    		Plague->Fire: PlagueDamageConvertedAsFire
-    		Fire->Physical: FireDamageConvertedAsPhysical
-    		Fire->Lightning: FireDamageConvertedAsLightning
-    		Fire->Plague: FireDamageConvertedAsPlague
-    	}
-    	distribution {
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_SummonBruteSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_SummonBruteSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_SummonBruteSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_SummonBruteSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_SummonBruteSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
-    		Physical: skill_SummonBruteSkillDefinition_AdditionalPhysicalDamageModifier
-    		Lightning: skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier
-    		Plague: skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier
-    		Fire: skill_SummonBruteSkillDefinition_AdditionalFireDamageModifier
-    	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
-    	}
-    }
-    SummonMarksmenSkillDefinition {
-    	primary: Physical
-    	base_damage: BaseDamage * skill_SummonMarksmenSkillDefinition_DamageModifier
-    	skill_conversions {
+    	character_conversions {
     		Physical->Lightning: PhysicalDamageConvertedAsLightning
     		Physical->Plague: PhysicalDamageConvertedAsPlague
     		Physical->Fire: PhysicalDamageConvertedAsFire
@@ -2059,22 +2242,69 @@ pack "hellclock" {
     		Fire->Lightning: FireDamageConvertedAsLightning
     		Fire->Plague: FireDamageConvertedAsPlague
     	}
-    	distribution {
+    	initial_additional {
+    		Physical: skill_SummonBruteSkillDefinition_AdditionalPhysicalDamageModifier
+    		Lightning: skill_SummonBruteSkillDefinition_AdditionalLightningDamageModifier
+    		Plague: skill_SummonBruteSkillDefinition_AdditionalPlagueDamageModifier
+    		Fire: skill_SummonBruteSkillDefinition_AdditionalFireDamageModifier
+    	}
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
+    	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
+    }
+    SummonMarksmenSkillDefinition {
+    	primary: Physical
+    	base_damage: BaseDamage
+    	skill_damage_modifier: skill_SummonMarksmenSkillDefinition_DamageModifier
+    	initial_distribution {
     		Physical: skill_SummonMarksmenSkillDefinition_PhysicalDamageConversionModifier
     		Lightning: skill_SummonMarksmenSkillDefinition_LightningDamageConversionModifier
     		Plague: skill_SummonMarksmenSkillDefinition_PlagueDamageConversionModifier
     		Fire: skill_SummonMarksmenSkillDefinition_FireDamageConversionModifier
     	}
-    	additional {
+    	character_conversions {
+    		Physical->Lightning: PhysicalDamageConvertedAsLightning
+    		Physical->Plague: PhysicalDamageConvertedAsPlague
+    		Physical->Fire: PhysicalDamageConvertedAsFire
+    		Lightning->Physical: LightningDamageConvertedAsPhysical
+    		Lightning->Plague: LightningDamageConvertedAsPlague
+    		Lightning->Fire: LightningDamageConvertedAsFire
+    		Plague->Physical: PlagueDamageConvertedAsPhysical
+    		Plague->Lightning: PlagueDamageConvertedAsLightning
+    		Plague->Fire: PlagueDamageConvertedAsFire
+    		Fire->Physical: FireDamageConvertedAsPhysical
+    		Fire->Lightning: FireDamageConvertedAsLightning
+    		Fire->Plague: FireDamageConvertedAsPlague
+    	}
+    	initial_additional {
     		Physical: skill_SummonMarksmenSkillDefinition_AdditionalPhysicalDamageModifier
     		Lightning: skill_SummonMarksmenSkillDefinition_AdditionalLightningDamageModifier
     		Plague: skill_SummonMarksmenSkillDefinition_AdditionalPlagueDamageModifier
     		Fire: skill_SummonMarksmenSkillDefinition_AdditionalFireDamageModifier
     	}
-    	critical {
-    		chance: CriticalChance
-    		multiplier: CriticalDamage
+    	character_additional {
+    		Physical: AdditionalPhysicalDamage
+    		Lightning: AdditionalLightningDamage
+    		Plague: AdditionalPlagueDamage
+    		Fire: AdditionalFireDamage
     	}
+    	apply_modifiers {
+    		Physical: PhysicalDamage
+    		Lightning: LightningDamage
+    		Plague: PlagueDamage
+    		Fire: FireDamage
+    	}
+    	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
   }
 }
