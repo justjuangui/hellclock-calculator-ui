@@ -18,7 +18,11 @@ export type NodeAffixType =
   | "SkillModifierNodeAffixDefinition"
   | "AttributeNodeAffixDefinition"
   | "StatusNodeAffixDefinition"
-  | "DevotionIncrementNodeAffixDefinition";
+  | "DevotionIncrementNodeAffixDefinition"
+  | "SkillBehaviorNodeAffixDefinition"
+  | "SkillEquipNodeAffixDefinition"
+  | "SkillUnlockNodeAffixDefinition"
+  | "StatusIntensityNodeAffixDefinition";
 
 export interface NodeAffixBase {
   name: string;
@@ -73,13 +77,329 @@ export interface DevotionIncrementNodeAffixDefinition extends NodeAffixBase {
   eDevotionCategory: string; // e.g., "Red", "Green", "Blue"
 }
 
+// Skill behavior system enums and types
+export type SkillEffectTrigger =
+  | "TargetHit"
+  | "BuildDamage"
+  | "Always"
+  | "DealDamage"
+  | "OnFinishUse";
+
+export type CharacterEffectTrigger =
+  | "Kill"
+  | "OnHurt"
+  | "OnSpendMana"
+  | "IgnoreDamage"
+  | "DealDamage"
+  | "OnDrainLife"
+  | "OnDepleteMana"
+  | "BeforeTakeDamage"
+  | "OnCollectPrize"
+  | "OnStatus"
+  | "MoveDistance"
+  | "OnDepleteBarrier"
+  | "OnApplyStatus"
+  | "OnManaChange"
+  | "OnMinionAmountChange"
+  | "Always";
+
+export type EffectTarget = "Self" | "TargetHit";
+
+export type SkillEffectVariableStackType =
+  | "UseHighest"
+  | "MultiplierSum"
+  | "Sum";
+
+export type SkillEffectVariableFormat =
+  | "MultiplicativeAdditive"
+  | "Percentage"
+  | "NoFormat"
+  | "Rounded"
+  | "Multiplicative";
+
+export type ComparisonOperator = "Equal" | "GreaterThanOrEqual";
+
+export type ValueComparisonType =
+  | "TargetIsElite"
+  | "EnduredDamage"
+  | "InputValue";
+
+// Skill effect variable reference - used for dynamic values
+export interface SkillEffectVariableReference {
+  type: "SkillEffectVariableReference";
+  valueOrName: string; // Variable name or numeric string
+  eSkillEffectVariableModifier: string; // Comma-separated modifiers like "MultiplyByCurrentMana" or "0" for none
+  statusToStack: Partial<StatusDefinition>; // Status to use for stack-based modifiers
+  supportVariableValueOrName: string;
+  supportESkillEffectVariableModifier: string;
+  supportStatusToStack: Partial<StatusDefinition>;
+}
+
+// Skill effect variable definition
+export interface SkillEffectVariable {
+  type: "SkillEffectVariable";
+  name: string;
+  baseValue: number;
+  eSkillEffectVariableStackType: SkillEffectVariableStackType;
+  eSkillEffectVariableFormat: SkillEffectVariableFormat;
+}
+
+export interface SkillEffectVariables {
+  type: "SkillEffectVariables";
+  variables: SkillEffectVariable[];
+}
+
+// Status definition reference
+export interface StatusDefinition {
+  name: string;
+  id: number;
+  type: string; // e.g., "StatModifierStatusDefinition"
+}
+
+// Skill effect rule set
+export interface SkillEffectRuleSet {
+  type: "SkillEffectRuleSet";
+  rules: SkillEffectRule[];
+}
+
+// Base skill effect data
+export interface BaseSkillEffectData {
+  name: string;
+  useCharacterEffectTrigger: boolean;
+  effectTrigger: SkillEffectTrigger;
+  characterEffectTrigger: CharacterEffectTrigger;
+  ruleSet: SkillEffectRuleSet;
+  revertOnRuleFail: boolean;
+  revertOnRemoval: boolean;
+  triggerTargetValue: SkillEffectVariableReference;
+  triggerTargetEnumValue: number;
+  triggerTargetStringValue: string;
+  subEffects: SkillEffectData[];
+}
+
+// Skill effect rules
+export interface RandomChanceSkillEffectRule {
+  name: string;
+  type: "RandomChanceSkillEffectRule";
+  chance: SkillEffectVariableReference;
+  negate: boolean;
+}
+
+export interface ValueComparisonSkillEffectRule {
+  name: string;
+  type: "ValueComparisonSkillEffectRule";
+  value1Type: ValueComparisonType;
+  value1Input: SkillEffectVariableReference;
+  comparisonOperator: ComparisonOperator;
+  value2Type: ValueComparisonType;
+  value2Input: SkillEffectVariableReference;
+  negate: boolean;
+}
+
+export interface DamageTypeSkillEffectRule {
+  name: string;
+  type: "DamageTypeSkillEffectRule";
+  eDamageTypeDefinition: string; // e.g., "PHYSICAL"
+  negate: boolean;
+}
+
+export interface TargetHasStatusSkillEffectRule {
+  name: string;
+  type: "TargetHasStatusSkillEffectRule";
+  effectTarget: EffectTarget;
+  statusDefinition: StatusDefinition;
+  checkForStacks: boolean;
+  negate: boolean;
+}
+
+export interface UseIntervalSkillEffectRule {
+  name: string;
+  type: "UseIntervalSkillEffectRule";
+  interval: SkillEffectVariableReference;
+  negate: boolean;
+}
+
+export interface TargetStateConditionSkillEffectRule {
+  name: string;
+  type: "TargetStateConditionSkillEffectRule";
+  condition: string;
+  negate: boolean;
+}
+
+export type SkillEffectRule =
+  | RandomChanceSkillEffectRule
+  | ValueComparisonSkillEffectRule
+  | DamageTypeSkillEffectRule
+  | TargetHasStatusSkillEffectRule
+  | UseIntervalSkillEffectRule
+  | TargetStateConditionSkillEffectRule;
+
+// Skill effect data types
+export interface AddStatusToTargetSkillEffectData extends BaseSkillEffectData {
+  type: "AddStatusToTargetSkillEffectData";
+  removeOnEffectReversion: boolean;
+  effectTarget: EffectTarget;
+  statusDefinition: StatusDefinition;
+  statusDuration: SkillEffectVariableReference;
+  statusIntensity: SkillEffectVariableReference;
+  stackAmount: SkillEffectVariableReference;
+}
+
+export interface RemoveStatusFromTargetSkillEffectData
+  extends Partial<BaseSkillEffectData> {
+  name?: string;
+  type: "RemoveStatusFromTargetSkillEffectData";
+  effectTarget: EffectTarget;
+  statusDefinition: StatusDefinition;
+  removeStacks: boolean;
+  stacksToRemove?: SkillEffectVariableReference;
+  useCharacterEffectTrigger: boolean;
+  effectTrigger: SkillEffectTrigger;
+  characterEffectTrigger: CharacterEffectTrigger;
+  ruleSet: SkillEffectRuleSet;
+  revertOnRuleFail: boolean;
+  revertOnRemoval: boolean;
+  triggerTargetValue: SkillEffectVariableReference;
+  triggerTargetEnumValue: number;
+  triggerTargetStringValue: string;
+  subEffects: SkillEffectData[];
+}
+
+export interface SkillEffectStatModifierDefinition {
+  type: "SkillEffectStatModifierDefinition";
+  eStatDefinition: string;
+  modifierType: StatModifierType;
+  value: SkillEffectVariableReference;
+  useStatConversion: boolean;
+  conversionStatDefinition: string;
+  listenToVariableModifiersUpdate: boolean;
+}
+
+export interface AddSkillStatModifierSkillEffectData
+  extends BaseSkillEffectData {
+  type: "AddSkillStatModifierSkillEffectData";
+  statModifiers: SkillEffectStatModifierDefinition[];
+}
+
+export interface SkillEffectSkillModifierDefinition {
+  type: "SkillEffectSkillModifierDefinition";
+  skillValueModifierKey: string;
+  modifierType: StatModifierType;
+  value: SkillEffectVariableReference;
+  useStatConversion: boolean;
+  conversionStatDefinition: string;
+  listenToVariableModifiersUpdate: boolean;
+}
+
+export interface AddSkillValueModifierSkillEffectData
+  extends BaseSkillEffectData {
+  type: "AddSkillValueModifierSkillEffectData";
+  modifiers: SkillEffectSkillModifierDefinition[];
+}
+
+export interface AddCharacterStatModifierSkillEffectData
+  extends BaseSkillEffectData {
+  type: "AddCharacterStatModifierSkillEffectData";
+  statModifiers: SkillEffectStatModifierDefinition[];
+}
+
+export interface PlayGameplayFxSkillEffectData extends BaseSkillEffectData {
+  type: "PlayGameplayFxSkillEffectData";
+}
+
+export interface DamageTargetSkillEffectData extends BaseSkillEffectData {
+  type: "DamageTargetSkillEffectData";
+  effectTarget: EffectTarget;
+  damage: SkillEffectVariableReference;
+}
+
+export interface RechargeSkillCooldownSkillEffectData
+  extends BaseSkillEffectData {
+  type: "RechargeSkillCooldownSkillEffectData";
+  rechargeAmount: SkillEffectVariableReference;
+}
+
+export interface AddBarrierSkillEffectData extends BaseSkillEffectData {
+  type: "AddBarrierSkillEffectData";
+  barrierAmount: SkillEffectVariableReference;
+}
+
+export interface AddStatusMaxStackSkillEffectData extends BaseSkillEffectData {
+  type: "AddStatusMaxStackSkillEffectData";
+  statusDefinition: StatusDefinition;
+  maxStackModifier: SkillEffectVariableReference;
+}
+
+export type SkillEffectData =
+  | AddStatusToTargetSkillEffectData
+  | RemoveStatusFromTargetSkillEffectData
+  | AddSkillStatModifierSkillEffectData
+  | AddSkillValueModifierSkillEffectData
+  | AddCharacterStatModifierSkillEffectData
+  | PlayGameplayFxSkillEffectData
+  | DamageTargetSkillEffectData
+  | RechargeSkillCooldownSkillEffectData
+  | AddBarrierSkillEffectData
+  | AddStatusMaxStackSkillEffectData;
+
+// Skill behavior data
+export interface SkillBehaviorData {
+  type: "SkillBehaviorData";
+  affectMultipleSkills: boolean;
+  useListOfSkills: boolean;
+  listOfSkills: any[]; // Array of skill references
+  skillTagFilter: string; // e.g., "Everything"
+  skillDefinition: Partial<any>; // Skill definition object
+  variables: SkillEffectVariables;
+  effects: SkillEffectData[];
+}
+
+// Localization variable for skill behavior
+export interface SkillBehaviorLocalizationVariable {
+  type: "SkillBehaviorLocalizationVariable";
+  skillEffectVariableReference: SkillEffectVariableReference;
+  overrideFormat: boolean;
+  valueFormatOverride: string; // e.g., "Percentage"
+}
+
+// Main skill behavior node affix
+export interface SkillBehaviorNodeAffixDefinition extends NodeAffixBase {
+  type: "SkillBehaviorNodeAffixDefinition";
+  additionalLocalizationVariables: SkillBehaviorLocalizationVariable[];
+  eModifierType: StatModifierType;
+  valuePerLevel: number;
+  behaviorData: SkillBehaviorData;
+}
+
+// Additional affix types found in constellation data
+export interface SkillEquipNodeAffixDefinition extends NodeAffixBase {
+  type: "SkillEquipNodeAffixDefinition";
+  skillDefinition: Partial<any>;
+}
+
+export interface SkillUnlockNodeAffixDefinition extends NodeAffixBase {
+  type: "SkillUnlockNodeAffixDefinition";
+  skillDefinition: Partial<any>;
+}
+
+export interface StatusIntensityNodeAffixDefinition extends NodeAffixBase {
+  type: "StatusIntensityNodeAffixDefinition";
+  statusDefinition: StatusDefinition;
+  valuePerLevel: number;
+  eModifierType: StatModifierType;
+}
+
 export type NodeAffix =
   | StatModifierNodeAffixDefinition
   | UnlockSkillNodeAffixDefinition
   | SkillModifierNodeAffixDefinition
   | AttributeNodeAffixDefinition
   | StatusNodeAffixDefinition
-  | DevotionIncrementNodeAffixDefinition;
+  | DevotionIncrementNodeAffixDefinition
+  | SkillBehaviorNodeAffixDefinition
+  | SkillEquipNodeAffixDefinition
+  | SkillUnlockNodeAffixDefinition
+  | StatusIntensityNodeAffixDefinition;
 
 // Edge definition for node dependencies
 export interface SkillTreeNodeEdgeData {

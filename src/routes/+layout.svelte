@@ -29,6 +29,7 @@
     ConstellationsHelper,
     type ConstellationsConfig,
   } from "$lib/hellclock/constellations";
+  import { StatusHelper, type StatusDB } from "$lib/hellclock/status";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
@@ -37,6 +38,7 @@
   import { provideRelicInventory } from "$lib/context/relicequipped.svelte";
   import { provideConstellationEquipped } from "$lib/context/constellationequipped.svelte";
   import { provideConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
+  import { provideStatusEvaluation } from "$lib/context/statusevaluation.svelte";
   import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -61,10 +63,16 @@
   let constellationEvaluationContext: ReturnType<
     typeof provideConstellationEvaluation
   > | null = null;
+  let statusEvaluationContext: ReturnType<typeof provideStatusEvaluation> | null =
+    null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
       skillContext = provideSkillEquipped(undefined, skillsHelper);
+    }
+
+    if (statusHelper && !statusEvaluationContext) {
+      statusEvaluationContext = provideStatusEvaluation(statusHelper);
     }
 
     if (gearsHelper && statsHelper && !gearEvaluationContext) {
@@ -83,10 +91,11 @@
       relicInventoryContext = provideRelicInventory(relicsHelper, 0);
     }
 
-    if (relicsHelper && statsHelper && !relicEvaluationContext) {
+    if (relicsHelper && statsHelper && statusHelper && !relicEvaluationContext) {
       relicEvaluationContext = provideRelicEvaluation(
         relicsHelper,
         statsHelper,
+        statusHelper,
         "en",
       );
     }
@@ -98,9 +107,10 @@
       );
     }
 
-    if (constellationsHelper && !constellationEvaluationContext) {
+    if (constellationsHelper && statusHelper && !constellationEvaluationContext) {
       constellationEvaluationContext = provideConstellationEvaluation(
         constellationsHelper,
+        statusHelper,
         "en",
       );
     }
@@ -135,6 +145,7 @@
   let skillsHelper = $state<SkillsHelper | null>(null);
   let relicsHelper = $state<RelicsHelper | null>(null);
   let constellationsHelper = $state<ConstellationsHelper | null>(null);
+  let statusHelper = $state<StatusHelper | null>(null);
   let assetPreloader = $state<AssetPreloader | null>(null);
 
   $effect(() => {
@@ -145,6 +156,7 @@
     setContext("skillsHelper", skillsHelper);
     setContext("relicsHelper", relicsHelper);
     setContext("constellationsHelper", constellationsHelper);
+    setContext("statusHelper", statusHelper);
     setContext("assetPreloader", assetPreloader);
     setContext("lang", "en");
     if (
@@ -155,6 +167,7 @@
       skillsHelper &&
       relicsHelper &&
       constellationsHelper &&
+      statusHelper &&
       assetPreloader
     ) {
       ready = true;
@@ -213,6 +226,9 @@
       constellationsHelper = new ConstellationsHelper(
         pack["Constellations"] as ConstellationsConfig,
       );
+
+      label = "Loading StatusHelper";
+      statusHelper = new StatusHelper(pack["Status"] as StatusDB);
 
       label = "Preloading PixiJS assets";
       let tmpAsset = new AssetPreloader();

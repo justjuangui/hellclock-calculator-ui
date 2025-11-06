@@ -1,11 +1,17 @@
 import type {
   ConstellationsHelper,
   StatModifierNodeAffixDefinition,
+  StatusNodeAffixDefinition,
 } from "$lib/hellclock/constellations";
+import type {
+  SkillBehaviorStatusDefinition,
+  StatusHelper,
+} from "$lib/hellclock/status";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
+import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 
 export type ConstellationModSource = {
   source: string;
@@ -37,11 +43,16 @@ const constellationEvaluationKey = Symbol("constellation-evaluation");
 
 export function provideConstellationEvaluation(
   constellationsHelper?: ConstellationsHelper,
+  statusHelper?: StatusHelper,
   lang = "en",
 ): ConstellationEvaluationAPI {
   const constellationEquippedApi = useConstellationEquipped();
+  const statusEvaluationApi = useStatusEvaluation();
 
-  function mapStatModifierForEval(statName: string, modifierType: string): string {
+  function mapStatModifierForEval(
+    statName: string,
+    modifierType: string,
+  ): string {
     // Normalize stat name
     let normalizedStatName = statName.replaceAll(" ", "");
 
@@ -66,7 +77,10 @@ export function provideConstellationEvaluation(
       return mods;
     }
 
-    for (const [key, allocated] of constellationEquippedApi.allocatedNodes.entries()) {
+    for (const [
+      key,
+      allocated,
+    ] of constellationEquippedApi.allocatedNodes.entries()) {
       if (allocated.level === 0) continue;
 
       const node = constellationsHelper.getNodeById(
@@ -133,12 +147,80 @@ export function provideConstellationEvaluation(
         // - UnlockSkillNodeAffixDefinition
         // - SkillModifierNodeAffixDefinition
         // - AttributeNodeAffixDefinition
-        // - StatusNodeAffixDefinition
       }
     }
 
     return mods;
   }
+
+  // Sync status effects from constellation nodes to StatusEvaluation
+  function syncConstellationStatusEffects(): void {
+    if (!statusHelper || !constellationsHelper || !statusEvaluationApi) return;
+
+    console.debug("Syncing constellation status effects...");
+    // Clear all constellation-sourced statuses first
+    statusEvaluationApi.clearBySource("constellation:");
+
+    // Process each allocated constellation node
+    for (const [
+      key,
+      allocated,
+    ] of constellationEquippedApi.allocatedNodes.entries()) {
+      if (allocated.level === 0) continue;
+
+      const node = constellationsHelper.getNodeById(
+        allocated.constellationId,
+        allocated.nodeId,
+      );
+      if (!node) continue;
+
+      const constellation = constellationsHelper.getConstellationById(
+        allocated.constellationId,
+      );
+      if (!constellation) continue;
+
+      const constellationName = translate(constellation.nameKey, lang);
+      const nodeName = translate(node.nameLocalizationKey, lang);
+
+      // Process each affix in the node
+      for (const affix of node.affixes) {
+        if (affix.type === "StatusNodeAffixDefinition") {
+          const statusAffix = affix as StatusNodeAffixDefinition;
+
+          // Get the status definition from the reference
+          const statusDef = statusHelper.getStatusFromReference(
+            statusAffix.statusDefinition,
+          );
+
+          if (statusDef) {
+            // Register the status with StatusEvaluation
+            // Duration is specified in the affix, default intensity and stacks
+            statusEvaluationApi.addStatus({
+              statusId: statusDef.id,
+              source: `constellation:${constellationName} - ${nodeName}`,
+              intensity: 1, // Constellations typically use base intensity
+              stacks: 1, // Constellations typically grant single stack
+              duration: statusAffix.duration,
+              meta: {
+                constellationId: allocated.constellationId,
+                nodeId: allocated.nodeId,
+                level: allocated.level,
+                constellationName,
+                nodeName,
+              },
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // Use $effect to sync status effects when constellation allocation changes
+  $effect(() => {
+    // Access reactive state to trigger effect
+    constellationEquippedApi.allocatedNodes;
+    syncConstellationStatusEffects();
+  });
 
   const api: ConstellationEvaluationAPI = {
     getConstellationMods,

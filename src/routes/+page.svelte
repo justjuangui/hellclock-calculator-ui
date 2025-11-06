@@ -6,6 +6,7 @@
   import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
   import { translate } from "$lib/hellclock/lang";
   import DisplayStats from "$lib/ui/DisplayStats.svelte";
+  import DisplayActiveStatuses from "$lib/ui/DisplayActiveStatuses.svelte";
   import GearSlots from "$lib/ui/GearSlots.svelte";
   import FilterGearSelector from "$lib/ui/FilterGearSelector.svelte";
   import type { GearItem, GearsHelper, GearSlot } from "$lib/hellclock/gears";
@@ -264,6 +265,7 @@
     </div>
   </div>
   <div class="flex flex-col gap-1 col-span-4">
+    <DisplayActiveStatuses />
     <DisplayStats {openExplain} />
   </div>
   <div class="col-span-8">

@@ -1,10 +1,12 @@
 import type {
   AddSkillValueModifierSkillEffectData,
+  AddStatusToTargetSkillEffectData,
   RelicAffix,
   RelicsHelper,
 } from "$lib/hellclock/relics";
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
+import type { StatusHelper } from "$lib/hellclock/status";
 import {
   getValueFromMultiplier,
   normalizedValueFromRange,
@@ -13,6 +15,7 @@ import { fmtValue } from "$lib/hellclock/utils";
 import { getContext, setContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { useRelicInventory } from "$lib/context/relicequipped.svelte";
+import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 
 export type RelicModSource = {
   source: string;
@@ -42,9 +45,11 @@ const relicEvaluationKey = Symbol("relic-evaluation");
 export function provideRelicEvaluation(
   relicsHelper?: RelicsHelper,
   statsHelper?: StatsHelper,
+  statusHelper?: StatusHelper,
   lang = "en",
 ): RelicEvaluationAPI {
   const relicInventoryApi = useRelicInventory();
+  const statusEvaluationApi = useStatusEvaluation();
 
   function mapModForEval(affix: RelicAffix): string {
     if (
@@ -278,6 +283,81 @@ export function provideRelicEvaluation(
       }
     }
   }
+
+  // Sync status effects from relics to StatusEvaluation
+  function syncRelicStatusEffects(): void {
+    if (!statusHelper || !statusEvaluationApi) return;
+
+    // Clear all relic-sourced statuses first
+    statusEvaluationApi.clearBySource("relic:");
+
+    // Get all unique relics from the inventory
+    const uniqueRelics = new SvelteMap<string, RelicItemWithPosition>();
+    for (const [, relic] of relicInventoryApi.relics) {
+      const key = `${relic.id}_${relic.position.x}_${relic.position.y}`;
+      if (!uniqueRelics.has(key)) {
+        uniqueRelics.set(key, relic);
+      }
+    }
+
+    // Process each relic's affixes for status effects
+    for (const relic of uniqueRelics.values()) {
+      const relicName = relic.name;
+      const allAffixes = [
+        ...(relic.selectedPrimaryAffixes || []),
+        ...(relic.selectedSecondaryAffixes || []),
+        ...(relic.selectedDevotionAffix ? [relic.selectedDevotionAffix] : []),
+        ...(relic.selectedCorruptionAffix ? [relic.selectedCorruptionAffix] : []),
+        ...(relic.selectedSpecialAffix ? [relic.selectedSpecialAffix] : []),
+      ];
+
+      for (const affix of allAffixes) {
+        if (affix.type === "SkillBehaviorAffixDefinition" && affix.behaviorData?.effects) {
+          for (const effect of affix.behaviorData.effects.filter(
+            (e: any) =>
+              e.type === "AddStatusToTargetSkillEffectData" &&
+              e.effectTrigger === "Always",
+          )) {
+            const statusEffect = effect as AddStatusToTargetSkillEffectData;
+
+            // Get status reference from the effect
+            const statusDef = statusHelper.getStatusFromReference(
+              statusEffect.statusDefinition,
+            );
+
+            if (statusDef) {
+              // Extract intensity and stacks from variables
+              const intensity = Number(
+                statusEffect.statusIntensity?.valueOrName || 1,
+              );
+              const stacks = Number(statusEffect.stackAmount?.valueOrName || 1);
+
+              // Register the status with StatusEvaluation
+              statusEvaluationApi.addStatus({
+                statusId: statusDef.id,
+                source: `relic:${relicName}`,
+                intensity,
+                stacks,
+                meta: {
+                  relicId: relic.id,
+                  relicName: relicName,
+                  affixId: affix.id,
+                  affixName: affix.name,
+                },
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Use $effect to sync status effects when relics change
+  $effect(() => {
+    // Access reactive state to trigger effect
+    relicInventoryApi.relics;
+    syncRelicStatusEffects();
+  });
 
   function processStatModifierAffix(
     affix: RelicAffix,

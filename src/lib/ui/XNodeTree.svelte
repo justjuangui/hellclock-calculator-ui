@@ -1,5 +1,6 @@
 <script lang="ts">
   import { type EvaluationNode } from "$lib/engine/types";
+  import XNodeTree from "$lib/ui/XNodeTree.svelte";
 
   interface Props {
     node: EvaluationNode;
@@ -12,7 +13,8 @@
   const fmt = (n: number) =>
     Number.isInteger(n) ? String(n) : n.toFixed(4).replace(/\.?0+$/, "");
 
-  const metaEntries = (m?: Record<string, string | number>) => Object.entries(m ?? {});
+  const metaEntries = (m?: Record<string, string | number>) =>
+    Object.entries(m ?? {});
 
   // Determine initial expanded state: first level expanded by default, or controlled by expandAll
   let expanded = $state(expandAll !== null ? expandAll : depth === 0);
@@ -47,7 +49,8 @@
       <span class="w-4"></span>
     {/if}
     <span class="font-mono text-sm">{node.name || "(unnamed)"}</span>
-    {#if node.type}<span class="badge badge-ghost badge-sm">{node.type}</span>{/if}
+    {#if node.type}<span class="badge badge-ghost badge-sm">{node.type}</span
+      >{/if}
     <span class="badge badge-outline badge-sm">= {fmt(node.value)}</span>
   </div>
 
@@ -69,8 +72,8 @@
 
   {#if hasChildren && expanded}
     <div class="ml-3 border-l pl-3 space-y-3">
-      {#each node.children as c}
-        <svelte:self node={c} depth={depth + 1} {expandAll} />
+      {#each node.children ?? [] as c}
+        <XNodeTree node={c} depth={depth + 1} {expandAll} />
       {/each}
     </div>
   {/if}
