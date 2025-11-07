@@ -1,16 +1,12 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { getContext, onMount } from "svelte";
   import type { ExplainPayload } from "$lib/engine/types";
   import XNodeTree from "$lib/ui/XNodeTree.svelte";
   import PhaseDebugView from "$lib/ui/PhaseDebugView.svelte";
   import { ESlotsType, useEquipped } from "$lib/context/equipped.svelte";
   import { translate } from "$lib/hellclock/lang";
-  import DisplayStats from "$lib/ui/DisplayStats.svelte";
-  import DisplayActiveStatuses from "$lib/ui/DisplayActiveStatuses.svelte";
-  import GearSlots from "$lib/ui/GearSlots.svelte";
   import FilterGearSelector from "$lib/ui/FilterGearSelector.svelte";
   import type { GearItem, GearsHelper, GearSlot } from "$lib/hellclock/gears";
-  import SkillSlots from "$lib/ui/SkillSlots.svelte";
   import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
   import type {
     SkillSelected,
@@ -18,57 +14,47 @@
     SkillSlotDefinition,
   } from "$lib/hellclock/skills";
   import FilterSkillSelector from "$lib/ui/FilterSkillSelector.svelte";
-  import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
   import { useEvaluationManager } from "$lib/context/evaluation.svelte";
-  import RelicInventory from "$lib/ui/RelicInventory.svelte";
   import FilterRelicSelector from "$lib/ui/FilterRelicSelector.svelte";
   import type { RelicItem } from "$lib/hellclock/relics";
   import { useRelicInventory } from "$lib/context/relicequipped.svelte";
-  import ConstellationMap from "$lib/ui/ConstellationMap.svelte";
+
+  // Import new components
+  import AppSidebar from "$lib/ui/AppSidebar.svelte";
+  import HomeView from "$lib/ui/views/HomeView.svelte";
+  import StatsView from "$lib/ui/views/StatsView.svelte";
+  import GearView from "$lib/ui/views/GearView.svelte";
+  import SkillsView from "$lib/ui/views/SkillsView.svelte";
+  import RelicsView from "$lib/ui/views/RelicsView.svelte";
+  import ConstellationsView from "$lib/ui/views/ConstellationsView.svelte";
+  import BellView from "$lib/ui/views/BellView.svelte";
+  import BlessingView from "$lib/ui/views/BlessingView.svelte";
 
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
 
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
+  const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
   const skillSlotsApi = useSkillEquipped();
   const relicInventoryApi = useRelicInventory();
   const evaluationManager = useEvaluationManager();
   const lang = getContext<string>("lang") || "en";
 
-  const leftOptions = [
-    { name: "Stats", soon: false },
-    { name: "Calculations", soon: true },
-  ];
-  const rightOptions = [
-    { name: "Gear", soon: false },
-    { name: "Skills", soon: false },
-    { name: "Constellation", soon: false },
-    { name: "Bell", soon: true },
-  ];
+  // New navigation state
+  let activeSection = $state<string>("home");
+  let sidebarCollapsed = $state(false);
 
-  let selectedLeft = $state(leftOptions[0]);
-  let selectedRight = $state(rightOptions[0]);
-  let previousRightTab = $state(rightOptions[0]);
-
-  // Check if any skills are equipped to control Skills tab availability
-  const hasSkills = $derived(skillSlotsApi.activeSkills.length > 0);
-
-  // Auto-open constellation map when Constellation tab is selected
-  $effect(() => {
-    if (selectedRight.name === "Constellation") {
-      showConstellationMap = true;
+  // Load sidebar collapsed state from localStorage
+  onMount(() => {
+    const savedCollapsed = localStorage.getItem("sidebarCollapsed");
+    if (savedCollapsed !== null) {
+      sidebarCollapsed = savedCollapsed === "true";
     }
   });
 
-  // Auto-switch from Skills tab to Gear tab when all skills are removed
+  // Save sidebar collapsed state to localStorage
   $effect(() => {
-    if (selectedRight.name === "Skills" && !hasSkills) {
-      // Find Gear tab and switch to it
-      const gearTab = rightOptions.find((opt) => opt.name === "Gear");
-      if (gearTab) {
-        selectedRight = gearTab;
-      }
-    }
+    localStorage.setItem("sidebarCollapsed", String(sidebarCollapsed));
   });
 
   let showExplain = $state(false);
@@ -96,8 +82,6 @@
     height: 0,
   });
   let relicSelectorTitle = $state<string>("Select Relic");
-
-  let showConstellationMap = $state(false);
 
   // The doEvaluate function has been replaced by the EvaluationManager context
   // All evaluation is now handled automatically when equipment changes
@@ -128,10 +112,12 @@
     }
   }
 
-  function onSlotClicked(blessedGear: boolean, s: GearSlot, remove = false) {
+  function onSlotClicked(s: GearSlot, blessedGear: boolean, remove = false) {
     if (remove) {
       if (blessedGear) {
         blessedSlotsApi.unset(s);
+      } else {
+        trinketSlotsApi.unset(s);
       }
       // Evaluation will happen automatically via EvaluationManager context
       return;
@@ -163,6 +149,7 @@
       // Evaluation will happen automatically via EvaluationManager context
       return;
     }
+
     let skillsSetted = Object.values(skillSlotsApi.skillsEquipped)
       .filter((sk) => sk)
       .map((sk) => sk!.skill.id);
@@ -202,102 +189,88 @@
     showRelicSelector = false;
     // Evaluation will happen automatically via EvaluationManager context
   }
+
+  // Keyboard shortcuts
+  function handleKeydown(event: KeyboardEvent) {
+    // Only handle shortcuts when no modal is open and no input is focused
+    if (
+      showExplain ||
+      showGearSelector ||
+      showSkillSelector ||
+      showRelicSelector
+    )
+      return;
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement
+    )
+      return;
+
+    const isMod = event.ctrlKey || event.metaKey;
+    if (!isMod) return;
+
+    switch (event.key.toLowerCase()) {
+      case "h":
+        event.preventDefault();
+        activeSection = "home";
+        break;
+      case "s":
+        event.preventDefault();
+        activeSection = "stats";
+        break;
+      case "g":
+        event.preventDefault();
+        activeSection = "gear";
+        break;
+      case "k":
+        event.preventDefault();
+        activeSection = "skills";
+        break;
+      case "r":
+        event.preventDefault();
+        activeSection = "relics";
+        break;
+      case "c":
+        event.preventDefault();
+        activeSection = "constellation";
+        break;
+      case "[":
+        event.preventDefault();
+        sidebarCollapsed = !sidebarCollapsed;
+        break;
+    }
+  }
 </script>
 
-<div class="grid gap-1 lg:grid-cols-12">
-  <div class="bg-base-100 border border-base-300 rounded-lg col-span-4">
-    <div class="p-3">
-      <div role="tablist" class="tabs tabs-border tabs-sm">
-        {#each leftOptions as opt}
-          <button
-            role="tab"
-            class={`indicator tab ${selectedLeft.name === opt.name ? "tab-active" : ""} ${opt.soon ? "tab-disabled" : ""}`}
-            onclick={() => {
-              if (!opt.soon) selectedLeft = opt;
-            }}
-            aria-selected={selectedLeft.name === opt.name}
-            aria-disabled={opt.soon}
-            title={opt.soon ? "Coming soon" : opt.name}
-          >
-            {opt.name}
-            {#if opt.soon}
-              <span class="indicator-item status status-error"></span>
-            {/if}
-          </button>
-        {/each}
-      </div>
-    </div>
-  </div>
-  <div class="bg-base-100 border border-base-300 rounded-lg col-span-8">
-    <div class="p-3">
-      <div role="tablist" class="tabs tabs-border tabs-sm">
-        {#each rightOptions as opt}
-          <button
-            role="tab"
-            class={`indicator tab ${selectedRight.name === opt.name ? "tab-active" : ""} ${opt.soon || (opt.name === "Skills" && !hasSkills) ? "tab-disabled" : ""}`}
-            onclick={() => {
-              if (!opt.soon && !(opt.name === "Skills" && !hasSkills)) {
-                // Track previous tab before switching (except when switching to Constellation)
-                if (
-                  opt.name !== "Constellation" &&
-                  selectedRight.name !== "Constellation"
-                ) {
-                  previousRightTab = selectedRight;
-                }
-                selectedRight = opt;
-              }
-            }}
-            aria-selected={selectedRight.name === opt.name}
-            aria-disabled={opt.soon || (opt.name === "Skills" && !hasSkills)}
-            title={opt.soon
-              ? "Coming soon"
-              : opt.name === "Skills" && !hasSkills
-                ? "No skills equipped"
-                : opt.name}
-          >
-            {opt.name}
-            {#if opt.soon}
-              <span class="indicator-item status status-error"></span>
-            {/if}
-          </button>
-        {/each}
-      </div>
-    </div>
-  </div>
-  <div class="flex flex-col gap-1 col-span-4">
-    <DisplayActiveStatuses />
-    <DisplayStats {openExplain} />
-  </div>
-  <div class="col-span-8">
-    <div class="grid gap-1 lg:grid-cols-8">
-      {#if ["Gear", "Skills"].includes(selectedRight.name)}
-        <div class="col-span-8">
-          <SkillSlots
-            equipped={skillSlotsApi.skillsEquipped}
-            {onSkillSlotClicked}
-          />
-        </div>
-      {/if}
-      {#if selectedRight.name == "Skills"}
-        <div class="col-span-8">
-          <DisplaySkills {openExplain} />
-        </div>
-      {/if}
-      {#if selectedRight.name == "Gear"}
-        <div class="col-span-3">
-          <GearSlots
-            blessedGear={true}
-            title="Gear"
-            equipped={blessedSlotsApi.equipped}
-            {onSlotClicked}
-          />
-        </div>
-        <div class="col-span-5">
-          <RelicInventory {onRelicSlotClicked} />
-        </div>
-      {/if}
-    </div>
-  </div>
+<svelte:window on:keydown={handleKeydown} />
+
+<div class="flex h-screen bg-base-200">
+  <!-- Sidebar -->
+  <AppSidebar bind:activeSection bind:collapsed={sidebarCollapsed} />
+
+  <!-- Main Content Area -->
+  <main
+    class="flex-1 overflow-y-auto transition-all duration-300 p-6"
+    style="margin-left: {sidebarCollapsed ? '65px' : '200px'}"
+  >
+    {#if activeSection === "home"}
+      <HomeView bind:activeSection />
+    {:else if activeSection === "stats"}
+      <StatsView onOpenExplain={openExplain} />
+    {:else if activeSection === "gear"}
+      <GearView {onSlotClicked} />
+    {:else if activeSection === "skills"}
+      <SkillsView {onSkillSlotClicked} onOpenExplain={openExplain} />
+    {:else if activeSection === "relics"}
+      <RelicsView {onRelicSlotClicked} />
+    {:else if activeSection === "constellation"}
+      <ConstellationsView onClose={() => (activeSection = "home")} />
+    {:else if activeSection === "bell"}
+      <BellView />
+    {:else if activeSection === "blessing"}
+      <BlessingView />
+    {/if}
+  </main>
 </div>
 
 <dialog class="modal" open={showExplain}>
@@ -401,6 +374,8 @@
           onEquip={(item) => {
             if (gearSelectorIsBlessed) {
               blessedSlotsApi.set(gearSelectorSlot, item);
+            } else {
+              trinketSlotsApi.set(gearSelectorSlot, item);
             }
             showGearSelector = false;
             // Evaluation will happen automatically via EvaluationManager context
@@ -475,19 +450,3 @@
     >
   </form>
 </dialog>
-
-<!-- Constellation Map Full Screen -->
-{#if showConstellationMap}
-  <ConstellationMap
-    onClose={() => {
-      showConstellationMap = false;
-      // Return to previous tab when closing constellation map
-      if (selectedRight.name === "Constellation") {
-        selectedRight =
-          previousRightTab.name !== "Constellation"
-            ? previousRightTab
-            : rightOptions[0];
-      }
-    }}
-  />
-{/if}

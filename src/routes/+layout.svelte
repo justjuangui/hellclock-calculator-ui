@@ -1,7 +1,6 @@
 <script lang="ts">
   import "../app.css";
   import { onMount, setContext } from "svelte";
-  import AppNavbar from "$lib/ui/AppNavbar.svelte";
   import { Engine } from "$lib/engine";
   import type { GamePack } from "$lib/engine/types";
   import { loadGamePack } from "$lib/engine/assets";
@@ -63,8 +62,9 @@
   let constellationEvaluationContext: ReturnType<
     typeof provideConstellationEvaluation
   > | null = null;
-  let statusEvaluationContext: ReturnType<typeof provideStatusEvaluation> | null =
-    null;
+  let statusEvaluationContext: ReturnType<
+    typeof provideStatusEvaluation
+  > | null = null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
@@ -91,7 +91,12 @@
       relicInventoryContext = provideRelicInventory(relicsHelper, 0);
     }
 
-    if (relicsHelper && statsHelper && statusHelper && !relicEvaluationContext) {
+    if (
+      relicsHelper &&
+      statsHelper &&
+      statusHelper &&
+      !relicEvaluationContext
+    ) {
       relicEvaluationContext = provideRelicEvaluation(
         relicsHelper,
         statsHelper,
@@ -107,7 +112,11 @@
       );
     }
 
-    if (constellationsHelper && statusHelper && !constellationEvaluationContext) {
+    if (
+      constellationsHelper &&
+      statusHelper &&
+      !constellationEvaluationContext
+    ) {
       constellationEvaluationContext = provideConstellationEvaluation(
         constellationsHelper,
         statusHelper,
@@ -249,7 +258,7 @@
   let { children } = $props();
 </script>
 
-<div data-theme="dark" class="min-h-screen bg-base-200">
+<div data-theme="dracula" class="min-h-screen bg-base-200">
   {#if !ready || error}
     <div class="min-h-screen flex items-center justify-center p-4">
       <div class="card w-full max-w-md bg-base-100 shadow-xl">
@@ -280,11 +289,6 @@
       </div>
     </div>
   {:else}
-    <div class="w-5xl mx-auto p-4">
-      <AppNavbar />
-      <div class="mt-2">
-        {@render children?.()}
-      </div>
-    </div>
+    {@render children?.()}
   {/if}
 </div>

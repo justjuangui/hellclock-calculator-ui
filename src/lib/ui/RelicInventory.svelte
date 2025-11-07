@@ -97,17 +97,12 @@
       relicInventory.setTier(relicInventory.currentTier - 1);
     }
   }
-
-  function clearInventory() {
-    relicInventory.clear();
-  }
 </script>
 
-<div class="bg-base-100 border border-base-300 rounded-lg h-full">
-  <div class="p-3 h-full flex flex-col">
+<div class="card bg-base-100 border border-base-300 shadow-lg h-full">
+  <div class="card-body p-4 h-full flex flex-col">
     <!-- Compact Header -->
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-sm font-semibold">Relic Inventory</h3>
+    <div class="flex items-center justify-end mb-3">
       <div class="flex items-center gap-2">
         <div class="badge badge-sm badge-outline">
           Tier {relicInventory.currentTier}
@@ -130,11 +125,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Compact Instructions -->
-    <p class="text-xs opacity-60 mb-3">
-      Click empty slots to browse and place relics. Click relics to remove.
-    </p>
 
     <!-- Relic Grid with proper spacing - centered in available space -->
     <div class="flex justify-center flex-1">
@@ -190,7 +180,7 @@
               ${
                 cell.isValid
                   ? "bg-base-100 border-base-300 hover:bg-base-200 hover:border-base-400"
-                  : "bg-base-300/30 border-base-300/30 opacity-40 cursor-not-allowed"
+                  : "bg-base-100/30 border-base-300/30 opacity-40 cursor-not-allowed"
               }
             `}
               style={`--this-col: 1;--this-row: 1;`}
@@ -213,25 +203,6 @@
           {/if}
         {/each}
       </div>
-    </div>
-
-    <!-- Compact Stats -->
-    <div class="flex justify-between text-xs opacity-60 mt-3">
-      <span>
-        {currentShape
-          ? (relicsHelper?.getAvailableSlotCount(currentShape) ?? 0)
-          : 0} slots
-      </span>
-      <span>
-        {occupiedPositions.length} occupied
-      </span>
-      <button
-        class="text-error hover:opacity-80"
-        onclick={clearInventory}
-        disabled={occupiedPositions.length === 0}
-      >
-        Clear
-      </button>
     </div>
   </div>
 </div>

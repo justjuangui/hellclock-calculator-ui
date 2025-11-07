@@ -19,14 +19,12 @@
   let skillSlots = $state(skillsHelper.getSkillSlotsDefinitions());
 </script>
 
-<div class="bg-base-100 border border-base-300 rounded-lg">
-  <div class="p-3">
-    <h3 class="text-base font-semibold mb-2">Skills</h3>
-    <p class="text-xs opacity-70 mb-3">
-      Click a slot to browse and equip skills, to remove just click once again.
-      Hover to see details.
-    </p>
-    <div class="flex flex-row gap-1">
+<div>
+  <p class="text-xs opacity-70 mb-3">
+    Click a slot to browse and equip skills, to remove just click once again.
+    Hover to see details.
+  </p>
+  <div class="flex flex-row gap-1">
       {#each skillSlots as s}
         <div class="tooltip tooltip-bottom">
           <div class="tooltip-content">
@@ -62,6 +60,5 @@
           </button>
         </div>
       {/each}
-    </div>
   </div>
 </div>

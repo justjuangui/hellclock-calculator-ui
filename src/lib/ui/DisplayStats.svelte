@@ -63,8 +63,8 @@
 </script>
 
 <!-- Displayed Stats -->
-<div class="bg-base-100 border border-base-300 rounded-lg">
-  <div class="p-3">
+<div class="card bg-base-100 border border-base-300 shadow-lg">
+  <div class="card-body">
     <div class="flex items-center justify-between gap-2 mb-2">
       <h3 class="text-base font-semibold">Stats</h3>
       <div role="tablist" class="tabs tabs-border tabs-sm">
@@ -103,7 +103,7 @@
               <span class="text-sm font-mono">{fmt(getStatFromEval(evalResult, stat), stat)}</span>
               <button
                 aria-label="Explain {stat}"
-                class="opacity-0 group-hover:opacity-100 p-1 hover:bg-base-300 rounded transition-all"
+                class="opacity-0 group-hover:opacity-100 p-1 hover:bg-base-100 rounded transition-all"
                 onclick={() => openExplain(stat)}
               >
                 <svg

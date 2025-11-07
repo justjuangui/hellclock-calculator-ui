@@ -10,7 +10,7 @@
     tooltipText,
   } from "$lib/hellclock/utils";
 
-  let { blessedGear, title, equipped, onSlotClicked } = $props();
+  let { blessedGear, equipped, onSlotClicked } = $props();
   const lang = getContext<string>("lang") || "en";
 
   const statsHelper = getContext<StatsHelper>("statsHelper");
@@ -57,19 +57,17 @@
   });
 </script>
 
-<div class="bg-base-100 border border-base-300 rounded-lg">
-  <div class="p-3">
-    <h3 class="text-base font-semibold mb-2">{title}</h3>
-    <p class="text-xs opacity-70 mb-3">
-      Click a slot to browse and equip items, to remove just click once again. Hover to see details.
-    </p>
-    <div class="grid grid-cols-3 gap-1">
+<div>
+  <p class="text-xs opacity-70 mb-3">
+    Click a slot to browse and equip items, to remove just click once again. Hover to see details.
+  </p>
+  <div class="grid grid-cols-3 gap-1">
       {#each allSlots as s}
         <div
           role="button"
           tabindex="0"
           aria-label={slotLabel[s]}
-          class={`relative cursor-pointer aspect-square rounded border-2 flex items-center justify-center transition-colors ${equipped[s]?.color ? "border-[var(--color)] bg-[var(--color)]/10" : "border-base-300 bg-base-200 hover:bg-base-300"}`}
+          class={`relative cursor-pointer aspect-square rounded border-2 flex items-center justify-center transition-colors ${equipped[s]?.color ? "border-[var(--color)] bg-[var(--color)]/10" : "border-base-300 bg-base-200 hover:bg-base-100"}`}
           style={`--color: ${equipped[s]?.color ? parseRGBA01ToCss(equipped[s]!.color) : "transparent"}`}
           onkeydown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -106,6 +104,5 @@
           {/if}
         </div>
       {/each}
-    </div>
   </div>
 </div>
