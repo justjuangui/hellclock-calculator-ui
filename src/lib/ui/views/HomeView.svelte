@@ -8,6 +8,7 @@
 	import type { GamePack } from '$lib/engine/types';
 	import { spriteUrl, parseRGBA01ToCss } from '$lib/hellclock/utils';
 	import { translate } from '$lib/hellclock/lang';
+	import { ESingType, formatStatNumber } from '$lib/hellclock/formats';
 
 	let {
 		activeSection = $bindable('home')
@@ -32,10 +33,10 @@
 		if (!evalResult) return null;
 
 		return {
-			health: (evalResult as any)['Max Health'] || 0,
-			mana: (evalResult as any)['Max Mana'] || 0,
-			dps: (evalResult as any)['Damage Per Second'] || 0,
-			defense: (evalResult as any)['Defense'] || 0
+			health: (evalResult as any)['Life'] || 0,
+			mana: (evalResult as any)['Mana'] || 0,
+			dps: (evalResult as any)['BaseDamage'] || 0,
+			defense: (evalResult as any)['AttackSpeed'] || 0
 		};
 	});
 
@@ -65,8 +66,14 @@
 		activeSection = section;
 	}
 
-	function formatNumber(value: number): string {
-		return Math.round(value).toLocaleString();
+	function formatStat(value: number | null, statName: string): string {
+		if (value === null) return '-';
+
+		const statDef = statsHelper.getStatByName(statName);
+		if (!statDef) return String(value);
+		const clampedValue = statsHelper.getValueForStat(statName, value);
+
+		return formatStatNumber(clampedValue, statDef.eStatFormat, ESingType.Default);
 	}
 </script>
 
@@ -99,12 +106,12 @@
 						/>
 					</svg>
 				</div>
-				<div class="stat-title">Health</div>
+				<div class="stat-title">{statsHelper.getLabelForStat('Life')}</div>
 				<div class="stat-value text-error">
 					{#if loading}
 						<span class="loading loading-spinner loading-sm"></span>
 					{:else if keyStats}
-						{formatNumber(keyStats.health)}
+						{formatStat(keyStats.health, 'Life')}
 					{:else}
 						-
 					{/if}
@@ -129,12 +136,12 @@
 						/>
 					</svg>
 				</div>
-				<div class="stat-title">Mana</div>
+				<div class="stat-title">{statsHelper.getLabelForStat('Mana')}</div>
 				<div class="stat-value text-info">
 					{#if loading}
 						<span class="loading loading-spinner loading-sm"></span>
 					{:else if keyStats}
-						{formatNumber(keyStats.mana)}
+						{formatStat(keyStats.mana, 'Mana')}
 					{:else}
 						-
 					{/if}
@@ -155,16 +162,16 @@
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+							d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
 						/>
 					</svg>
 				</div>
-				<div class="stat-title">DPS</div>
+				<div class="stat-title">{statsHelper.getLabelForStat('BaseDamage')}</div>
 				<div class="stat-value text-warning">
 					{#if loading}
 						<span class="loading loading-spinner loading-sm"></span>
 					{:else if keyStats}
-						{formatNumber(keyStats.dps)}
+						{formatStat(keyStats.dps, 'BaseDamage')}
 					{:else}
 						-
 					{/if}
@@ -185,16 +192,16 @@
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+							d="M3 12h3m3-6l3 3-3 3m12-3h-3m-3 6l-3-3 3-3M12 3v3m0 12v3"
 						/>
 					</svg>
 				</div>
-				<div class="stat-title">Defense</div>
+				<div class="stat-title">{statsHelper.getLabelForStat('AttackSpeed')}</div>
 				<div class="stat-value text-success">
 					{#if loading}
 						<span class="loading loading-spinner loading-sm"></span>
 					{:else if keyStats}
-						{formatNumber(keyStats.defense)}
+						{formatStat(keyStats.defense, 'AttackSpeed')}
 					{:else}
 						-
 					{/if}
