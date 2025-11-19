@@ -1,8 +1,8 @@
 <script lang="ts">
   import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
-  import SkillSlots from "$lib/ui/SkillSlots.svelte";
-  import DisplaySkills from "$lib/ui/DisplaySkills.svelte";
-  import type { SkillSlotDefinition } from "$lib/hellclock/skills";
+  import SkillCard from "$lib/ui/SkillCard.svelte";
+  import type { SkillsHelper, SkillSlotDefinition } from "$lib/hellclock/skills";
+  import { getContext } from "svelte";
 
   let { onSkillSlotClicked, onOpenExplain } = $props<{
     onSkillSlotClicked: (s: SkillSlotDefinition, remove?: Boolean) => void;
@@ -10,6 +10,10 @@
   }>();
 
   const skillEquipped = useSkillEquipped();
+  const skillsHelper = getContext<SkillsHelper>("skillsHelper");
+
+  // Get all skill slots
+  const skillSlots = $derived(skillsHelper.getSkillSlotsDefinitions());
 
   function handleOpenExplain(stat: string) {
     onOpenExplain?.(stat);
@@ -26,56 +30,45 @@
       </p>
     </div>
     <div class="flex gap-2">
-      <button class="btn btn-outline btn-sm">Clear All Skills</button>
+      <button
+        class="btn btn-outline btn-sm"
+        onclick={() => skillEquipped.clear()}
+        disabled={skillEquipped.activeSkills.length === 0}
+      >
+        Clear All Skills
+      </button>
     </div>
   </div>
 
-  <!-- Skills Slots Card -->
-  <div class="card bg-base-100 border border-base-300 shadow-lg">
-    <div class="card-body">
-      <h2 class="card-title text-lg mb-4">
-        <span class="text-xl">✨</span>
-        Active Skills
-        <span class="badge badge-primary ml-auto">
-          {Object.values(skillEquipped.skillsEquipped).filter((s) => s)
-            .length}/{Object.keys(skillEquipped.skillsEquipped).length}
-        </span>
-      </h2>
-      <SkillSlots
-        equipped={skillEquipped.skillsEquipped}
-        {onSkillSlotClicked}
-      />
-    </div>
+  <!-- Skill Cards Grid -->
+  <div class="grid grid-cols-2 gap-4">
+    {#each skillSlots as slot (slot)}
+      {@const skillData = skillEquipped.skillsEquipped[slot]}
+      {#if skillData}
+        <SkillCard
+          skill={skillData}
+          slotId={slot}
+          onRemove={() => onSkillSlotClicked(slot, true)}
+          onOpenExplain={handleOpenExplain}
+        />
+      {:else}
+        <!-- Empty Slot Placeholder -->
+        <button
+          class="card bg-base-100 border border-dashed border-base-300 shadow-sm opacity-50 hover:opacity-70 hover:border-base-400 transition-all cursor-pointer"
+          onclick={() => onSkillSlotClicked(slot)}
+          type="button"
+        >
+          <div class="card-body p-0">
+            <div class="flex items-center justify-center h-full min-h-[140px]">
+              <div class="text-center">
+                <div class="text-4xl mb-2 opacity-30">+</div>
+                <div class="text-sm opacity-60">Empty Skill Slot</div>
+              </div>
+            </div>
+          </div>
+        </button>
+      {/if}
+    {/each}
   </div>
 
-  <!-- Info Card -->
-  <div class="alert alert-info">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      class="stroke-current shrink-0 w-6 h-6"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-    <span
-      >Click on a skill slot to open the skill selector and equip skills.</span
-    >
-  </div>
-
-  <!-- Skills Details -->
-  <div class="card bg-base-100 border border-base-300 shadow-lg">
-    <div class="card-body">
-      <h2 class="card-title text-lg mb-4">
-        <span class="text-xl">📋</span>
-        Skill Details
-      </h2>
-      <DisplaySkills openExplain={handleOpenExplain} />
-    </div>
-  </div>
 </div>

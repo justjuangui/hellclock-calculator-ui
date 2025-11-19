@@ -238,6 +238,7 @@ pack "hellclock" {
     HellClockTimeDropChanceBonus: HellClockTimeDropChanceBonus.PERCENTAGE using common
     MinimumAttackSpeed: MinimumAttackSpeed.PERCENTAGE using common
     MinimumMovementSpeed: MinimumMovementSpeed.PERCENTAGE using common
+    SkillProjectileDamage: SkillProjectileDamage.PERCENTAGE using common
     skill_BasicAttackDefinition_Dmg_Total: skill_BasicAttackDefinition_Dmg_Total.skill using common
     skill_BasicAttackDefinition_CurrentManaCost: skill_BasicAttackDefinition_CurrentManaCost.skill using common
     skill_BasicAttackDefinition_Dmg_Physical: skill_BasicAttackDefinition_Dmg_Physical.skill using common
@@ -1867,7 +1868,7 @@ pack "hellclock" {
     	critical_average_formula: total_damage * (1 + CriticalChance * (CriticalDamage - 1))
     }
     SlowTimeSkillDefinition {
-    	primary: Physical
+    	primary: Lightning
     	base_damage: BaseDamage
     	skill_damage_modifier: skill_SlowTimeSkillDefinition_DamageModifier
     	initial_distribution {
