@@ -6,8 +6,6 @@
     Container,
     Graphics,
     Sprite,
-    Text,
-    TextStyle,
   } from "pixi.js";
   import { Viewport } from "pixi-viewport";
   import type {
@@ -106,8 +104,8 @@
 
       // Activate plugins
       viewport.drag().pinch().wheel().decelerate().clampZoom({
-        minScale: 0.3,
-        maxScale: 10,
+        minScale: 0.1,
+        maxScale: 1,
       });
 
       // Draw starfield background
@@ -238,24 +236,24 @@
           const texture = Assets.get(textureUrl);
 
           // Verify texture is valid before creating sprite
-          const sprite = Sprite.from(texture);
-          sprite.alpha = 0.6;
+            const sprite = Sprite.from(texture);
+            sprite.alpha = 0.6;
 
-          if (currentDevotionPoints === totalNodes) {
-            const spriteColors = parseRGBA01ToPixiHex(
-              config.illustrationMasteredColor,
+            if (currentDevotionPoints === totalNodes) {
+              const spriteColors = parseRGBA01ToPixiHex(
+                config.illustrationMasteredColor,
+              );
+              sprite.tint = spriteColors.color;
+              sprite.alpha = spriteColors.alpha;
+            }
+
+            constellationContainer.addChild(sprite);
+            fitSprite(
+              sprite,
+              constellationDetails.width,
+              constellationDetails.height,
+              "contain",
             );
-            sprite.tint = spriteColors.color;
-            sprite.alpha = spriteColors.alpha;
-          }
-
-          constellationContainer.addChild(sprite);
-          fitSprite(
-            sprite,
-            constellationDetails.width * constellationDetails.nodeViewScale[0],
-            constellationDetails.height * constellationDetails.nodeViewScale[1],
-            "contain",
-          );
         } catch (error) {
           console.error(
             `Failed to load texture for constellation ${constellation.id}:`,
@@ -269,8 +267,8 @@
     drawEdges(
       constellationContainer,
       constellation,
-      constellationDetails.nodeViewPosition,
-      constellationDetails.nodeViewScale,
+      [0,0,0],
+      [1,1,1],
       config,
     );
 
@@ -278,8 +276,8 @@
     drawNodes(
       constellationContainer,
       constellation,
-      constellationDetails.nodeViewPosition,
-      constellationDetails.nodeViewScale,
+      [0,0,0],
+      [1,1,1],
       config,
     );
   }
