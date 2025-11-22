@@ -72,6 +72,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    SlashAreaAngleModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     SpawnerAreaRadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -676,7 +687,7 @@ pack "hellclock" {
     skill_FeitorsLashSkillDefinition_CanUseNegativeManaModifier: skill_FeitorsLashSkillDefinition_CanUseNegativeManaModifier.skill using common
     skill_FeitorsLashSkillDefinition_IgnoreCooldownModifier: skill_FeitorsLashSkillDefinition_IgnoreCooldownModifier.skill using common
     skill_FeitorsLashSkillDefinition_SkillCharacterMovementSpeedModifier: skill_FeitorsLashSkillDefinition_SkillCharacterMovementSpeedModifier.skill using common
-    skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier: skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier.skill using common
+    skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier: skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier.skill using SlashAreaAngleModifier
     skill_SlowTimeSkillDefinition_Dmg_Total: skill_SlowTimeSkillDefinition_Dmg_Total.skill using common
     skill_SlowTimeSkillDefinition_CurrentManaCost: skill_SlowTimeSkillDefinition_CurrentManaCost.skill using common
     skill_SlowTimeSkillDefinition_Dmg_Physical: skill_SlowTimeSkillDefinition_Dmg_Physical.skill using common
