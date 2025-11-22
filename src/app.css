@@ -8,6 +8,15 @@
         themes: dracula
 }
 
+/* Safelist dynamic classes for damage distribution */
+@source inline("bg-orange-500");
+@source inline("bg-base-content/60");
+@source inline("bg-success");
+@source inline("bg-info");
+@source inline("bg-error");
+@source inline("bg-primary");
+@source inline("bg-secondary");
+
 @theme {
         --font-sans: 'Roboto', sans-serif;
 }

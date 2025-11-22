@@ -14,6 +14,7 @@
         "/assets/skill-calculations.json",
         "/assets/Skills Config.json",
         "/assets/Constellations.json",
-        "/assets/Status.json"
+        "/assets/Status.json",
+        "/assets/skill-display.json"
     ]
 }

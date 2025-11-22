@@ -29,6 +29,8 @@
     type ConstellationsConfig,
   } from "$lib/hellclock/constellations";
   import { StatusHelper, type StatusDB } from "$lib/hellclock/status";
+import { SkillDisplayHelper } from "$lib/hellclock/skillcard-helper";
+import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
@@ -155,6 +157,7 @@
   let relicsHelper = $state<RelicsHelper | null>(null);
   let constellationsHelper = $state<ConstellationsHelper | null>(null);
   let statusHelper = $state<StatusHelper | null>(null);
+  let skillDisplayHelper = $state<SkillDisplayHelper | null>(null);
   let assetPreloader = $state<AssetPreloader | null>(null);
 
   $effect(() => {
@@ -166,6 +169,7 @@
     setContext("relicsHelper", relicsHelper);
     setContext("constellationsHelper", constellationsHelper);
     setContext("statusHelper", statusHelper);
+    setContext("skillDisplayHelper", skillDisplayHelper);
     setContext("assetPreloader", assetPreloader);
     setContext("lang", "en");
     if (
@@ -177,6 +181,7 @@
       relicsHelper &&
       constellationsHelper &&
       statusHelper &&
+      skillDisplayHelper &&
       assetPreloader
     ) {
       ready = true;
@@ -238,6 +243,11 @@
 
       label = "Loading StatusHelper";
       statusHelper = new StatusHelper(pack["Status"] as StatusDB);
+
+      label = "Loading SkillDisplayHelper";
+      skillDisplayHelper = new SkillDisplayHelper(
+        pack["skill-display"] as SkillDisplayDefinitions,
+      );
 
       label = "Preloading PixiJS assets";
       let tmpAsset = new AssetPreloader();
