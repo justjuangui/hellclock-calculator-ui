@@ -3,13 +3,16 @@
 	import type { SkillsHelper } from "$lib/hellclock/skills";
 	import type { RelicsHelper } from "$lib/hellclock/relics";
 	import type { ConstellationsHelper } from "$lib/hellclock/constellations";
+	import type { GearsHelper } from "$lib/hellclock/gears";
 	import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
 	import { useRelicInventory } from "$lib/context/relicequipped.svelte";
 	import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
+	import { useEquipped, ESlotsType } from "$lib/context/equipped.svelte";
 	import {
 		ImportOrchestrator,
 		type ImportPreview,
 		type RelicLoadoutSummary,
+		type GearLoadoutSummary,
 		type ImportResult,
 	} from "$lib/import";
 
@@ -17,11 +20,13 @@
 	const skillsHelper = getContext<SkillsHelper>("skillsHelper");
 	const relicsHelper = getContext<RelicsHelper>("relicsHelper");
 	const constellationsHelper = getContext<ConstellationsHelper>("constellationsHelper");
+	const gearsHelper = getContext<GearsHelper>("gearsHelper");
 
 	// Get context APIs
 	const skillApi = useSkillEquipped();
 	const relicApi = useRelicInventory();
 	const constellationApi = useConstellationEquipped();
+	const gearApi = useEquipped(ESlotsType.BlessedGear);
 
 	// Dialog ref
 	let dialog: HTMLDialogElement;
@@ -31,12 +36,15 @@
 	let fileName = $state("");
 	let preview: ImportPreview | null = $state(null);
 	let loadouts: RelicLoadoutSummary[] = $state([]);
+	let gearLoadouts: GearLoadoutSummary[] = $state([]);
 
 	// Import options
 	let importSkills = $state(true);
 	let importRelics = $state(true);
 	let selectedLoadoutIndex = $state(0);
 	let importConstellations = $state(true);
+	let importGear = $state(true);
+	let selectedGearLoadoutIndex = $state(0);
 
 	// Result state
 	let importing = $state(false);
@@ -46,8 +54,8 @@
 	let orchestrator: ImportOrchestrator | null = $state(null);
 
 	$effect(() => {
-		if (skillsHelper && relicsHelper && constellationsHelper) {
-			orchestrator = new ImportOrchestrator(skillsHelper, relicsHelper, constellationsHelper);
+		if (skillsHelper && relicsHelper && constellationsHelper && gearsHelper) {
+			orchestrator = new ImportOrchestrator(skillsHelper, relicsHelper, constellationsHelper, gearsHelper);
 		}
 	});
 
@@ -67,10 +75,13 @@
 		fileName = "";
 		preview = null;
 		loadouts = [];
+		gearLoadouts = [];
 		importSkills = true;
 		importRelics = true;
 		selectedLoadoutIndex = 0;
 		importConstellations = true;
+		importGear = true;
+		selectedGearLoadoutIndex = 0;
 		importing = false;
 		importResult = null;
 	}
@@ -90,14 +101,20 @@
 			// Get preview
 			preview = orchestrator.preview(saveData);
 			loadouts = preview.relicLoadouts;
+			gearLoadouts = preview.gearLoadouts;
 
-			// Default to current in-game loadout
+			// Default to current in-game loadout for relics
 			const currentLoadout = loadouts.find((l) => l.isCurrentInGame);
 			selectedLoadoutIndex = currentLoadout?.index ?? 0;
+
+			// Default to current in-game loadout for gear
+			const currentGearLoadout = gearLoadouts.find((l) => l.isCurrentInGame);
+			selectedGearLoadoutIndex = currentGearLoadout?.index ?? 0;
 		} catch (err) {
 			preview = {
 				skills: [],
 				relicLoadouts: [],
+				gearLoadouts: [],
 				constellations: [],
 				errors: [
 					{
@@ -124,11 +141,14 @@
 					relics: importRelics,
 					relicLoadoutIndex: selectedLoadoutIndex,
 					constellations: importConstellations,
+					gear: importGear,
+					gearLoadoutIndex: selectedGearLoadoutIndex,
 				},
 				{
 					skillApi,
 					relicApi,
 					constellationApi,
+					gearApi,
 				},
 			);
 
@@ -141,7 +161,7 @@
 		} catch (err) {
 			importResult = {
 				success: false,
-				imported: { skills: 0, relics: 0, constellations: 0 },
+				imported: { skills: 0, relics: 0, constellations: 0, gear: 0 },
 				errors: [
 					{
 						system: "skills",
@@ -157,11 +177,12 @@
 
 	// Computed values for display
 	const selectedLoadout = $derived(loadouts[selectedLoadoutIndex]);
+	const selectedGearLoadout = $derived(gearLoadouts[selectedGearLoadoutIndex]);
 	const hasErrors = $derived((preview?.errors.length ?? 0) > 0 || (importResult?.errors.length ?? 0) > 0);
 	const canImport = $derived(
 		saveData !== null &&
 			!importing &&
-			(importSkills || importRelics || importConstellations) &&
+			(importSkills || importRelics || importConstellations || importGear) &&
 			!hasErrors,
 	);
 </script>
@@ -192,7 +213,40 @@
 			<!-- Import Options -->
 			<div class="divider">Import Options</div>
 
-			<div class="form-control">
+			<div class="form-control flex flex-col gap-2">
+				<!-- Gear -->
+				<label class="label cursor-pointer justify-start gap-3">
+					<input
+						type="checkbox"
+						class="checkbox checkbox-primary"
+						bind:checked={importGear}
+						disabled={gearLoadouts.every((l) => l.gearCount === 0)}
+					/>
+					<span class="label-text">Import Blessed Gear</span>
+				</label>
+
+				{#if importGear && gearLoadouts.length > 0}
+					<div class="ml-8 mt-2 mb-2">
+						<span class="label-text text-sm opacity-70">Select Loadout:</span>
+						<div class="flex flex-wrap gap-2 mt-1">
+							{#each gearLoadouts as loadout}
+								<button
+									class="btn btn-sm"
+									class:btn-primary={selectedGearLoadoutIndex === loadout.index}
+									class:btn-outline={selectedGearLoadoutIndex !== loadout.index}
+									onclick={() => (selectedGearLoadoutIndex = loadout.index)}
+								>
+									Loadout {loadout.index + 1}
+									<span class="badge badge-xs ml-1">{loadout.gearCount}</span>
+									{#if loadout.isCurrentInGame}
+										<span class="badge badge-xs badge-success ml-1">current</span>
+									{/if}
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
 				<!-- Skills -->
 				<label class="label cursor-pointer justify-start gap-3">
 					<input
@@ -259,6 +313,12 @@
 			<div class="divider">Summary</div>
 
 			<div class="text-sm space-y-1">
+				{#if importGear && selectedGearLoadout}
+					<p>
+						<span class="font-semibold">Gear:</span>
+						{selectedGearLoadout.gearCount} items from Loadout {selectedGearLoadout.index + 1}
+					</p>
+				{/if}
 				{#if importSkills}
 					<p>
 						<span class="font-semibold">Skills:</span>
@@ -351,7 +411,8 @@
 						<p class="text-sm">
 							Imported {importResult.imported.skills} skills,
 							{importResult.imported.relics} relics,
-							{importResult.imported.constellations} constellation nodes
+							{importResult.imported.constellations} constellation nodes,
+							{importResult.imported.gear} gear items
 						</p>
 					</div>
 				</div>

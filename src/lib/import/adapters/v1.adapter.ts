@@ -8,12 +8,15 @@ import type {
 	ParsedSkill,
 	ParsedRelic,
 	ParsedConstellation,
+	ParsedGear,
 	RelicLoadoutSummary,
+	GearLoadoutSummary,
 	SaveFile,
 	SaveFileSkillSlot,
 	SaveFileSkillLevel,
 	SaveFileRelicLoadoutsData,
 	SaveFileConstellationsData,
+	SaveFileGearLoadoutsData,
 	ParsedAffix,
 	ParsedImplicitAffix,
 } from "../types";
@@ -154,5 +157,43 @@ export class V1Adapter implements ImportAdapter {
 		}
 
 		return parsed;
+	}
+
+	getGearLoadouts(saveData: unknown): GearLoadoutSummary[] {
+		const data = saveData as SaveFile;
+		const gearData = data._blessedGearLoadoutsSaveData as SaveFileGearLoadoutsData | undefined;
+
+		if (!gearData) return [];
+
+		const summaries: GearLoadoutSummary[] = [];
+
+		for (let i = 0; i < gearData._loadouts.length; i++) {
+			const loadout = gearData._loadouts[i];
+			summaries.push({
+				index: i,
+				gearCount: loadout._gear?.length ?? 0,
+				isCurrentInGame: i === gearData._currentIndex,
+			});
+		}
+
+		return summaries;
+	}
+
+	parseGear(saveData: unknown, loadoutIndex: number): ParsedGear[] {
+		const data = saveData as SaveFile;
+		const gearData = data._blessedGearLoadoutsSaveData as SaveFileGearLoadoutsData | undefined;
+
+		if (!gearData || loadoutIndex < 0 || loadoutIndex >= gearData._loadouts.length) {
+			return [];
+		}
+
+		const loadout = gearData._loadouts[loadoutIndex];
+		const items = loadout._gear ?? [];
+
+		return items.map((g) => ({
+			defId: g._gearDefinitionHashId,
+			variantIndex: g._variantIndex,
+			multiplier: g._multiplier,
+		}));
 	}
 }

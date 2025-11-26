@@ -12,6 +12,8 @@ export type ImportOptions = {
 	relics: boolean;
 	relicLoadoutIndex: number; // 0, 1, or 2 - user selected
 	constellations: boolean;
+	gear: boolean;
+	gearLoadoutIndex: number; // 0, 1, or 2 - user selected
 };
 
 export type ImportResult = {
@@ -20,19 +22,20 @@ export type ImportResult = {
 		skills: number;
 		relics: number;
 		constellations: number;
+		gear: number;
 	};
 	errors: ImportError[];
 	warnings: ImportWarning[];
 };
 
 export type ImportError = {
-	system: "skills" | "relics" | "constellations";
+	system: "skills" | "relics" | "constellations" | "gear";
 	message: string;
 	data?: unknown;
 };
 
 export type ImportWarning = {
-	system: "skills" | "relics" | "constellations";
+	system: "skills" | "relics" | "constellations" | "gear";
 	message: string;
 };
 
@@ -82,13 +85,25 @@ export type ParsedConstellation = {
 	level: number;
 };
 
+export type ParsedGear = {
+	defId: number;
+	variantIndex: number;
+	multiplier: number;
+};
+
 // ============================================================================
-// Relic Loadout Summary
+// Loadout Summaries
 // ============================================================================
 
 export type RelicLoadoutSummary = {
 	index: number;
 	relicCount: number;
+	isCurrentInGame: boolean; // Was _currentIndex in save
+};
+
+export type GearLoadoutSummary = {
+	index: number;
+	gearCount: number;
 	isCurrentInGame: boolean; // Was _currentIndex in save
 };
 
@@ -156,12 +171,28 @@ export type SaveFileConstellationsData = {
 	skillTreesData: SaveFileConstellation[];
 };
 
+export type SaveFileGear = {
+	_gearDefinitionHashId: number;
+	_variantIndex: number;
+	_multiplier: number;
+};
+
+export type SaveFileGearLoadout = {
+	_gear: SaveFileGear[];
+};
+
+export type SaveFileGearLoadoutsData = {
+	_currentIndex: number;
+	_loadouts: SaveFileGearLoadout[];
+};
+
 export type SaveFile = {
 	saveVersion?: number;
 	skillSlots: SaveFileSkillSlot[];
 	_skillAndLevels: SaveFileSkillLevel[];
 	_relicLoadoutsSaveData: SaveFileRelicLoadoutsData;
 	constellationsData: SaveFileConstellationsData;
+	_blessedGearLoadoutsSaveData?: SaveFileGearLoadoutsData;
 	// Other fields not needed for import
 	[key: string]: unknown;
 };

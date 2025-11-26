@@ -11,13 +11,16 @@ import type {
   RelicConfiguration,
   RelicRarity,
 } from "$lib/hellclock/relics";
+import type { GearsHelper } from "$lib/hellclock/gears";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
+import type { EquippedAPI } from "$lib/context/equipped.svelte";
 import type {
   ParsedSkill,
   ParsedRelic,
   ParsedConstellation,
+  ParsedGear,
   ParsedAffix,
 } from "./types";
 
@@ -41,6 +44,7 @@ export class ImportApplier {
   constructor(
     private skillsHelper: SkillsHelper,
     private relicsHelper: RelicsHelper,
+    private gearsHelper: GearsHelper,
   ) {}
 
   /**
@@ -318,5 +322,29 @@ export class ImportApplier {
     }));
 
     return api.importNodes(nodesToImport);
+  }
+
+  /**
+   * Apply gear to the equipped gear context
+   */
+  applyGear(gear: ParsedGear[], api: EquippedAPI): number {
+    // Clear existing gear
+    api.clear();
+
+    let appliedCount = 0;
+
+    for (const parsed of gear) {
+      const item = this.gearsHelper.getGearItem(
+        parsed.defId,
+        parsed.variantIndex,
+        parsed.multiplier,
+      );
+      if (!item) continue;
+
+      api.set(item.slot, item);
+      appliedCount++;
+    }
+
+    return appliedCount;
   }
 }

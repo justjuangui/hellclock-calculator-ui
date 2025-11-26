@@ -68,7 +68,6 @@ export function provideConstellationEquipped(
     if (!constellationsHelper) return;
 
     // Calculate new category points
-    debugger;
     const newCategoryPoints = new Map<string, number>();
 
     // Track which constellations we've seen (for mastery checking)

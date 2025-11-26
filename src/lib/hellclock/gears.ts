@@ -159,6 +159,52 @@ export class GearsHelper {
     }
   }
 
+  /**
+   * Get a single gear item by definition ID and variant index
+   * Used for importing gear from save files
+   */
+  getGearItem(
+    defId: number,
+    variantIndex: number,
+    multiplier?: number,
+  ): GearItem | undefined {
+    const gd = this.getGearDefinitionById(defId);
+    if (!gd || !gd.variants || variantIndex >= gd.variants.length) {
+      return undefined;
+    }
+
+    const variant = gd.variants[variantIndex];
+    const rarity = gd.blessingPrice
+      ? this.gearRarity.blessedGearRarity
+      : undefined;
+
+    let mods = [
+      ...(variant.value.statModifiersDefinitions?.map((s) => ({ ...s })) ?? []),
+    ];
+    mods.forEach((m) => {
+      m.selectedValue = multiplier ?? rarity?.multiplierRange[1] ?? 1;
+    });
+
+    return {
+      defId: gd.id,
+      slot: gd.slot,
+      tier: gd.tier,
+      visualTier: gd.visualTier ?? gd.tier,
+      localizedName: variant.value.variantLocalizedName,
+      prefixLocalizedName: rarity?.localizedName,
+      color: rarity?.color,
+      multiplierRange: rarity?.multiplierRange ?? [0, 1],
+      sprite: variant.value.sprite,
+      mods,
+      sellingValue:
+        gd.sellingValue && rarity
+          ? Math.floor(gd.sellingValue * rarity.sellingValueMultiplier)
+          : gd.sellingValue,
+      gearShopCost: gd.gearShopCost,
+      blessingPrice: gd.blessingPrice,
+    };
+  }
+
   getGearItems(blessed: boolean, slotFilter?: GearSlot): GearItem[] {
     let items: GearItem[] = [];
     this.gearDefinitions

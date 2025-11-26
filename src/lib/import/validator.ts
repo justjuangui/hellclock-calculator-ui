@@ -6,10 +6,12 @@
 import type { SkillsHelper } from "$lib/hellclock/skills";
 import type { RelicsHelper } from "$lib/hellclock/relics";
 import type { ConstellationsHelper } from "$lib/hellclock/constellations";
+import type { GearsHelper } from "$lib/hellclock/gears";
 import type {
 	ParsedSkill,
 	ParsedRelic,
 	ParsedConstellation,
+	ParsedGear,
 	ValidationResult,
 	ImportError,
 	ImportWarning,
@@ -26,6 +28,7 @@ export class ImportValidator {
 		private skillsHelper: SkillsHelper,
 		private relicsHelper: RelicsHelper,
 		private constellationsHelper: ConstellationsHelper,
+		private gearsHelper: GearsHelper,
 	) {}
 
 	/**
@@ -237,5 +240,76 @@ export class ImportValidator {
 		}
 
 		return { data: validNodes, errors, warnings };
+	}
+
+	/**
+	 * Validate a single gear item
+	 */
+	validateGear(gear: ParsedGear): ValidationResult {
+		const gearDef = this.gearsHelper.getGearDefinitionById(gear.defId);
+
+		if (!gearDef) {
+			return {
+				valid: false,
+				error: `Unknown gear definition ID: ${gear.defId}`,
+			};
+		}
+
+		// Check if gear has variants
+		if (!gearDef.variants || gearDef.variants.length === 0) {
+			return {
+				valid: false,
+				error: `Gear ${gearDef.name} has no variants`,
+			};
+		}
+
+		// Check if variant index is valid
+		if (gear.variantIndex < 0 || gear.variantIndex >= gearDef.variants.length) {
+			return {
+				valid: false,
+				error: `Invalid variant index ${gear.variantIndex} for gear ${gearDef.name} (has ${gearDef.variants.length} variants)`,
+			};
+		}
+
+		// Check if multiplier is in valid range
+		if (gear.multiplier < 0 || gear.multiplier > 1) {
+			return {
+				valid: true,
+				warning: `Gear multiplier ${gear.multiplier} is outside normal range (0-1)`,
+			};
+		}
+
+		return { valid: true };
+	}
+
+	/**
+	 * Validate all gear items
+	 */
+	validateAllGear(gear: ParsedGear[]): ValidatedData<ParsedGear[]> {
+		const validGear: ParsedGear[] = [];
+		const errors: ImportError[] = [];
+		const warnings: ImportWarning[] = [];
+
+		for (const g of gear) {
+			const result = this.validateGear(g);
+
+			if (!result.valid) {
+				errors.push({
+					system: "gear",
+					message: result.error!,
+					data: g,
+				});
+			} else {
+				validGear.push(g);
+				if (result.warning) {
+					warnings.push({
+						system: "gear",
+						message: result.warning,
+					});
+				}
+			}
+		}
+
+		return { data: validGear, errors, warnings };
 	}
 }

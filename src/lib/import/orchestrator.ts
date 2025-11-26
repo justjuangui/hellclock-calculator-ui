@@ -6,9 +6,11 @@
 import type { SkillsHelper } from "$lib/hellclock/skills";
 import type { RelicsHelper } from "$lib/hellclock/relics";
 import type { ConstellationsHelper } from "$lib/hellclock/constellations";
+import type { GearsHelper } from "$lib/hellclock/gears";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
+import type { EquippedAPI } from "$lib/context/equipped.svelte";
 
 import type { ImportAdapter } from "./adapters/base";
 import { V1Adapter } from "./adapters/v1.adapter";
@@ -22,12 +24,15 @@ import type {
   ParsedSkill,
   ParsedRelic,
   ParsedConstellation,
+  ParsedGear,
   RelicLoadoutSummary,
+  GearLoadoutSummary,
 } from "./types";
 
 export type ImportPreview = {
   skills: ParsedSkill[];
   relicLoadouts: RelicLoadoutSummary[];
+  gearLoadouts: GearLoadoutSummary[];
   constellations: ParsedConstellation[];
   errors: ImportError[];
   warnings: ImportWarning[];
@@ -42,6 +47,7 @@ export class ImportOrchestrator {
     private skillsHelper: SkillsHelper,
     private relicsHelper: RelicsHelper,
     private constellationsHelper: ConstellationsHelper,
+    private gearsHelper: GearsHelper,
   ) {
     // Register adapters (add new versions here)
     this.adapters = [new V1Adapter()];
@@ -51,8 +57,9 @@ export class ImportOrchestrator {
       skillsHelper,
       relicsHelper,
       constellationsHelper,
+      gearsHelper,
     );
-    this.applier = new ImportApplier(skillsHelper, relicsHelper);
+    this.applier = new ImportApplier(skillsHelper, relicsHelper, gearsHelper);
   }
 
   /**
@@ -85,6 +92,7 @@ export class ImportOrchestrator {
       return {
         skills: [],
         relicLoadouts: [],
+        gearLoadouts: [],
         constellations: [],
         errors,
         warnings,
@@ -94,6 +102,7 @@ export class ImportOrchestrator {
     // Parse all data
     const skills = adapter.parseSkills(saveData);
     const relicLoadouts = adapter.getRelicLoadouts(saveData);
+    const gearLoadouts = adapter.getGearLoadouts(saveData);
     const constellations = adapter.parseConstellations(saveData);
 
     // Validate (but don't filter out invalid items for preview)
@@ -110,6 +119,7 @@ export class ImportOrchestrator {
     return {
       skills,
       relicLoadouts,
+      gearLoadouts,
       constellations,
       errors,
       warnings,
@@ -150,6 +160,39 @@ export class ImportOrchestrator {
   }
 
   /**
+   * Get gear for a specific loadout (for preview)
+   */
+  previewGear(
+    saveData: unknown,
+    loadoutIndex: number,
+  ): {
+    gear: ParsedGear[];
+    errors: ImportError[];
+    warnings: ImportWarning[];
+  } {
+    const errors: ImportError[] = [];
+    const warnings: ImportWarning[] = [];
+
+    const adapter = this.findAdapter(saveData);
+    if (!adapter) {
+      errors.push({
+        system: "gear",
+        message: "Unsupported save file format",
+      });
+      return { gear: [], errors, warnings };
+    }
+
+    const gear = adapter.parseGear(saveData, loadoutIndex);
+    const validation = this.validator.validateAllGear(gear);
+
+    return {
+      gear,
+      errors: validation.errors,
+      warnings: validation.warnings,
+    };
+  }
+
+  /**
    * Import data into the application
    */
   async import(
@@ -159,6 +202,7 @@ export class ImportOrchestrator {
       skillApi: SkillEquippedAPI;
       relicApi: RelicInventoryAPI;
       constellationApi: ConstellationEquippedAPI;
+      gearApi: EquippedAPI;
     },
   ): Promise<ImportResult> {
     const result: ImportResult = {
@@ -167,6 +211,7 @@ export class ImportOrchestrator {
         skills: 0,
         relics: 0,
         constellations: 0,
+        gear: 0,
       },
       errors: [],
       warnings: [],
@@ -227,6 +272,22 @@ export class ImportOrchestrator {
         result.imported.constellations = this.applier.applyConstellations(
           validation.data,
           contexts.constellationApi,
+        );
+      }
+    }
+
+    // Import gear
+    if (options.gear) {
+      const gear = adapter.parseGear(saveData, options.gearLoadoutIndex);
+      const validation = this.validator.validateAllGear(gear);
+
+      result.errors.push(...validation.errors);
+      result.warnings.push(...validation.warnings);
+
+      if (validation.data.length > 0) {
+        result.imported.gear = this.applier.applyGear(
+          validation.data,
+          contexts.gearApi,
         );
       }
     }

@@ -5,7 +5,7 @@
   import { getContext } from "svelte";
 
   let { onSkillSlotClicked, onOpenExplain } = $props<{
-    onSkillSlotClicked: (s: SkillSlotDefinition, remove?: Boolean) => void;
+    onSkillSlotClicked: (s: SkillSlotDefinition, remove?: boolean | undefined) => void;
     onOpenExplain?: (stat: string) => void;
   }>();
 

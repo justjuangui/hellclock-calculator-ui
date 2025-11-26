@@ -7,7 +7,9 @@ import type {
 	ParsedSkill,
 	ParsedRelic,
 	ParsedConstellation,
+	ParsedGear,
 	RelicLoadoutSummary,
+	GearLoadoutSummary,
 } from "../types";
 
 export interface ImportAdapter {
@@ -43,4 +45,15 @@ export interface ImportAdapter {
 	 * Returns only allocated nodes (level > 0)
 	 */
 	parseConstellations(saveData: unknown): ParsedConstellation[];
+
+	/**
+	 * Get summary of all gear loadouts for UI selection
+	 */
+	getGearLoadouts(saveData: unknown): GearLoadoutSummary[];
+
+	/**
+	 * Parse gear from a specific loadout
+	 * @param loadoutIndex - 0, 1, or 2
+	 */
+	parseGear(saveData: unknown, loadoutIndex: number): ParsedGear[];
 }

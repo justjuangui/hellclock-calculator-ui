@@ -12,9 +12,11 @@ export type {
 	ParsedSkill,
 	ParsedRelic,
 	ParsedConstellation,
+	ParsedGear,
 	ParsedAffix,
 	ParsedImplicitAffix,
 	RelicLoadoutSummary,
+	GearLoadoutSummary,
 	SaveFile,
 } from "./types";
 
