@@ -105,6 +105,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    ExplodeOnDeathLifeToDamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * SummonDamagePercentage
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     DamageModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -1025,7 +1036,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_InstantRespawnCooldownModifier: skill_SummonBruteSkillDefinition_InstantRespawnCooldownModifier.skill using common
     skill_SummonBruteSkillDefinition_InstantRespawnLifeCostModifier: skill_SummonBruteSkillDefinition_InstantRespawnLifeCostModifier.skill using common
     skill_SummonBruteSkillDefinition_ExplodeOnDeathEnabledModifier: skill_SummonBruteSkillDefinition_ExplodeOnDeathEnabledModifier.skill using common
-    skill_SummonBruteSkillDefinition_ExplodeOnDeathLifeToDamageModifier: skill_SummonBruteSkillDefinition_ExplodeOnDeathLifeToDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_ExplodeOnDeathLifeToDamageModifier: skill_SummonBruteSkillDefinition_ExplodeOnDeathLifeToDamageModifier.skill using ExplodeOnDeathLifeToDamageModifier
     skill_SummonBruteSkillDefinition_DieOnTauntEndEnabledModifier: skill_SummonBruteSkillDefinition_DieOnTauntEndEnabledModifier.skill using common
     skill_SummonBruteSkillDefinition_ActivationOwnerBuffEnabledModifier: skill_SummonBruteSkillDefinition_ActivationOwnerBuffEnabledModifier.skill using common
     skill_SummonBruteSkillDefinition_DurationModifier: skill_SummonBruteSkillDefinition_DurationModifier.skill using common
