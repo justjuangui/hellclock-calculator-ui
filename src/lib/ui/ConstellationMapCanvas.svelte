@@ -1,12 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, getContext } from "svelte";
-  import {
-    Application,
-    Assets,
-    Container,
-    Graphics,
-    Sprite,
-  } from "pixi.js";
+  import { Application, Assets, Container, Graphics, Sprite } from "pixi.js";
   import { Viewport } from "pixi-viewport";
   import type {
     ConstellationDetails,
@@ -236,24 +230,24 @@
           const texture = Assets.get(textureUrl);
 
           // Verify texture is valid before creating sprite
-            const sprite = Sprite.from(texture);
-            sprite.alpha = 0.6;
+          const sprite = Sprite.from(texture);
+          sprite.alpha = 0.6;
 
-            if (currentDevotionPoints === totalNodes) {
-              const spriteColors = parseRGBA01ToPixiHex(
-                config.illustrationMasteredColor,
-              );
-              sprite.tint = spriteColors.color;
-              sprite.alpha = spriteColors.alpha;
-            }
-
-            constellationContainer.addChild(sprite);
-            fitSprite(
-              sprite,
-              constellationDetails.width,
-              constellationDetails.height,
-              "contain",
+          if (currentDevotionPoints === totalNodes) {
+            const spriteColors = parseRGBA01ToPixiHex(
+              config.illustrationMasteredColor,
             );
+            sprite.tint = spriteColors.color;
+            sprite.alpha = spriteColors.alpha;
+          }
+
+          constellationContainer.addChild(sprite);
+          fitSprite(
+            sprite,
+            constellationDetails.width,
+            constellationDetails.height,
+            "contain",
+          );
         } catch (error) {
           console.error(
             `Failed to load texture for constellation ${constellation.id}:`,
@@ -267,8 +261,8 @@
     drawEdges(
       constellationContainer,
       constellation,
-      [0,0,0],
-      [1,1,1],
+      [0, 0, 0],
+      [1, 1, 1],
       config,
     );
 
@@ -276,8 +270,8 @@
     drawNodes(
       constellationContainer,
       constellation,
-      [0,0,0],
-      [1,1,1],
+      [0, 0, 0],
+      [1, 1, 1],
       config,
     );
   }
@@ -581,7 +575,7 @@
     skillsHelper,
   )}
   <div
-    class="fixed z-50 pointer-events-none"
+    class="fixed z-50 pointer-events-none w-64"
     style="left: {hoveredNode.screenX + 20}px; top: {hoveredNode.screenY +
       20}px;"
   >

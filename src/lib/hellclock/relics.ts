@@ -626,6 +626,56 @@ export class RelicsHelper {
   }
 
   /**
+   * Get relic sprite URL for a base definition and tier
+   * Handles unique relics with custom sprites
+   */
+  getRelicSpriteUrl(baseDef: RelicBaseDefinition, tier: number): string {
+    let spriteName: string;
+    if (baseDef.sprite) {
+      spriteName = baseDef.sprite;
+    } else {
+      spriteName = this.getRelicSprite(baseDef.eRelicSize, tier);
+    }
+    return `/assets/sprites/${spriteName}.png`;
+  }
+
+  /**
+   * Get relic display name based on definition and selected affixes
+   * For unique relics, uses localization key
+   * For normal relics, builds: [SpecialAffix] [Size] Relic of [FirstAffix]
+   */
+  getRelicDisplayName(
+    baseDef: RelicBaseDefinition,
+    lang: string,
+    selectedSpecialAffix?: RelicAffix,
+    selectedPrimaryAffixes?: RelicAffix[],
+    selectedSecondaryAffixes?: RelicAffix[],
+  ): string {
+    // Unique relics have localization key
+    if (baseDef.nameLocalizationKey) {
+      return translate(baseDef.nameLocalizationKey, lang) || baseDef.name;
+    }
+
+    // Build: [SpecialAffix] [Size] Relic of [FirstAffix]
+    let displayName = `${baseDef.eRelicSize} Relic`;
+
+    if (selectedSpecialAffix) {
+      const prefix = translate(selectedSpecialAffix.nameLocalizationKey, lang);
+      displayName = `${prefix} ${displayName}`;
+    }
+
+    if (selectedPrimaryAffixes?.length) {
+      const suffix = translate(selectedPrimaryAffixes[0].nameLocalizationKey, lang);
+      displayName += ` of ${suffix}`;
+    } else if (selectedSecondaryAffixes?.length) {
+      const suffix = translate(selectedSecondaryAffixes[0].nameLocalizationKey, lang);
+      displayName += ` of ${suffix}`;
+    }
+
+    return displayName;
+  }
+
+  /**
    * Get relic background sprite for size
    */
   getRelicBackgroundSprite(size: RelicSize): string {

@@ -366,6 +366,10 @@ export class SkillsHelper {
     );
   }
 
+  getMaxSkillLevel(): number {
+    return this.skillsConfig.maxSkillUpgradeLevelBonus + 7;
+  }
+
   getAllSkillDefinitions(): Skill[] {
     return this.skillsRoot.Skills;
   }

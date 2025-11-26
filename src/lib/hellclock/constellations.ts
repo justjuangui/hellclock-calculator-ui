@@ -660,42 +660,14 @@ export class ConstellationsHelper {
     return { canAllocate: true };
   }
 
-  // Get all nodes that should be cascade-deallocated due to constellation becoming locked
+  // Get all nodes that should be cascade-deallocated
+  // Note: Constellation unlock checks removed to allow leapfrogging
   getCascadeDeallocations(
     allocatedNodes: AllocatedNodesMap,
     devotionCategoryPoints: Map<string, number>,
   ): Set<string> {
-    const nodesToDeallocate = new Set<string>();
-
-    // Check each allocated constellation
-    const constellationIds = new Set(
-      Array.from(allocatedNodes.values()).map((n) => n.constellationId),
-    );
-
-    for (const constellationId of constellationIds) {
-      const constellation = this.getConstellationById(constellationId);
-      if (!constellation) continue;
-
-      // Check if constellation is still unlocked
-      if (constellation.conditions && constellation.conditions.length > 0) {
-        const isUnlocked = constellation.conditions.every((condition) => {
-          const currentPoints =
-            devotionCategoryPoints.get(condition.required_devotion) || 0;
-          return currentPoints >= parseInt(condition.targetValue);
-        });
-
-        // If constellation is now locked, mark all its nodes for deallocation
-        if (!isUnlocked) {
-          for (const [key, allocated] of allocatedNodes.entries()) {
-            if (allocated.constellationId === constellationId) {
-              nodesToDeallocate.add(key);
-            }
-          }
-        }
-      }
-    }
-
-    return nodesToDeallocate;
+    // Return empty set - no cascade deallocation based on constellation lock status
+    return new Set<string>();
   }
 
   // Check if a node can be deallocated without orphaning other nodes
@@ -875,6 +847,9 @@ export class ConstellationsHelper {
               : "",
             valueText,
           );
+        } else if (affix.type === "SkillBehaviorNodeAffixDefinition") {
+          // normally this kind of node have descriptions
+          affixText = translate(affix.description, lang);
         } else {
           affixText = affix.name;
         }
@@ -882,6 +857,7 @@ export class ConstellationsHelper {
         lines.push({
           text: affixText,
           type: "affix",
+          icon: "UI_AffixBullet",
         });
       }
     }

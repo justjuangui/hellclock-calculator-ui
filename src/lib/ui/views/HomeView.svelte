@@ -9,6 +9,7 @@
 	import { spriteUrl, parseRGBA01ToCss } from '$lib/hellclock/utils';
 	import { translate } from '$lib/hellclock/lang';
 	import { ESingType, formatStatNumber } from '$lib/hellclock/formats';
+	import ImportDialog from '$lib/ui/ImportDialog.svelte';
 
 	let {
 		activeSection = $bindable('home')
@@ -45,7 +46,7 @@
 		const blessedCount = Object.values(blessedSlots.equipped).filter((item) => item !== null).length;
 		const trinketCount = Object.values(trinketSlots.equipped).filter((item) => item !== null).length;
 		const skillCount = Object.values(skillEquipped.skillsEquipped).filter((s) => s !== null).length;
-		const relicCount = relicInventory.relics.size;
+		const relicCount = relicInventory.getUniqueRelicCount();
 
 		return {
 			gear: blessedCount + trinketCount,
@@ -62,8 +63,15 @@
 		Object.values(skillEquipped.skillsEquipped).filter((s) => s !== null)
 	);
 
+	// Import dialog ref
+	let importDialog: ReturnType<typeof ImportDialog>;
+
 	function navigateTo(section: string) {
 		activeSection = section;
+	}
+
+	function openImportDialog() {
+		importDialog?.open();
 	}
 
 	function formatStat(value: number | null, statName: string): string {
@@ -82,7 +90,7 @@
 	<div class="flex justify-between items-center">
 		<h1 class="text-3xl font-bold">Build Overview</h1>
 		<div class="flex gap-2">
-			<button class="btn btn-outline btn-sm" disabled>Import Build</button>
+			<button class="btn btn-outline btn-sm" onclick={openImportDialog}>Import Build</button>
 			<button class="btn btn-primary btn-sm" disabled>Export Build</button>
 		</div>
 	</div>
@@ -349,3 +357,6 @@
 		</div>
 	</div>
 </div>
+
+<!-- Import Dialog -->
+<ImportDialog bind:this={importDialog} />

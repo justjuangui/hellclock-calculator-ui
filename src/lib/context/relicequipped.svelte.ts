@@ -46,6 +46,8 @@ export type RelicInventoryAPI = {
   getAvailableSlots: () => RelicInventoryPosition[];
   getOccupiedPositions: () => string[];
   positionKey: (x: number, y: number) => string;
+  getUniqueRelics: () => RelicItemWithPosition[];
+  getUniqueRelicCount: () => number;
 };
 
 const relicInventoryKey = Symbol("relic-inventory");
@@ -175,6 +177,22 @@ export function provideRelicInventory(
     return Array.from(relics.keys());
   };
 
+  // Get unique relics (filter out duplicates from multi-slot relics)
+  const getUniqueRelics = (): RelicItemWithPosition[] => {
+    const unique: RelicItemWithPosition[] = [];
+    for (const [key, relic] of relics.entries()) {
+      // Only include the relic at its top-left position
+      if (key === positionKey(relic.position.x, relic.position.y)) {
+        unique.push(relic);
+      }
+    }
+    return unique;
+  };
+
+  const getUniqueRelicCount = (): number => {
+    return getUniqueRelics().length;
+  };
+
   const calculateAvailableSpace = (x: number, y: number): { width: number; height: number } => {
     const shape = getCurrentShape();
     if (!shape || !isValidPosition(x, y) || relics.has(positionKey(x, y))) {
@@ -292,6 +310,8 @@ export function provideRelicInventory(
     getAvailableSlots,
     getOccupiedPositions,
     positionKey,
+    getUniqueRelics,
+    getUniqueRelicCount,
   };
 
   setContext(relicInventoryKey, api);

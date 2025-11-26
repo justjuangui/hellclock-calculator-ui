@@ -217,8 +217,8 @@ export function provideConstellationEvaluation(
 
   // Use $effect to sync status effects when constellation allocation changes
   $effect(() => {
-    // Access reactive state to trigger effect
-    constellationEquippedApi.allocatedNodes;
+    // Explicitly track map size to ensure effect re-runs on any change
+    const _nodeCount = constellationEquippedApi.allocatedNodes.size;
     syncConstellationStatusEffects();
   });
 

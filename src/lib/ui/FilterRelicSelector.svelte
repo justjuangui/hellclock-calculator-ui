@@ -129,17 +129,6 @@
       .filter((m) => m != "Corrupted");
   });
 
-  function getRelicSpriteUrl(rbd: RelicBaseDefinition, tier: number): string {
-    let spriteName = "";
-    if (rbd.sprite) {
-      spriteName = rbd.sprite;
-    } else {
-      spriteName = relicsHelper?.getRelicSprite(rbd.eRelicSize, tier) || "";
-    }
-
-    return `/assets/sprites/${spriteName}.png`;
-  }
-
   // Reset dependent selections when parent selection changes
   $effect(() => {
     if (selectedSize && !availableSizes.includes(selectedSize)) {
@@ -220,13 +209,19 @@
 
     const simpleRelic: RelicItem = {
       id: `relic-${selectedRelicDef.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      name: getRelicDisplayName(selectedRelicDef, relicConfiguration),
+      name: relicsHelper.getRelicDisplayName(
+        selectedRelicDef,
+        lang,
+        relicConfiguration?.selectedSpecialAffix,
+        relicConfiguration?.selectedPrimaryAffixes,
+        relicConfiguration?.selectedSecondaryAffixes,
+      ),
       size: selectedSize!,
       rank: selectedRank,
       tier: relicConfiguration.tier,
       imbuedType: selectedImbuedType,
       rarity: relicConfiguration.rarity,
-      sprite: getRelicSpriteUrl(selectedRelicDef, relicConfiguration.tier),
+      sprite: relicsHelper.getRelicSpriteUrl(selectedRelicDef, relicConfiguration.tier),
       width: sizeConfig?.relicInventoryShape.width || 1,
       height: sizeConfig?.relicInventoryShape.height || 1,
       selectedPrimaryAffixes: [...relicConfiguration.selectedPrimaryAffixes],
@@ -366,30 +361,6 @@
 
     // Trigger reactivity
     relicConfiguration = { ...relicConfiguration };
-  }
-
-  function getRelicDisplayName(
-    rbd: RelicBaseDefinition,
-    rcf: RelicConfiguration | null,
-  ): string {
-    if (rbd.nameLocalizationKey) {
-      return translate(rbd.nameLocalizationKey, lang) || rbd.name;
-    }
-
-    // Display name is [Prefix] [RelicSize] Relic [PostFix]
-    let displayName = `${rbd.eRelicSize} Relic`;
-
-    if (rcf) {
-      if (rcf.selectedSpecialAffix) {
-        displayName = `${translate(rcf.selectedSpecialAffix.nameLocalizationKey, lang)} ${displayName}`;
-      }
-      if (rcf.selectedPrimaryAffixes?.length) {
-        displayName += ` of ${translate(rcf.selectedPrimaryAffixes[0].nameLocalizationKey, lang)}`;
-      } else if (rcf.selectedSecondaryAffixes?.length) {
-        displayName += ` of ${translate(rcf.selectedSecondaryAffixes[0].nameLocalizationKey, lang)}`;
-      }
-    }
-    return displayName;
   }
 
   function getAffixCountByAffixTab(
@@ -546,17 +517,24 @@
               <div>
                 <img
                   alt={relicDef.name}
-                  src={getRelicSpriteUrl(relicDef, selectedTier)}
+                  src={relicsHelper.getRelicSpriteUrl(relicDef, selectedTier)}
                   class="w-12 mb-2"
                 />
               </div>
               <div>
                 <div>
-                  {getRelicDisplayName(
+                  {relicsHelper.getRelicDisplayName(
                     relicDef,
+                    lang,
                     selectedRelicDef?.id == relicDef.id
-                      ? relicConfiguration
-                      : null,
+                      ? relicConfiguration?.selectedSpecialAffix
+                      : undefined,
+                    selectedRelicDef?.id == relicDef.id
+                      ? relicConfiguration?.selectedPrimaryAffixes
+                      : undefined,
+                    selectedRelicDef?.id == relicDef.id
+                      ? relicConfiguration?.selectedSecondaryAffixes
+                      : undefined,
                   )}
                 </div>
                 <div class="text-xs uppercase font-semibold opacity-60">
