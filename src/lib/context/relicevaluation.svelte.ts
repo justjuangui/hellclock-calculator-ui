@@ -223,7 +223,7 @@ export function provideRelicEvaluation(
     mods: RelicModCollection,
   ): void {
     // For now only support for SkillDefinition behavior affixes
-    if (affix.behaviorData?.skillDefinition) {
+    if (affix.behaviorData?.skillDefinition?.name) {
       for (const effect of affix.behaviorData.effects?.filter(
         (e) =>
           e.type === "AddSkillValueModifierSkillEffectData" &&
@@ -234,6 +234,9 @@ export function provideRelicEvaluation(
           const skillValueModifierName =
             modifier.skillValueModifierKey.replaceAll(" ", "");
 
+          if (skillValueModifierName.includes("!Status")) {
+            continue;
+          }
           let layer = "add";
           const modifierType = modifier.modifierType.toLowerCase();
           if (modifierType === "multiplicative") {
