@@ -30,7 +30,7 @@ const worldTierEvaluationKey = Symbol("world-tier-evaluation");
  * Following the same pattern as gearevaluation.svelte.ts
  */
 function mapModForEval(mod: WorldTierStatModifier): string {
-  let statName = mod.statDefinition;
+  let statName = mod.eStatDefinition;
   const modifierType = mod.modifierType.toLowerCase();
 
   if (modifierType === "additive") {
@@ -55,6 +55,9 @@ export function provideWorldTierEvaluation(
       return mods;
     }
 
+    // Get the tier key using the helper
+    const tierKey = worldTiersHelper?.getWorldTierKey(worldTier) ?? worldTier.name.split(" ")[0];
+
     // Process all stat modifiers from the selected world tier
     for (const mod of worldTier.playerStatModifiers) {
       const statInfo = mapModForEval(mod);
@@ -65,13 +68,13 @@ export function provideWorldTierEvaluation(
       }
 
       mods[statName].push({
-        source: `World Tier ${worldTier.worldTierRomanNumber} (${worldTier.worldTierKey})`,
+        source: `World Tier ${worldTier.worldTierRomanNumber} (${tierKey})`,
         amount: mod.value, // Direct value, no rarity multiplier needed
         layer: layer || "base",
         meta: {
           type: "worldtier",
-          id: worldTier.worldTierKey,
-          statDefinition: mod.statDefinition,
+          id: tierKey,
+          statDefinition: mod.eStatDefinition,
         },
       });
     }

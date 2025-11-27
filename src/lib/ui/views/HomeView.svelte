@@ -10,6 +10,7 @@
   import { spriteUrl, parseRGBA01ToCss } from "$lib/hellclock/utils";
   import { translate } from "$lib/hellclock/lang";
   import { ESingType, formatStatNumber } from "$lib/hellclock/formats";
+  import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
   import ImportDialog from "$lib/ui/ImportDialog.svelte";
 
   let { activeSection = $bindable("home") } = $props<{
@@ -19,6 +20,7 @@
   const statsHelper = getContext<StatsHelper>("statsHelper");
   const gamepack = getContext<GamePack>("gamepack");
   const lang = getContext<string>("lang");
+  const worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
   const evaluationManager = useEvaluationManager();
   const blessedSlots = useEquipped(ESlotsType.BlessedGear);
   const trinketSlots = useEquipped(ESlotsType.TrinkedGear);
@@ -103,9 +105,9 @@
     <h1 class="text-3xl font-bold">
       Build Overview
       {#if worldTierApi.selectedWorldTier}
-        <span class="text-primary"
-          >(World Tier {worldTierApi.selectedWorldTier
-            .worldTierRomanNumber})</span
+        <span
+          style="color: {parseRGBA01ToCss(worldTierApi.selectedWorldTier.worldTierColor)}"
+          >(World Tier {worldTierApi.selectedWorldTier.worldTierRomanNumber} - {translate(worldTierApi.selectedWorldTier.worldTierLocalizationKey, lang)})</span
         >
       {/if}
     </h1>

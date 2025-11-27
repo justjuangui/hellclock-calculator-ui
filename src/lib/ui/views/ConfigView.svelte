@@ -4,9 +4,12 @@
   import type { WorldTiersHelper, WorldTier } from "$lib/hellclock/worldtiers";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import { formatStatModNumber } from "$lib/hellclock/formats";
+  import { translate } from "$lib/hellclock/lang";
+  import { parseRGBA01ToCss } from "$lib/hellclock/utils";
 
   const worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
   const statsHelper = getContext<StatsHelper>("statsHelper");
+  const lang = getContext<string>("lang") || "en";
   const worldTierEquipped = useWorldTierEquipped();
 
   const allWorldTiers = $derived(worldTiersHelper.getAllWorldTiers());
@@ -57,25 +60,27 @@
       <!-- World Tier Radio Buttons -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {#each allWorldTiers as tier}
+          {@const tierKey = worldTiersHelper.getWorldTierKey(tier)}
+          {@const isSelected = selectedTier && worldTiersHelper.getWorldTierKey(selectedTier) === tierKey}
+          {@const tierColor = parseRGBA01ToCss(tier.worldTierColor)}
           <button
-            class="card border-2 cursor-pointer transition-all {selectedTier?.worldTierKey ===
-            tier.worldTierKey
-              ? 'border-primary bg-primary/10'
+            class="card border-2 cursor-pointer transition-all {isSelected
+              ? 'bg-opacity-10'
               : 'border-base-300 hover:border-primary/50'}"
+            style={isSelected ? `border-color: ${tierColor}; background-color: ${tierColor}20;` : ''}
             onclick={() => selectWorldTier(tier)}
           >
             <div class="card-body p-4">
               <div class="flex items-center gap-3">
                 <div
-                  class="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold {selectedTier?.worldTierKey ===
-                  tier.worldTierKey
-                    ? 'bg-primary text-primary-content'
-                    : 'bg-base-300'}"
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold"
+                  style={isSelected ? `background-color: ${tierColor}; color: white;` : ''}
+                  class:bg-base-300={!isSelected}
                 >
                   {tier.worldTierRomanNumber}
                 </div>
                 <div>
-                  <div class="font-semibold">{tier.worldTierKey}</div>
+                  <div class="font-semibold">{translate(tier.worldTierLocalizationKey, lang)}</div>
                   <div class="text-xs opacity-60">
                     Tier {tier.worldTierRomanNumber}
                   </div>
@@ -105,7 +110,7 @@
     <div class="card bg-base-100 border border-base-300 shadow">
       <div class="card-body">
         <h2 class="card-title text-xl mb-4">
-          World Tier {selectedTier.worldTierRomanNumber} ({selectedTier.worldTierKey})
+          World Tier {selectedTier.worldTierRomanNumber} ({translate(selectedTier.worldTierLocalizationKey, lang)})
           Modifiers
         </h2>
 
@@ -122,8 +127,8 @@
               {#each selectedTier.playerStatModifiers as mod}
                 <tr>
                   <td>
-                    {statsHelper.getLabelForStat(mod.statDefinition) ||
-                      mod.statDefinition}
+                    {statsHelper.getLabelForStat(mod.eStatDefinition) ||
+                      mod.eStatDefinition}
                   </td>
                   <td>
                     <span
@@ -142,7 +147,7 @@
                   >
                     {formatModValue(
                       mod.value,
-                      mod.statDefinition,
+                      mod.eStatDefinition,
                       mod.modifierType,
                     )}
                   </td>

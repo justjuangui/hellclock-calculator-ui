@@ -269,7 +269,7 @@
 
       label = "Loading WorldTiersHelper";
       worldTiersHelper = new WorldTiersHelper(
-        pack["WorldTiers"] as WorldTiersRoot,
+        pack["World Tiers"] as WorldTiersRoot,
       );
 
       label = "Loading SkillDisplayHelper";

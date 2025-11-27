@@ -36,7 +36,8 @@ export function provideWorldTierEquipped(
 
     get worldTierHash(): string {
       if (!selectedWorldTier) return "";
-      return selectedWorldTier.worldTierKey;
+      // Derive the tier key from the name (e.g., "Normal World Tier Config" → "Normal")
+      return worldTiersHelper?.getWorldTierKey(selectedWorldTier) ?? selectedWorldTier.name.split(" ")[0];
     },
   };
 
