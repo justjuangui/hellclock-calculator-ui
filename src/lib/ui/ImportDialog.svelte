@@ -216,8 +216,23 @@
     <!-- File Input -->
     <div class="form-control mb-4">
       <label class="label">
-        <span class="label-text">Select PlayerSave0.json</span>
+        <span class="label-text">Select your save data</span>
       </label>
+      <div class="flex items-center gap-2 mb-2">
+        <code class="text-xs opacity-70 bg-base-200 px-2 py-1 rounded">
+          %USERPROFILE%\AppData\LocalLow\Rogue Snail\Hell Clock
+        </code>
+        <button
+          type="button"
+          class="btn btn-xs btn-ghost"
+          onclick={() =>
+            navigator.clipboard.writeText(
+              "%USERPROFILE%\\AppData\\LocalLow\\Rogue Snail\\Hell Clock",
+            )}
+        >
+          Copy
+        </button>
+      </div>
       <input
         type="file"
         accept=".json"
