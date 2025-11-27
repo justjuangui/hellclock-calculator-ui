@@ -100,11 +100,30 @@
               </div>
 
               <!-- stat lines -->
-              <div class="text-xs mt-1 space-y-1 flex flex-col flex-1 justify-stretch">
+              <div
+                class="text-xs mt-1 space-y-1 flex flex-col flex-1 justify-stretch"
+              >
                 {#each item.mods as m}
-                  <div class="badge badge-soft badge-accent truncate w-full flex">
-                    <div class="grow">{fmtValue(m, lang, statsHelper, item.multiplierRange[0], item.multiplierRange[1])}</div>
-                    <input type="range" min={item.multiplierRange[0]} max={item.multiplierRange[1]} bind:value={m.selectedValue} step="any" class="range range-xs w-[100px]" />
+                  <div
+                    class="badge badge-soft badge-accent truncate w-full flex"
+                  >
+                    <div class="grow">
+                      {fmtValue(
+                        m,
+                        lang,
+                        statsHelper,
+                        item.multiplierRange[0],
+                        item.multiplierRange[1],
+                      )}
+                    </div>
+                    <input
+                      type="range"
+                      min={item.multiplierRange[0]}
+                      max={item.multiplierRange[1]}
+                      bind:value={m.selectedValue}
+                      step="any"
+                      class="range range-xs w-[100px]"
+                    />
                   </div>
                 {/each}
                 {#if item.mods.length === 0}
@@ -130,7 +149,8 @@
               <div class="mt-1">
                 <button
                   onclick={() => onEquip(item)}
-                  class="btn btn-outline btn-sm w-full border-[var(--color)]">Equip</button
+                  class="btn btn-outline btn-sm w-full border-[var(--color)]"
+                  >Equip</button
                 >
               </div>
             </div>

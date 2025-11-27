@@ -29,6 +29,7 @@
   import ConstellationsView from "$lib/ui/views/ConstellationsView.svelte";
   import BellView from "$lib/ui/views/BellView.svelte";
   import BlessingView from "$lib/ui/views/BlessingView.svelte";
+  import ConfigView from "$lib/ui/views/ConfigView.svelte";
 
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
@@ -265,6 +266,8 @@
       <RelicsView {onRelicSlotClicked} />
     {:else if activeSection === "constellation"}
       <ConstellationsView onClose={() => (activeSection = "home")} />
+    {:else if activeSection === "config"}
+      <ConfigView />
     {:else if activeSection === "bell"}
       <BellView />
     {:else if activeSection === "blessing"}

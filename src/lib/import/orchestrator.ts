@@ -7,10 +7,12 @@ import type { SkillsHelper } from "$lib/hellclock/skills";
 import type { RelicsHelper } from "$lib/hellclock/relics";
 import type { ConstellationsHelper } from "$lib/hellclock/constellations";
 import type { GearsHelper } from "$lib/hellclock/gears";
+import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
 import type { EquippedAPI } from "$lib/context/equipped.svelte";
+import type { WorldTierEquippedAPI } from "$lib/context/worldtierequipped.svelte";
 
 import type { ImportAdapter } from "./adapters/base";
 import { V1Adapter } from "./adapters/v1.adapter";
@@ -34,6 +36,7 @@ export type ImportPreview = {
   relicLoadouts: RelicLoadoutSummary[];
   gearLoadouts: GearLoadoutSummary[];
   constellations: ParsedConstellation[];
+  worldTierKey: string;
   errors: ImportError[];
   warnings: ImportWarning[];
 };
@@ -48,6 +51,7 @@ export class ImportOrchestrator {
     private relicsHelper: RelicsHelper,
     private constellationsHelper: ConstellationsHelper,
     private gearsHelper: GearsHelper,
+    private worldTiersHelper?: WorldTiersHelper,
   ) {
     // Register adapters (add new versions here)
     this.adapters = [new V1Adapter()];
@@ -59,7 +63,12 @@ export class ImportOrchestrator {
       constellationsHelper,
       gearsHelper,
     );
-    this.applier = new ImportApplier(skillsHelper, relicsHelper, gearsHelper);
+    this.applier = new ImportApplier(
+      skillsHelper,
+      relicsHelper,
+      gearsHelper,
+      worldTiersHelper,
+    );
   }
 
   /**
@@ -94,6 +103,7 @@ export class ImportOrchestrator {
         relicLoadouts: [],
         gearLoadouts: [],
         constellations: [],
+        worldTierKey: "Normal",
         errors,
         warnings,
       };
@@ -104,6 +114,7 @@ export class ImportOrchestrator {
     const relicLoadouts = adapter.getRelicLoadouts(saveData);
     const gearLoadouts = adapter.getGearLoadouts(saveData);
     const constellations = adapter.parseConstellations(saveData);
+    const worldTierKey = adapter.parseWorldTier(saveData);
 
     // Validate (but don't filter out invalid items for preview)
     const skillValidation = this.validator.validateSkills(skills);
@@ -121,6 +132,7 @@ export class ImportOrchestrator {
       relicLoadouts,
       gearLoadouts,
       constellations,
+      worldTierKey,
       errors,
       warnings,
     };
@@ -203,6 +215,7 @@ export class ImportOrchestrator {
       relicApi: RelicInventoryAPI;
       constellationApi: ConstellationEquippedAPI;
       gearApi: EquippedAPI;
+      worldTierApi?: WorldTierEquippedAPI;
     },
   ): Promise<ImportResult> {
     const result: ImportResult = {
@@ -290,6 +303,12 @@ export class ImportOrchestrator {
           contexts.gearApi,
         );
       }
+    }
+
+    // Import world tier (always applied if worldTierApi is provided)
+    if (contexts.worldTierApi) {
+      const worldTierKey = adapter.parseWorldTier(saveData);
+      this.applier.applyWorldTier(worldTierKey, contexts.worldTierApi);
     }
 
     // Set success based on whether we had any critical errors

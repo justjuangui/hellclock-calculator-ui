@@ -15,6 +15,7 @@
         "/assets/Skills Config.json",
         "/assets/Constellations.json",
         "/assets/Status.json",
-        "/assets/skill-display.json"
+        "/assets/skill-display.json",
+        "/assets/WorldTiers.json"
     ]
 }

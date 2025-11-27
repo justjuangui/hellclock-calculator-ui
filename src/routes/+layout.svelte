@@ -29,8 +29,12 @@
     type ConstellationsConfig,
   } from "$lib/hellclock/constellations";
   import { StatusHelper, type StatusDB } from "$lib/hellclock/status";
-import { SkillDisplayHelper } from "$lib/hellclock/skillcard-helper";
-import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
+  import {
+    WorldTiersHelper,
+    type WorldTiersRoot,
+  } from "$lib/hellclock/worldtiers";
+  import { SkillDisplayHelper } from "$lib/hellclock/skillcard-helper";
+  import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { provideEvaluationManager } from "$lib/context/evaluation.svelte";
   import { provideGearEvaluation } from "$lib/context/gearevaluation.svelte";
@@ -40,6 +44,8 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   import { provideConstellationEquipped } from "$lib/context/constellationequipped.svelte";
   import { provideConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
   import { provideStatusEvaluation } from "$lib/context/statusevaluation.svelte";
+  import { provideWorldTierEquipped } from "$lib/context/worldtierequipped.svelte";
+  import { provideWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
   import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -66,6 +72,12 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   > | null = null;
   let statusEvaluationContext: ReturnType<
     typeof provideStatusEvaluation
+  > | null = null;
+  let worldTierEquippedContext: ReturnType<
+    typeof provideWorldTierEquipped
+  > | null = null;
+  let worldTierEvaluationContext: ReturnType<
+    typeof provideWorldTierEvaluation
   > | null = null;
 
   $effect(() => {
@@ -126,6 +138,14 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
       );
     }
 
+    if (worldTiersHelper && !worldTierEquippedContext) {
+      worldTierEquippedContext = provideWorldTierEquipped(worldTiersHelper);
+    }
+
+    if (worldTiersHelper && !worldTierEvaluationContext) {
+      worldTierEvaluationContext = provideWorldTierEvaluation(worldTiersHelper);
+    }
+
     if (
       engine &&
       pack &&
@@ -157,6 +177,7 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   let relicsHelper = $state<RelicsHelper | null>(null);
   let constellationsHelper = $state<ConstellationsHelper | null>(null);
   let statusHelper = $state<StatusHelper | null>(null);
+  let worldTiersHelper = $state<WorldTiersHelper | null>(null);
   let skillDisplayHelper = $state<SkillDisplayHelper | null>(null);
   let assetPreloader = $state<AssetPreloader | null>(null);
 
@@ -169,6 +190,7 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
     setContext("relicsHelper", relicsHelper);
     setContext("constellationsHelper", constellationsHelper);
     setContext("statusHelper", statusHelper);
+    setContext("worldTiersHelper", worldTiersHelper);
     setContext("skillDisplayHelper", skillDisplayHelper);
     setContext("assetPreloader", assetPreloader);
     setContext("lang", "en");
@@ -181,6 +203,7 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
       relicsHelper &&
       constellationsHelper &&
       statusHelper &&
+      worldTiersHelper &&
       skillDisplayHelper &&
       assetPreloader
     ) {
@@ -243,6 +266,11 @@ import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
 
       label = "Loading StatusHelper";
       statusHelper = new StatusHelper(pack["Status"] as StatusDB);
+
+      label = "Loading WorldTiersHelper";
+      worldTiersHelper = new WorldTiersHelper(
+        pack["WorldTiers"] as WorldTiersRoot,
+      );
 
       label = "Loading SkillDisplayHelper";
       skillDisplayHelper = new SkillDisplayHelper(

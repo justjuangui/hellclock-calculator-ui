@@ -1,0 +1,323 @@
+{
+    "worldTiers": [
+        {
+            "worldTierKey": "Normal",
+            "configName": "Normal World Tier Config",
+            "worldTierRomanNumber": "I",
+            "worldTierLocalizationKey": "NormalWorldTierLabel",
+            "playerStatModifiers": []
+        },
+        {
+            "worldTierKey": "Abyss",
+            "configName": "Abyss World Tier Config",
+            "worldTierRomanNumber": "II",
+            "worldTierLocalizationKey": "AbyssWorldTierLabel",
+            "playerStatModifiers": [
+                {
+                    "statDefinition": "PhysicalResistance",
+                    "statDefinitionInt": 4,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.25,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "FireResistance",
+                    "statDefinitionInt": 25,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.25,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "LightningResistance",
+                    "statDefinitionInt": 26,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.25,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "PlagueResistance",
+                    "statDefinitionInt": 27,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.25,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "SoulStoneGain",
+                    "statDefinitionInt": 22,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "RelicDropChanceBonus",
+                    "statDefinitionInt": 52,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Evasion",
+                    "statDefinitionInt": 74,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.20000000298023225,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Endurance",
+                    "statDefinitionInt": 78,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.20000000298023225,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "AntiMagic",
+                    "statDefinitionInt": 79,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.20000000298023225,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "ExperienceGain",
+                    "statDefinitionInt": 9,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.800000011920929,
+                    "isMultiplicativeBelowOne": true
+                },
+                {
+                    "statDefinition": "CurrencyDropChanceBonus",
+                    "statDefinitionInt": 110,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "GoldGain",
+                    "statDefinitionInt": 40,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.800000011920929,
+                    "isMultiplicativeBelowOne": true
+                }
+            ]
+        },
+        {
+            "worldTierKey": "Oblivion",
+            "configName": "Oblivion World Tier Config",
+            "worldTierRomanNumber": "III",
+            "worldTierLocalizationKey": "OblivionWorldTierLabel",
+            "playerStatModifiers": [
+                {
+                    "statDefinition": "PhysicalResistance",
+                    "statDefinitionInt": 4,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "FireResistance",
+                    "statDefinitionInt": 25,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "LightningResistance",
+                    "statDefinitionInt": 26,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "PlagueResistance",
+                    "statDefinitionInt": 27,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.5,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "SoulStoneGain",
+                    "statDefinitionInt": 22,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "RelicDropChanceBonus",
+                    "statDefinitionInt": 52,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Evasion",
+                    "statDefinitionInt": 74,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.4000000059604645,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Endurance",
+                    "statDefinitionInt": 78,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.4000000059604645,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "AntiMagic",
+                    "statDefinitionInt": 79,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.4000000059604645,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "ExperienceGain",
+                    "statDefinitionInt": 9,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.6000000238418579,
+                    "isMultiplicativeBelowOne": true
+                },
+                {
+                    "statDefinition": "CurrencyDropChanceBonus",
+                    "statDefinitionInt": 110,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 1.7999999523162842,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "GoldGain",
+                    "statDefinitionInt": 40,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.6000000238418579,
+                    "isMultiplicativeBelowOne": true
+                }
+            ]
+        },
+        {
+            "worldTierKey": "Void",
+            "configName": "Void World Tier Config",
+            "worldTierRomanNumber": "IV",
+            "worldTierLocalizationKey": "VoidWorldTierLabel",
+            "playerStatModifiers": [
+                {
+                    "statDefinition": "PhysicalResistance",
+                    "statDefinitionInt": 4,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "FireResistance",
+                    "statDefinitionInt": 25,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "LightningResistance",
+                    "statDefinitionInt": 26,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "PlagueResistance",
+                    "statDefinitionInt": 27,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "SoulStoneGain",
+                    "statDefinitionInt": 22,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "RelicDropChanceBonus",
+                    "statDefinitionInt": 52,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 0.75,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Evasion",
+                    "statDefinitionInt": 74,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.6000000238418579,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "Endurance",
+                    "statDefinitionInt": 78,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.6000000238418579,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "AntiMagic",
+                    "statDefinitionInt": 79,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": -0.6000000238418579,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "ExperienceGain",
+                    "statDefinitionInt": 9,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.4000000059604645,
+                    "isMultiplicativeBelowOne": true
+                },
+                {
+                    "statDefinition": "CurrencyDropChanceBonus",
+                    "statDefinitionInt": 110,
+                    "modifierType": "Additive",
+                    "modifierTypeInt": 0,
+                    "value": 1.2000000476837159,
+                    "isMultiplicativeBelowOne": false
+                },
+                {
+                    "statDefinition": "GoldGain",
+                    "statDefinitionInt": 40,
+                    "modifierType": "Multiplicative",
+                    "modifierTypeInt": 1,
+                    "value": 0.4000000059604645,
+                    "isMultiplicativeBelowOne": true
+                }
+            ]
+        }
+    ]
+}

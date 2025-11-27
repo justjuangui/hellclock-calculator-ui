@@ -12,10 +12,12 @@ import type {
   RelicRarity,
 } from "$lib/hellclock/relics";
 import type { GearsHelper } from "$lib/hellclock/gears";
+import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
 import type { EquippedAPI } from "$lib/context/equipped.svelte";
+import type { WorldTierEquippedAPI } from "$lib/context/worldtierequipped.svelte";
 import type {
   ParsedSkill,
   ParsedRelic,
@@ -45,6 +47,7 @@ export class ImportApplier {
     private skillsHelper: SkillsHelper,
     private relicsHelper: RelicsHelper,
     private gearsHelper: GearsHelper,
+    private worldTiersHelper?: WorldTiersHelper,
   ) {}
 
   /**
@@ -346,5 +349,23 @@ export class ImportApplier {
     }
 
     return appliedCount;
+  }
+
+  /**
+   * Apply world tier to the world tier equipped context
+   */
+  applyWorldTier(worldTierKey: string, api: WorldTierEquippedAPI): boolean {
+    if (!this.worldTiersHelper) return false;
+
+    const tier = this.worldTiersHelper.getWorldTierByKey(worldTierKey);
+    if (!tier) {
+      // Fallback to default
+      const defaultTier = this.worldTiersHelper.getDefaultWorldTier();
+      api.setWorldTier(defaultTier);
+      return true;
+    }
+
+    api.setWorldTier(tier);
+    return true;
   }
 }
