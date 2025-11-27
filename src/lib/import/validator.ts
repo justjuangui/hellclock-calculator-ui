@@ -183,8 +183,8 @@ export class ImportValidator {
 
 		if (!constellation) {
 			return {
-				valid: false,
-				error: `Unknown constellation ID: ${node.constellationId}`,
+				valid: true,
+				warning: `Unknown constellation ID: ${node.constellationId}`,
 			};
 		}
 
@@ -192,8 +192,8 @@ export class ImportValidator {
 
 		if (!nodeDef) {
 			return {
-				valid: false,
-				error: `Unknown node GUID: ${node.nodeGuid} in constellation ${constellation.name}`,
+				valid: true,
+				warning: `Unknown node GUID: ${node.nodeGuid} in constellation ${constellation.name}`,
 			};
 		}
 
