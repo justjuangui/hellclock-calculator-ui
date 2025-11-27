@@ -320,11 +320,11 @@
         const isAllocated =
           constellationEquippedApi.isNodeAllocated(
             constellation.id,
-            node.name,
+            node.GUID,
           ) &&
           constellationEquippedApi.isNodeAllocated(
             constellation.id,
-            requiredNode.name,
+            requiredNode.GUID,
           );
 
         // Use devotion-specific colors
@@ -366,12 +366,12 @@
 
       const level = constellationEquippedApi.getNodeLevel(
         constellation.id,
-        node.name,
+        node.GUID,
       );
       const isAllocated = level > 0;
       const canAllocate = constellationEquippedApi.canAllocateNode(
         constellation.id,
-        node.name,
+        node.GUID,
       ).canAllocate;
 
       // Determine node color using devotion config
@@ -564,7 +564,7 @@
 {#if hoveredNode}
   {@const nodeLevel = constellationEquippedApi.getNodeLevel(
     hoveredNode.constellation.id,
-    hoveredNode.node.name,
+    hoveredNode.node.GUID,
   )}
   {@const tooltipLines = constellationsHelper.getTooltipLines(
     hoveredNode.constellation,

@@ -405,6 +405,7 @@ export type NodeAffix =
 export interface SkillTreeNodeEdgeData {
   type: "SkillTreeNodeEdgeData";
   requiredNode: {
+    GUI: string;
     name: string; // UUID of required node
     type: "SkillTreeNodeDefinition";
   };
@@ -413,7 +414,8 @@ export interface SkillTreeNodeEdgeData {
 
 // Skill tree node definition
 export interface SkillTreeNodeDefinition {
-  name: string; // UUID
+  GUID: string;
+  name: string;
   type: "SkillTreeNodeDefinition";
   edges: SkillTreeNodeEdgeData[]; // Dependencies
   sprite: string; // Icon sprite name
@@ -541,7 +543,7 @@ export class ConstellationsHelper {
   ): SkillTreeNodeDefinition | undefined {
     const constellation = this.getConstellationById(constellationId);
     if (!constellation) return undefined;
-    return constellation.nodes.find((node) => node.name === nodeId);
+    return constellation.nodes.find((node) => node.GUID === nodeId);
   }
 
   // Get all root nodes (starting points) for a constellation

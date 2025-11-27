@@ -37,14 +37,14 @@
   ) {
     const nodeLevel = constellationEquippedApi.getNodeLevel(
       constellation.id,
-      node.name,
+      node.GUID,
     );
 
     // If node is allocated, deallocate it
     if (nodeLevel > 0) {
       const result = constellationEquippedApi.deallocateNode(
         constellation.id,
-        node.name,
+        node.GUID,
       );
 
       if (!result.success) {
@@ -56,7 +56,7 @@
     // If node is not allocated, try to allocate it
     const canAllocate = constellationEquippedApi.canAllocateNode(
       constellation.id,
-      node.name,
+      node.GUID,
     );
 
     if (!canAllocate.canAllocate) {
@@ -71,7 +71,7 @@
 
     const result = constellationEquippedApi.allocateNode(
       constellation.id,
-      node.name,
+      node.GUID,
     );
 
     if (!result.success) {
