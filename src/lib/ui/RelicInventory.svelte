@@ -169,6 +169,14 @@
                   class="absolute inset-0 border border-primary/20 rounded-sm pointer-events-none"
                 ></div>
               {/if}
+              <!-- Rank indicator circles -->
+              {#if cell.relic.rank > 0}
+                <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5">
+                  {#each Array(cell.relic.rank) as _}
+                    <div class="w-1 h-1 rounded-full bg-green-500"></div>
+                  {/each}
+                </div>
+              {/if}
             </div>
           {:else}
             <!-- Empty or invalid cell without tooltip -->
