@@ -48,6 +48,7 @@ export type GearDefinition = {
   tier: number;
   visualTier?: number;
   power?: number;
+  sprite?: string; // e.g., "IconTrinket_BootsT1"
   variants?: GearVariant[];
   nameKey?: LangText[];
   sellingValue?: number;
@@ -169,18 +170,45 @@ export class GearsHelper {
     multiplier?: number,
   ): GearItem | undefined {
     const gd = this.getGearDefinitionById(defId);
-    if (!gd || !gd.variants || variantIndex >= gd.variants.length) {
+    if (!gd || !gd.variants || (variantIndex > 0 && variantIndex >= gd.variants.length)) {
       return undefined;
     }
 
-    const variant = gd.variants[variantIndex];
+    let mods: StatMod[] = [];
+    let localizedName: LangText[] | undefined = gd.nameKey;
+    let sprite: string | undefined = undefined;
+    if (gd.variants.length > 0) {
+      const variant = gd.variants[variantIndex];
+      localizedName = variant.value.variantLocalizedName;
+      sprite = variant.value.sprite;
+      mods = [
+        ...(variant.value.statModifiersDefinitions?.map((s) => ({ ...s })) ??
+          []),
+      ];
+    } else {
+      let slot = this.slotDatabase.blessedGearSlotDefinitions?.find(
+        (sd) => sd.slot === gd.slot,
+      );
+      if (!slot) {
+        console.warn(
+          `No slot definition found for slot ${gd.slot} in gear definition ID ${gd.id}`,
+        );
+        return undefined;
+      }
+      mods = [
+        {
+          eStatDefinition: slot.statDefinition,
+          modifierType: slot.eStatModifierType as StatModifierType,
+          type: "StatModifierDefinition",
+          value: gd.power ?? 0,
+        },
+      ];
+      sprite = gd.sprite;
+    }
     const rarity = gd.blessingPrice
       ? this.gearRarity.blessedGearRarity
       : undefined;
 
-    let mods = [
-      ...(variant.value.statModifiersDefinitions?.map((s) => ({ ...s })) ?? []),
-    ];
     mods.forEach((m) => {
       m.selectedValue = multiplier ?? rarity?.multiplierRange[1] ?? 1;
     });
@@ -190,11 +218,11 @@ export class GearsHelper {
       slot: gd.slot,
       tier: gd.tier,
       visualTier: gd.visualTier ?? gd.tier,
-      localizedName: variant.value.variantLocalizedName,
+      localizedName,
       prefixLocalizedName: rarity?.localizedName,
       color: rarity?.color,
       multiplierRange: rarity?.multiplierRange ?? [0, 1],
-      sprite: variant.value.sprite,
+      sprite,
       mods,
       sellingValue:
         gd.sellingValue && rarity
@@ -264,7 +292,11 @@ export class GearsHelper {
             ? this.gearRarity.blessedGearRarity
             : undefined;
 
-          let mods = [...(variant.value.statModifiersDefinitions?.map(s => ({...s})) ?? [])];
+          let mods = [
+            ...(variant.value.statModifiersDefinitions?.map((s) => ({
+              ...s,
+            })) ?? []),
+          ];
           mods.forEach((m) => {
             m.selectedValue = rarity?.multiplierRange[1] ?? 1;
           });
