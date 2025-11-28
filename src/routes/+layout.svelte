@@ -156,7 +156,7 @@
     }
 
     if (bellsHelper && !bellEquippedContext) {
-      bellEquippedContext = provideBellEquipped(bellsHelper, 100); // Initial bell points
+      bellEquippedContext = provideBellEquipped(bellsHelper, 200); // Initial bell points
     }
 
     if (bellsHelper && statusHelper && !bellEvaluationContext) {
