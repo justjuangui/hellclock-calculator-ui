@@ -520,7 +520,6 @@ export function provideConstellationEquipped(
       });
     }
 
-    debugger;
     // Iteratively allocate until no more progress
     let progressMade = true;
     while (progressMade && pending.size > 0) {
