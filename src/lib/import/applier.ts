@@ -380,7 +380,10 @@ export class ImportApplier {
     if (nodes.length === 0) return 0;
 
     // Group nodes by bell ID
-    const nodesByBell = new Map<number, Array<{ nodeId: string; level: number }>>();
+    const nodesByBell = new Map<
+      number,
+      Array<{ nodeId: string; level: number }>
+    >();
     for (const parsed of nodes) {
       if (!nodesByBell.has(parsed.bellId)) {
         nodesByBell.set(parsed.bellId, []);
