@@ -101,6 +101,7 @@
       <span class="text-xl w-6 flex-shrink-0 flex justify-center">🔗</span>
       {#if !collapsed}
         <span class="flex-1 text-left text-sm">GitHub</span>
+        <span class="text-xs opacity-50">v{__APP_VERSION__}</span>
       {/if}
     </a>
   </div>
