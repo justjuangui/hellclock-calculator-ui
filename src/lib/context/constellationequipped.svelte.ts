@@ -129,7 +129,7 @@ export function provideConstellationEquipped(
       if (maxPoints && spentPoints >= maxPoints) {
         // Check if ALL nodes are allocated at max level
         const allNodesAllocated = constellation.nodes.every((node) => {
-          const key = `${constellationId}:${node.name}`;
+          const key = `${constellationId}:${node.GUID}`;
           const allocated = allocatedNodes.get(key);
           return allocated && allocated.level >= node.maxLevel;
         });
@@ -356,7 +356,7 @@ export function provideConstellationEquipped(
           });
 
         const allNodesAllocated = constellation.nodes.every((n) => {
-          const k = `${constId}:${n.name}`;
+          const k = `${constId}:${n.GUID}`;
           const alloc = tempAllocatedNodes.get(k);
           return alloc && alloc.level >= n.maxLevel;
         });

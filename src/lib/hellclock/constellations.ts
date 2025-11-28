@@ -546,6 +546,15 @@ export class ConstellationsHelper {
     return constellation.nodes.find((node) => node.GUID === nodeId);
   }
 
+  getNodeByName(
+    constellationId: number,
+    nodeName: string,
+  ): SkillTreeNodeDefinition | undefined {
+    const constellation = this.getConstellationById(constellationId);
+    if (!constellation) return undefined;
+    return constellation.nodes.find((node) => node.name === nodeName);
+  }
+
   // Get all root nodes (starting points) for a constellation
   getRootNodes(constellationId: number): SkillTreeNodeDefinition[] {
     const constellation = this.getConstellationById(constellationId);
@@ -561,7 +570,7 @@ export class ConstellationsHelper {
     const constellation = this.getConstellationById(constellationId);
     if (!constellation) return [];
     return constellation.nodes.filter((node) =>
-      node.edges.some((edge) => edge.requiredNode.name === nodeId),
+      node.edges.some((edge) => edge.requiredNode.GUI === nodeId),
     );
   }
 
@@ -586,7 +595,16 @@ export class ConstellationsHelper {
     if (node.edges.length > 0) {
       // Check if ANY edge is satisfied and leads to root
       for (const edge of node.edges) {
-        const requiredNodeId = edge.requiredNode.name;
+        let requiredNodeId = "";
+        if (edge.requiredNode.GUI) {
+          requiredNodeId = edge.requiredNode.GUI;
+        } else {
+          const reqNode = this.getNodeByName(
+            constellationId,
+            edge.requiredNode.name,
+          );
+          requiredNodeId = reqNode ? reqNode.GUID : "";
+        }
         const allocatedKey = `${constellationId}:${requiredNodeId}`;
         const allocatedNode = allocatedNodes.get(allocatedKey);
 
@@ -613,12 +631,30 @@ export class ConstellationsHelper {
 
     // Find nodes that have this node as a required dependency
     for (const potentialParent of constellation.nodes) {
-      const hasThisAsRequirement = potentialParent.edges.some(
-        (edge) => edge.requiredNode.name === nodeId,
-      );
+      const hasThisAsRequirement = potentialParent.edges.some((edge) => {
+        if (edge.requiredNode.GUI) {
+          return edge.requiredNode.GUI === nodeId;
+        }
+
+        const reqNode = this.getNodeByName(
+          constellationId,
+          edge.requiredNode.name,
+        );
+        return reqNode && reqNode.GUID === nodeId;
+      });
 
       if (hasThisAsRequirement) {
-        const parentKey = `${constellationId}:${potentialParent.name}`;
+        let parentNodeId = "";
+        if (potentialParent.GUID) {
+          parentNodeId = potentialParent.GUID;
+        } else {
+          const reqNode = this.getNodeByName(
+            constellationId,
+            potentialParent.name,
+          );
+          parentNodeId = reqNode ? reqNode.GUID : "";
+        }
+        const parentKey = `${constellationId}:${parentNodeId}`;
         const parentAllocated = allocatedNodes.get(parentKey);
 
         if (parentAllocated) {
@@ -626,7 +662,7 @@ export class ConstellationsHelper {
           if (
             this.hasPathToAllocatedRoot(
               constellationId,
-              potentialParent.name,
+              parentNodeId,
               allocatedNodes,
               visited,
             )
