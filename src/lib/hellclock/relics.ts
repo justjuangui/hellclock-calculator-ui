@@ -274,6 +274,13 @@ export type SkillBehaviorData = {
   effects: SkillEffect[];
 };
 
+export type StatModifierDefinition = {
+  type: "StatModifierDefinition";
+  eStatDefinition: string;
+  modifierType: StatModifierType;
+  value: number;
+}
+
 export type RelicAffix = {
   name: string;
   id: number;
@@ -299,6 +306,9 @@ export type RelicAffix = {
   eStatDefinition?: string;
   statModifierType?: StatModifierType;
   skillDefinition?: AffixSkillDefinition;
+  // StatModifierAffixDefinition specific fields
+  applyRollToAdditionalStatModifiers?: boolean;
+  additionalStatModifierDefinitions?: StatModifierDefinition[]; 
   // SkillBehaviorAffixDefinition specific fields
   rollVariableName?: string;
   descriptionValuePrefix?: string;

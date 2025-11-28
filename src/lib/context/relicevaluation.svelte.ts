@@ -244,7 +244,11 @@ export function provideRelicEvaluation(
           } else if (modifierType === "multiplicativeadditive") {
             layer = "multadd";
           }
-          const statName = `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`.replaceAll(" ","");
+          const statName =
+            `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`.replaceAll(
+              " ",
+              "",
+            );
 
           if (!(statName in mods)) {
             mods[statName] = [];
@@ -310,12 +314,17 @@ export function provideRelicEvaluation(
         ...(relic.selectedPrimaryAffixes || []),
         ...(relic.selectedSecondaryAffixes || []),
         ...(relic.selectedDevotionAffix ? [relic.selectedDevotionAffix] : []),
-        ...(relic.selectedCorruptionAffix ? [relic.selectedCorruptionAffix] : []),
+        ...(relic.selectedCorruptionAffix
+          ? [relic.selectedCorruptionAffix]
+          : []),
         ...(relic.selectedSpecialAffix ? [relic.selectedSpecialAffix] : []),
       ];
 
       for (const affix of allAffixes) {
-        if (affix.type === "SkillBehaviorAffixDefinition" && affix.behaviorData?.effects) {
+        if (
+          affix.type === "SkillBehaviorAffixDefinition" &&
+          affix.behaviorData?.effects
+        ) {
           for (const effect of affix.behaviorData.effects.filter(
             (e: any) =>
               e.type === "AddStatusToTargetSkillEffectData" &&
@@ -406,6 +415,57 @@ export function provideRelicEvaluation(
         value: fmtValue(mockMod, lang, statsHelper!, 1, 1),
       },
     });
+
+    // handle additionalStatModifierDefinitions with applyRollToAdditionalStatModifiers
+    if (affix.additionalStatModifierDefinitions?.length) {
+      for (const addModDef of affix.additionalStatModifierDefinitions) {
+        let statNameAddModDef = addModDef.eStatDefinition;
+        const modifierType = addModDef.modifierType.toLowerCase() || "additive";
+        let layerAddModDef = "add";
+        if (modifierType === "additive") {
+          layerAddModDef = `add`;
+        } else if (modifierType === "multiplicative") {
+          layerAddModDef = `mult`;
+        } else if (modifierType === "multiplicativeadditive") {
+          layerAddModDef = `multadd`;
+        }
+
+        if (!(statNameAddModDef in mods)) {
+          mods[statNameAddModDef] = [];
+        }
+
+        const addModValue = affix.applyRollToAdditionalStatModifiers
+          ? value
+          : addModDef.value;
+
+        const mockAddMod = {
+          type: "StatModifierDefinition" as const,
+          eStatDefinition: addModDef.eStatDefinition!,
+          modifierType: addModDef.modifierType,
+          value: addModValue,
+          selectedValue: addModValue,
+        };
+
+        mods[statNameAddModDef].push({
+          source: `${relicName} (${affixType})`,
+          amount: getValueFromMultiplier(
+            addModValue,
+            addModDef.modifierType,
+            addModValue,
+            1,
+            1,
+          ),
+          layer: layerAddModDef || "base",
+          meta: {
+            type: "relic",
+            id: String(affix.id),
+            position: positionKey,
+            affixType: affixType,
+            value: fmtValue(mockAddMod, lang, statsHelper!, 1, 1),
+          },
+        });
+      }
+    }
   }
 
   const api: RelicEvaluationAPI = {
