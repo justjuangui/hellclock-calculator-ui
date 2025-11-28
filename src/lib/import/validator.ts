@@ -7,11 +7,13 @@ import type { SkillsHelper } from "$lib/hellclock/skills";
 import type { RelicsHelper } from "$lib/hellclock/relics";
 import type { ConstellationsHelper } from "$lib/hellclock/constellations";
 import type { GearsHelper } from "$lib/hellclock/gears";
+import type { BellsHelper } from "$lib/hellclock/bells";
 import type {
 	ParsedSkill,
 	ParsedRelic,
 	ParsedConstellation,
 	ParsedGear,
+	ParsedBell,
 	ValidationResult,
 	ImportError,
 	ImportWarning,
@@ -29,6 +31,7 @@ export class ImportValidator {
 		private relicsHelper: RelicsHelper,
 		private constellationsHelper: ConstellationsHelper,
 		private gearsHelper: GearsHelper,
+		private bellsHelper?: BellsHelper,
 	) {}
 
 	/**
@@ -256,7 +259,7 @@ export class ImportValidator {
 		}
 
 		// Check if gear has variants
-		if (!gearDef.variants || gearDef.variants.length === 0) {
+		if (gear.variantIndex != 0 && (!gearDef.variants || gearDef.variants.length === 0)) {
 			return {
 				valid: false,
 				error: `Gear ${gearDef.name} has no variants`,
@@ -264,10 +267,10 @@ export class ImportValidator {
 		}
 
 		// Check if variant index is valid
-		if (gear.variantIndex < 0 || gear.variantIndex >= gearDef.variants.length) {
+		if (gear.variantIndex < 0 || gear.variantIndex > gearDef.variants!.length) {
 			return {
 				valid: false,
-				error: `Invalid variant index ${gear.variantIndex} for gear ${gearDef.name} (has ${gearDef.variants.length} variants)`,
+				error: `Invalid variant index ${gear.variantIndex} for gear ${gearDef.name} (has ${gearDef.variants!.length} variants)`,
 			};
 		}
 
@@ -311,5 +314,74 @@ export class ImportValidator {
 		}
 
 		return { data: validGear, errors, warnings };
+	}
+
+	/**
+	 * Validate a single bell node
+	 */
+	validateBell(node: ParsedBell): ValidationResult {
+		if (!this.bellsHelper) {
+			return { valid: true }; // Skip validation if helper not available
+		}
+
+		const bell = this.bellsHelper.getBellById(node.bellId);
+
+		if (!bell) {
+			return {
+				valid: true,
+				warning: `Unknown bell ID: ${node.bellId}`,
+			};
+		}
+
+		const nodeDef = this.bellsHelper.getNodeById(node.bellId, node.nodeGuid);
+
+		if (!nodeDef) {
+			return {
+				valid: true,
+				warning: `Unknown node GUID: ${node.nodeGuid} in bell ${node.bellId}`,
+			};
+		}
+
+		// Check level is valid
+		const maxLevel = nodeDef.maxLevel ?? 1;
+		if (node.level > maxLevel) {
+			return {
+				valid: true,
+				warning: `Node level ${node.level} exceeds max ${maxLevel}, will be capped`,
+			};
+		}
+
+		return { valid: true };
+	}
+
+	/**
+	 * Validate all bell nodes
+	 */
+	validateBells(nodes: ParsedBell[]): ValidatedData<ParsedBell[]> {
+		const validNodes: ParsedBell[] = [];
+		const errors: ImportError[] = [];
+		const warnings: ImportWarning[] = [];
+
+		for (const node of nodes) {
+			const result = this.validateBell(node);
+
+			if (!result.valid) {
+				errors.push({
+					system: "bells",
+					message: result.error!,
+					data: node,
+				});
+			} else {
+				validNodes.push(node);
+				if (result.warning) {
+					warnings.push({
+						system: "bells",
+						message: result.warning,
+					});
+				}
+			}
+		}
+
+		return { data: validNodes, errors, warnings };
 	}
 }

@@ -8,11 +8,13 @@ import type { RelicsHelper } from "$lib/hellclock/relics";
 import type { ConstellationsHelper } from "$lib/hellclock/constellations";
 import type { GearsHelper } from "$lib/hellclock/gears";
 import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
+import type { BellsHelper } from "$lib/hellclock/bells";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
 import type { EquippedAPI } from "$lib/context/equipped.svelte";
 import type { WorldTierEquippedAPI } from "$lib/context/worldtierequipped.svelte";
+import type { BellEquippedAPI } from "$lib/context/bellequipped.svelte";
 
 import type { ImportAdapter } from "./adapters/base";
 import { V1Adapter } from "./adapters/v1.adapter";
@@ -27,6 +29,7 @@ import type {
   ParsedRelic,
   ParsedConstellation,
   ParsedGear,
+  ParsedBell,
   RelicLoadoutSummary,
   GearLoadoutSummary,
 } from "./types";
@@ -36,6 +39,7 @@ export type ImportPreview = {
   relicLoadouts: RelicLoadoutSummary[];
   gearLoadouts: GearLoadoutSummary[];
   constellations: ParsedConstellation[];
+  bells: ParsedBell[];
   worldTierKey: string;
   errors: ImportError[];
   warnings: ImportWarning[];
@@ -52,6 +56,7 @@ export class ImportOrchestrator {
     private constellationsHelper: ConstellationsHelper,
     private gearsHelper: GearsHelper,
     private worldTiersHelper?: WorldTiersHelper,
+    private bellsHelper?: BellsHelper,
   ) {
     // Register adapters (add new versions here)
     this.adapters = [new V1Adapter()];
@@ -62,12 +67,14 @@ export class ImportOrchestrator {
       relicsHelper,
       constellationsHelper,
       gearsHelper,
+      bellsHelper,
     );
     this.applier = new ImportApplier(
       skillsHelper,
       relicsHelper,
       gearsHelper,
       worldTiersHelper,
+      bellsHelper,
     );
   }
 
@@ -103,6 +110,7 @@ export class ImportOrchestrator {
         relicLoadouts: [],
         gearLoadouts: [],
         constellations: [],
+        bells: [],
         worldTierKey: "Normal",
         errors,
         warnings,
@@ -114,24 +122,29 @@ export class ImportOrchestrator {
     const relicLoadouts = adapter.getRelicLoadouts(saveData);
     const gearLoadouts = adapter.getGearLoadouts(saveData);
     const constellations = adapter.parseConstellations(saveData);
+    const bells = adapter.parseBells ? adapter.parseBells(saveData) : [];
     const worldTierKey = adapter.parseWorldTier(saveData);
 
     // Validate (but don't filter out invalid items for preview)
     const skillValidation = this.validator.validateSkills(skills);
     const constellationValidation =
       this.validator.validateConstellations(constellations);
+    const bellValidation = this.validator.validateBells(bells);
 
     // Collect all errors and warnings
     errors.push(...skillValidation.errors);
     errors.push(...constellationValidation.errors);
+    errors.push(...bellValidation.errors);
     warnings.push(...skillValidation.warnings);
     warnings.push(...constellationValidation.warnings);
+    warnings.push(...bellValidation.warnings);
 
     return {
       skills,
       relicLoadouts,
       gearLoadouts,
       constellations,
+      bells,
       worldTierKey,
       errors,
       warnings,
@@ -216,6 +229,7 @@ export class ImportOrchestrator {
       constellationApi: ConstellationEquippedAPI;
       gearApi: EquippedAPI;
       worldTierApi?: WorldTierEquippedAPI;
+      bellApi?: BellEquippedAPI;
     },
   ): Promise<ImportResult> {
     const result: ImportResult = {
@@ -225,6 +239,7 @@ export class ImportOrchestrator {
         relics: 0,
         constellations: 0,
         gear: 0,
+        bells: 0,
       },
       errors: [],
       warnings: [],
@@ -301,6 +316,22 @@ export class ImportOrchestrator {
         result.imported.gear = this.applier.applyGear(
           validation.data,
           contexts.gearApi,
+        );
+      }
+    }
+
+    // Import bells
+    if (options.bells && contexts.bellApi && adapter.parseBells) {
+      const bells = adapter.parseBells(saveData);
+      const validation = this.validator.validateBells(bells);
+
+      result.errors.push(...validation.errors);
+      result.warnings.push(...validation.warnings);
+
+      if (validation.data.length > 0) {
+        result.imported.bells = this.applier.applyBells(
+          validation.data,
+          contexts.bellApi,
         );
       }
     }

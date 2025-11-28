@@ -13,16 +13,19 @@ import type {
 } from "$lib/hellclock/relics";
 import type { GearsHelper } from "$lib/hellclock/gears";
 import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
+import type { BellsHelper } from "$lib/hellclock/bells";
 import type { SkillEquippedAPI } from "$lib/context/skillequipped.svelte";
 import type { RelicInventoryAPI } from "$lib/context/relicequipped.svelte";
 import type { ConstellationEquippedAPI } from "$lib/context/constellationequipped.svelte";
 import type { EquippedAPI } from "$lib/context/equipped.svelte";
 import type { WorldTierEquippedAPI } from "$lib/context/worldtierequipped.svelte";
+import type { BellEquippedAPI } from "$lib/context/bellequipped.svelte";
 import type {
   ParsedSkill,
   ParsedRelic,
   ParsedConstellation,
   ParsedGear,
+  ParsedBell,
   ParsedAffix,
 } from "./types";
 
@@ -48,6 +51,7 @@ export class ImportApplier {
     private relicsHelper: RelicsHelper,
     private gearsHelper: GearsHelper,
     private worldTiersHelper?: WorldTiersHelper,
+    private bellsHelper?: BellsHelper,
   ) {}
 
   /**
@@ -367,5 +371,33 @@ export class ImportApplier {
 
     api.setWorldTier(tier);
     return true;
+  }
+
+  /**
+   * Apply bells to the bell equipped context
+   */
+  applyBells(nodes: ParsedBell[], api: BellEquippedAPI): number {
+    if (nodes.length === 0) return 0;
+
+    // Group nodes by bell ID
+    const nodesByBell = new Map<number, Array<{ nodeId: string; level: number }>>();
+    for (const parsed of nodes) {
+      if (!nodesByBell.has(parsed.bellId)) {
+        nodesByBell.set(parsed.bellId, []);
+      }
+      nodesByBell.get(parsed.bellId)!.push({
+        nodeId: parsed.nodeGuid,
+        level: parsed.level,
+      });
+    }
+
+    // Apply nodes for each bell (typically only one bell's data in save)
+    let totalApplied = 0;
+    for (const [bellId, bellNodes] of nodesByBell) {
+      const applied = api.importNodes(bellId, bellNodes);
+      totalApplied += applied;
+    }
+
+    return totalApplied;
   }
 }

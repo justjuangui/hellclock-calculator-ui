@@ -9,6 +9,7 @@ import type {
   ParsedRelic,
   ParsedConstellation,
   ParsedGear,
+  ParsedBell,
   RelicLoadoutSummary,
   GearLoadoutSummary,
   SaveFile,
@@ -17,6 +18,7 @@ import type {
   SaveFileRelicLoadoutsData,
   SaveFileConstellationsData,
   SaveFileGearLoadoutsData,
+  SaveFileBellSkillTree,
   ParsedAffix,
   ParsedImplicitAffix,
 } from "../types";
@@ -227,5 +229,31 @@ export class V1Adapter implements ImportAdapter {
     }
 
     return WORLD_TIER_MAP[worldTierIndex] ?? "Normal";
+  }
+
+  /**
+   * Parse bell skill tree node allocations
+   * Returns only allocated nodes (level > 0)
+   */
+  parseBells(saveData: unknown): ParsedBell[] {
+    const data = saveData as SaveFile;
+    const bellData = data.greatBellSkillTreeData as SaveFileBellSkillTree | undefined;
+
+    if (!bellData) return [];
+
+    const parsed: ParsedBell[] = [];
+
+    for (const node of bellData._skillTreeNodes) {
+      // Only include allocated nodes (level > 0)
+      if (node._upgradeLevel > 0) {
+        parsed.push({
+          bellId: bellData._skillTreeHashId,
+          nodeGuid: node._nodeDefinitionGuid,
+          level: node._upgradeLevel,
+        });
+      }
+    }
+
+    return parsed;
   }
 }

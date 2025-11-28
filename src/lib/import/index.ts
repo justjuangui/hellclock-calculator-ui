@@ -13,6 +13,7 @@ export type {
 	ParsedRelic,
 	ParsedConstellation,
 	ParsedGear,
+	ParsedBell,
 	ParsedAffix,
 	ParsedImplicitAffix,
 	RelicLoadoutSummary,

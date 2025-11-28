@@ -14,6 +14,7 @@ export type ImportOptions = {
   constellations: boolean;
   gear: boolean;
   gearLoadoutIndex: number; // 0, 1, or 2 - user selected
+  bells: boolean;
 };
 
 export type ImportResult = {
@@ -23,19 +24,20 @@ export type ImportResult = {
     relics: number;
     constellations: number;
     gear: number;
+    bells: number;
   };
   errors: ImportError[];
   warnings: ImportWarning[];
 };
 
 export type ImportError = {
-  system: "skills" | "relics" | "constellations" | "gear";
+  system: "skills" | "relics" | "constellations" | "gear" | "bells";
   message: string;
   data?: unknown;
 };
 
 export type ImportWarning = {
-  system: "skills" | "relics" | "constellations" | "gear";
+  system: "skills" | "relics" | "constellations" | "gear" | "bells";
   message: string;
 };
 
@@ -81,6 +83,12 @@ export type ParsedImplicitAffix = {
 
 export type ParsedConstellation = {
   constellationId: number;
+  nodeGuid: string;
+  level: number;
+};
+
+export type ParsedBell = {
+  bellId: number;
   nodeGuid: string;
   level: number;
 };
@@ -171,6 +179,18 @@ export type SaveFileConstellationsData = {
   skillTreesData: SaveFileConstellation[];
 };
 
+// Bell skill tree node
+export type SaveFileBellNode = {
+  _nodeDefinitionGuid: string;
+  _upgradeLevel: number;
+};
+
+// Bell skill tree data
+export type SaveFileBellSkillTree = {
+  _skillTreeHashId: number;
+  _skillTreeNodes: SaveFileBellNode[];
+};
+
 export type SaveFileGear = {
   _gearDefinitionHashId: number;
   _variantIndex: number;
@@ -193,6 +213,7 @@ export type SaveFile = {
   _relicLoadoutsSaveData: SaveFileRelicLoadoutsData;
   constellationsData: SaveFileConstellationsData;
   _blessedGearLoadoutsSaveData?: SaveFileGearLoadoutsData;
+  greatBellSkillTreeData?: SaveFileBellSkillTree; // Bell skill tree data
   worldTier?: number; // 0=Normal, 1=Abyss, 2=Oblivion, 3=Void
   // Other fields not needed for import
   [key: string]: unknown;

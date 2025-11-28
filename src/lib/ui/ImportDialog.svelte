@@ -5,11 +5,13 @@
   import type { ConstellationsHelper } from "$lib/hellclock/constellations";
   import type { GearsHelper } from "$lib/hellclock/gears";
   import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
+  import type { BellsHelper } from "$lib/hellclock/bells";
   import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
   import { useRelicInventory } from "$lib/context/relicequipped.svelte";
   import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
   import { useEquipped, ESlotsType } from "$lib/context/equipped.svelte";
   import { useWorldTierEquipped } from "$lib/context/worldtierequipped.svelte";
+  import { useBellEquipped } from "$lib/context/bellequipped.svelte";
   import {
     ImportOrchestrator,
     type ImportPreview,
@@ -26,6 +28,7 @@
   );
   const gearsHelper = getContext<GearsHelper>("gearsHelper");
   const worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
+  const bellsHelper = getContext<BellsHelper>("bellsHelper");
 
   // Get context APIs
   const skillApi = useSkillEquipped();
@@ -33,6 +36,7 @@
   const constellationApi = useConstellationEquipped();
   const gearApi = useEquipped(ESlotsType.BlessedGear);
   const worldTierApi = useWorldTierEquipped();
+  const bellApi = useBellEquipped();
 
   // Dialog ref
   let dialog: HTMLDialogElement;
@@ -51,6 +55,7 @@
   let importConstellations = $state(true);
   let importGear = $state(true);
   let selectedGearLoadoutIndex = $state(0);
+  let importBells = $state(true);
 
   // Result state
   let importing = $state(false);
@@ -65,7 +70,8 @@
       relicsHelper &&
       constellationsHelper &&
       gearsHelper &&
-      worldTiersHelper
+      worldTiersHelper &&
+      bellsHelper
     ) {
       orchestrator = new ImportOrchestrator(
         skillsHelper,
@@ -73,6 +79,7 @@
         constellationsHelper,
         gearsHelper,
         worldTiersHelper,
+        bellsHelper,
       );
     }
   });
@@ -100,6 +107,7 @@
     importConstellations = true;
     importGear = true;
     selectedGearLoadoutIndex = 0;
+    importBells = true;
     importing = false;
     importResult = null;
   }
@@ -134,6 +142,7 @@
         relicLoadouts: [],
         gearLoadouts: [],
         constellations: [],
+        bells: [],
         worldTierKey: "Normal",
         errors: [
           {
@@ -162,6 +171,7 @@
           constellations: importConstellations,
           gear: importGear,
           gearLoadoutIndex: selectedGearLoadoutIndex,
+          bells: importBells,
         },
         {
           skillApi,
@@ -169,6 +179,7 @@
           constellationApi,
           gearApi,
           worldTierApi,
+          bellApi,
         },
       );
 
@@ -181,7 +192,7 @@
     } catch (err) {
       importResult = {
         success: false,
-        imported: { skills: 0, relics: 0, constellations: 0, gear: 0 },
+        imported: { skills: 0, relics: 0, constellations: 0, gear: 0, bells: 0 },
         errors: [
           {
             system: "skills",
@@ -204,7 +215,7 @@
   const canImport = $derived(
     saveData !== null &&
       !importing &&
-      (importSkills || importRelics || importConstellations || importGear) &&
+      (importSkills || importRelics || importConstellations || importGear || importBells) &&
       !hasErrors,
   );
 </script>
@@ -215,7 +226,7 @@
 
     <!-- File Input -->
     <div class="form-control mb-4">
-      <label class="label">
+      <label class="label" for="save-file-input">
         <span class="label-text">Select your save data</span>
       </label>
       <div class="flex items-center gap-2 mb-2">
@@ -234,15 +245,16 @@
         </button>
       </div>
       <input
+        id="save-file-input"
         type="file"
         accept=".json"
         class="file-input file-input-bordered w-full"
         onchange={handleFileSelect}
       />
       {#if fileName}
-        <label class="label">
+        <div class="label">
           <span class="label-text-alt text-success">{fileName}</span>
-        </label>
+        </div>
       {/if}
     </div>
 
@@ -352,6 +364,22 @@
             >
           </span>
         </label>
+
+        <!-- Bells -->
+        <label class="label cursor-pointer justify-start gap-3">
+          <input
+            type="checkbox"
+            class="checkbox checkbox-primary"
+            bind:checked={importBells}
+            disabled={preview.bells.length === 0}
+          />
+          <span class="label-text">
+            Import Bells
+            <span class="badge badge-sm ml-2"
+              >{preview.bells.length} nodes</span
+            >
+          </span>
+        </label>
       </div>
 
       <!-- Preview Summary -->
@@ -382,6 +410,12 @@
           <p>
             <span class="font-semibold">Constellations:</span>
             {preview.constellations.length} allocated nodes
+          </p>
+        {/if}
+        {#if importBells}
+          <p>
+            <span class="font-semibold">Bells:</span>
+            {preview.bells.length} allocated nodes
           </p>
         {/if}
       </div>

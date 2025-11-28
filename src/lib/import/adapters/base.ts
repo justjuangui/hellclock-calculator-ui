@@ -8,6 +8,7 @@ import type {
   ParsedRelic,
   ParsedConstellation,
   ParsedGear,
+  ParsedBell,
   RelicLoadoutSummary,
   GearLoadoutSummary,
 } from "../types";
@@ -62,4 +63,10 @@ export interface ImportAdapter {
    * Returns world tier key (e.g., "Normal", "Abyss", "Oblivion", "Void")
    */
   parseWorldTier(saveData: unknown): string;
+
+  /**
+   * Parse bell skill tree node allocations (optional)
+   * Returns only allocated nodes (level > 0)
+   */
+  parseBells?(saveData: unknown): ParsedBell[];
 }
