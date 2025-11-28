@@ -118,8 +118,8 @@
                     </div>
                     <input
                       type="range"
-                      min={item.multiplierRange[0]}
-                      max={item.multiplierRange[1]}
+                      min={0}
+                      max={1}
                       bind:value={m.selectedValue}
                       step="any"
                       class="range range-xs w-[100px]"

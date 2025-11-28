@@ -62,10 +62,6 @@ export function normalizedValueFromRange(
   return (toMax - toMin) * num3 + toMin;
 }
 
-export function normalizedValue(from: number, fromMin = 0.0, fromMax = 1.0) {
-  return Math.min(Math.max(from, fromMin), fromMax);
-}
-
 export function roundHalfToEven(x: number, digits = 0): number {
   const f = 10 ** digits;
   const y = x * f;
@@ -98,7 +94,13 @@ export function getValueFromMultiplier(
   maxMultiplier: number,
 ) {
   let val = baseValue;
-  let normalize = normalizedValue(multiplier, minMultiplier, maxMultiplier);
+  let normalize = normalizedValueFromRange(
+    multiplier,
+    0,
+    1,
+    minMultiplier,
+    maxMultiplier,
+  );
   if (modifier === "Additive") {
     val *= normalize;
   } else {
