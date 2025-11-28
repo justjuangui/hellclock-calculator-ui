@@ -8,6 +8,7 @@ import { useGearEvaluation } from "$lib/context/gearevaluation.svelte";
 import { useSkillEvaluation } from "$lib/context/skillevaluation.svelte";
 import { useRelicEvaluation } from "$lib/context/relicevaluation.svelte";
 import { useConstellationEvaluation } from "$lib/context/constellationevaluation.svelte";
+import { useBellEvaluation } from "$lib/context/bellevaluation.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 import { useWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
 
@@ -80,6 +81,7 @@ export function provideEvaluationManager(
   let lastSkillHash = $state<string>("");
   let lastRelicHash = $state<string>("");
   let lastConstellationHash = $state<string>("");
+  let lastBellHash = $state<string>("");
   let lastStatusHash = $state<string>("");
   let lastWorldTierHash = $state<string>("");
 
@@ -90,6 +92,7 @@ export function provideEvaluationManager(
   let constellationEvaluationAPI: ReturnType<
     typeof useConstellationEvaluation
   > | null = null;
+  let bellEvaluationAPI: ReturnType<typeof useBellEvaluation> | null = null;
   let statusEvaluationAPI: ReturnType<typeof useStatusEvaluation> | null = null;
   let worldTierEvaluationAPI: ReturnType<typeof useWorldTierEvaluation> | null =
     null;
@@ -101,6 +104,7 @@ export function provideEvaluationManager(
       skillEvaluationAPI = useSkillEvaluation();
       relicEvaluationAPI = useRelicEvaluation();
       constellationEvaluationAPI = useConstellationEvaluation();
+      bellEvaluationAPI = useBellEvaluation();
       statusEvaluationAPI = useStatusEvaluation();
       worldTierEvaluationAPI = useWorldTierEvaluation();
     } catch {
@@ -124,6 +128,7 @@ export function provideEvaluationManager(
       skillEvaluationAPI &&
       relicEvaluationAPI &&
       constellationEvaluationAPI &&
+      bellEvaluationAPI &&
       statusEvaluationAPI &&
       worldTierEvaluationAPI &&
       actor &&
@@ -143,6 +148,7 @@ export function provideEvaluationManager(
       !skillEvaluationAPI ||
       !relicEvaluationAPI ||
       !constellationEvaluationAPI ||
+      !bellEvaluationAPI ||
       !statusEvaluationAPI ||
       !worldTierEvaluationAPI
     )
@@ -153,6 +159,7 @@ export function provideEvaluationManager(
     const currentRelicHash = relicEvaluationAPI.relicHash;
     const currentConstellationHash =
       constellationEvaluationAPI.constellationHash;
+    const currentBellHash = bellEvaluationAPI.bellHash;
     const currentStatusHash = statusEvaluationAPI.statusHash;
     const currentWorldTierHash = worldTierEvaluationAPI.worldTierHash;
 
@@ -162,6 +169,7 @@ export function provideEvaluationManager(
       currentSkillHash !== lastSkillHash ||
       currentRelicHash !== lastRelicHash ||
       currentConstellationHash !== lastConstellationHash ||
+      currentBellHash !== lastBellHash ||
       currentStatusHash !== lastStatusHash ||
       currentWorldTierHash !== lastWorldTierHash
     ) {
@@ -169,6 +177,7 @@ export function provideEvaluationManager(
       lastSkillHash = currentSkillHash;
       lastRelicHash = currentRelicHash;
       lastConstellationHash = currentConstellationHash;
+      lastBellHash = currentBellHash;
       lastStatusHash = currentStatusHash;
       lastWorldTierHash = currentWorldTierHash;
 
@@ -209,21 +218,23 @@ export function provideEvaluationManager(
       !skillEvaluationAPI ||
       !relicEvaluationAPI ||
       !constellationEvaluationAPI ||
+      !bellEvaluationAPI ||
       !statusEvaluationAPI ||
       !worldTierEvaluationAPI
     ) {
       throw new Error(
-        "Gear, Skill, Relic, Constellation, Status, and WorldTier evaluation APIs are required",
+        "Gear, Skill, Relic, Constellation, Bell, Status, and WorldTier evaluation APIs are required",
       );
     }
 
     await buildActor();
 
-    // Collect modifications from gear, skills, relics, constellations, statuses, and world tier
+    // Collect modifications from gear, skills, relics, constellations, bells, statuses, and world tier
     const gearMods = gearEvaluationAPI.getGearMods();
     const skillMods = skillEvaluationAPI.getSkillMods();
     const relicMods = relicEvaluationAPI.getRelicMods();
     const constellationMods = constellationEvaluationAPI.getConstellationMods();
+    const bellMods = bellEvaluationAPI.getBellMods();
     const statusMods = statusEvaluationAPI.getStatusMods();
     const worldTierMods = worldTierEvaluationAPI.getWorldTierMods();
 
@@ -314,7 +325,31 @@ export function provideEvaluationManager(
       }
     });
 
-    // Add status mods, merging with existing gear, skill, relic, and constellation mods
+    // Add bell mods, merging with existing mods
+    Object.entries(bellMods).forEach(([statName, sources]) => {
+      const unifiedSources = sources.map((source) => ({
+        source: source.source,
+        amount: source.amount,
+        layer: source.layer,
+        meta: {
+          type: source.meta.type,
+          id: source.meta.bellId,
+          slot: source.meta.nodeId,
+          bellId: source.meta.bellId,
+          nodeId: source.meta.nodeId,
+          level: source.meta.level,
+          value: source.meta.value,
+        },
+      }));
+
+      if (statName in allMods) {
+        allMods[statName] = [...allMods[statName], ...unifiedSources];
+      } else {
+        allMods[statName] = unifiedSources;
+      }
+    });
+
+    // Add status mods, merging with existing gear, skill, relic, constellation, and bell mods
     Object.entries(statusMods).forEach(([statName, sources]) => {
       const unifiedSources = sources.map((source) => ({
         source: source.source,

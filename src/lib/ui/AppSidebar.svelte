@@ -20,8 +20,8 @@
     { id: "skills", label: "Skills", icon: "✨" },
     { id: "relics", label: "Relics", icon: "💎" },
     { id: "constellation", label: "Constellation", icon: "🌟" },
+    { id: "bell", label: "Bell", icon: "🔔" },
     { id: "config", label: "Config", icon: "⚙️" },
-    { id: "bell", label: "Bell", icon: "🔔", disabled: true },
     { id: "blessing", label: "Blessing", icon: "🙏", disabled: true },
   ];
 </script>

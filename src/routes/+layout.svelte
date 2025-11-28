@@ -33,6 +33,10 @@
     WorldTiersHelper,
     type WorldTiersRoot,
   } from "$lib/hellclock/worldtiers";
+  import {
+    BellsHelper,
+    type GreatBellSkillTreeDefinition,
+  } from "$lib/hellclock/bells";
   import { SkillDisplayHelper } from "$lib/hellclock/skillcard-helper";
   import type { SkillDisplayDefinitions } from "$lib/hellclock/skillcard-types";
   import { provideSkillEquipped } from "$lib/context/skillequipped.svelte";
@@ -46,6 +50,8 @@
   import { provideStatusEvaluation } from "$lib/context/statusevaluation.svelte";
   import { provideWorldTierEquipped } from "$lib/context/worldtierequipped.svelte";
   import { provideWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
+  import { provideBellEquipped } from "$lib/context/bellequipped.svelte";
+  import { provideBellEvaluation } from "$lib/context/bellevaluation.svelte";
   import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -79,6 +85,9 @@
   let worldTierEvaluationContext: ReturnType<
     typeof provideWorldTierEvaluation
   > | null = null;
+  let bellEquippedContext: ReturnType<typeof provideBellEquipped> | null = null;
+  let bellEvaluationContext: ReturnType<typeof provideBellEvaluation> | null =
+    null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
@@ -146,6 +155,18 @@
       worldTierEvaluationContext = provideWorldTierEvaluation(worldTiersHelper);
     }
 
+    if (bellsHelper && !bellEquippedContext) {
+      bellEquippedContext = provideBellEquipped(bellsHelper, 100); // Initial bell points
+    }
+
+    if (bellsHelper && statusHelper && !bellEvaluationContext) {
+      bellEvaluationContext = provideBellEvaluation(
+        bellsHelper,
+        statusHelper,
+        "en",
+      );
+    }
+
     if (
       engine &&
       pack &&
@@ -178,6 +199,7 @@
   let constellationsHelper = $state<ConstellationsHelper | null>(null);
   let statusHelper = $state<StatusHelper | null>(null);
   let worldTiersHelper = $state<WorldTiersHelper | null>(null);
+  let bellsHelper = $state<BellsHelper | null>(null);
   let skillDisplayHelper = $state<SkillDisplayHelper | null>(null);
   let assetPreloader = $state<AssetPreloader | null>(null);
 
@@ -191,6 +213,7 @@
     setContext("constellationsHelper", constellationsHelper);
     setContext("statusHelper", statusHelper);
     setContext("worldTiersHelper", worldTiersHelper);
+    setContext("bellsHelper", bellsHelper);
     setContext("skillDisplayHelper", skillDisplayHelper);
     setContext("assetPreloader", assetPreloader);
     setContext("lang", "en");
@@ -204,6 +227,7 @@
       constellationsHelper &&
       statusHelper &&
       worldTiersHelper &&
+      bellsHelper &&
       skillDisplayHelper &&
       assetPreloader
     ) {
@@ -270,6 +294,13 @@
       label = "Loading WorldTiersHelper";
       worldTiersHelper = new WorldTiersHelper(
         pack["World Tiers"] as WorldTiersRoot,
+      );
+
+      label = "Loading BellsHelper";
+      bellsHelper = new BellsHelper(
+        pack["Campaign Bell"] as GreatBellSkillTreeDefinition,
+        pack["Infernal Bell"] as GreatBellSkillTreeDefinition,
+        pack["Oblivion Bell"] as GreatBellSkillTreeDefinition,
       );
 
       label = "Loading SkillDisplayHelper";

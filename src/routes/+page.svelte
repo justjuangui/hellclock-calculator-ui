@@ -269,7 +269,7 @@
     {:else if activeSection === "config"}
       <ConfigView />
     {:else if activeSection === "bell"}
-      <BellView />
+      <BellView onClose={() => (activeSection = "home")} />
     {:else if activeSection === "blessing"}
       <BlessingView />
     {/if}

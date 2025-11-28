@@ -16,6 +16,9 @@
         "/assets/Constellations.json",
         "/assets/Status.json",
         "/assets/skill-display.json",
-        "/assets/World Tiers.json"
+        "/assets/World Tiers.json",
+        "/assets/Campaign Bell.json",
+        "/assets/Infernal Bell.json",
+        "/assets/Oblivion Bell.json"
     ]
 }
