@@ -5,7 +5,7 @@
   import type { StatsHelper } from "$lib/hellclock/stats";
   import { formatStatModNumber } from "$lib/hellclock/formats";
   import { translate } from "$lib/hellclock/lang";
-  import { parseRGBA01ToCss } from "$lib/hellclock/utils";
+  import { parseRGBA01ToCssLightened } from "$lib/hellclock/utils";
 
   const worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
   const statsHelper = getContext<StatsHelper>("statsHelper");
@@ -62,7 +62,7 @@
         {#each allWorldTiers as tier}
           {@const tierKey = worldTiersHelper.getWorldTierKey(tier)}
           {@const isSelected = selectedTier && worldTiersHelper.getWorldTierKey(selectedTier) === tierKey}
-          {@const tierColor = parseRGBA01ToCss(tier.worldTierColor)}
+          {@const tierColor = parseRGBA01ToCssLightened(tier.worldTierColor)}
           <button
             class="card border-2 cursor-pointer transition-all {isSelected
               ? 'bg-opacity-10'
