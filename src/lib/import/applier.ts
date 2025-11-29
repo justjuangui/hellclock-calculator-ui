@@ -233,7 +233,7 @@ export class ImportApplier {
       const affix = this.relicsHelper.getRelicAffixById(firstParsed.affixId);
       if (affix) {
         specialAffix = affix;
-        specialValues[affix.id] = Math.min(firstParsed.rollValue / 1.2, 1);
+        specialValues[affix.id] = firstParsed.rollValue;
       }
     }
 
@@ -242,8 +242,7 @@ export class ImportApplier {
       const affix = this.relicsHelper.getRelicAffixById(parsed.affixId);
       if (!affix) continue;
 
-      // Normalize roll value (save uses 0-1.2 range, we store as 0-1)
-      const normalizedValue = Math.min(parsed.rollValue / 1.2, 1);
+      const normalizedValue = parsed.rollValue;
 
       if (primaryIds.has(parsed.affixId)) {
         primaryAffixes.push(affix);

@@ -104,7 +104,7 @@ export class V1Adapter implements ImportAdapter {
       // Parse regular affixes
       const affixes: ParsedAffix[] = (item._affixesData ?? []).map((a) => ({
         affixId: a._relicAffixDefinitionId,
-        rollValue: Math.fround(a._rollValue),
+        rollValue: a._rollValue,
         tier: a._tier,
         locked: a._locked,
       }));
@@ -116,7 +116,7 @@ export class V1Adapter implements ImportAdapter {
         category: ia._eImplicitAffixCategory,
         affix: {
           affixId: ia._relicAffixData._relicAffixDefinitionId,
-          rollValue: Math.fround(ia._relicAffixData._rollValue),
+          rollValue: ia._relicAffixData._rollValue,
           tier: ia._relicAffixData._tier,
           locked: ia._relicAffixData._locked,
         },

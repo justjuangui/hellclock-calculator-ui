@@ -1020,7 +1020,6 @@ export class RelicsHelper {
     lines.push({ text: "", type: "divider" });
 
     const affixIcons = this.getRelicAffixIcons();
-
     if (relic.selectedSpecialAffix) {
       const value = relic.specialAffixValues?.[relic.selectedSpecialAffix.id];
       lines.push({
