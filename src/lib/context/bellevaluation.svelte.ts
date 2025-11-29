@@ -90,12 +90,10 @@ export function provideBellEvaluation(
           }
 
           // Calculate the effective value
-          const effectiveValue = getValueFromMultiplier(
+          const effectiveValue = bellsHelper.getStatValueAtLevel(
             statAffix.value,
+            allocated.level,
             statAffix.statModifierType,
-            1,
-            1,
-            1,
           );
 
           // Determine layer based on modifier type
@@ -111,7 +109,7 @@ export function provideBellEvaluation(
 
           mods[statKey].push({
             source: `${bellName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}`,
-            amount: effectiveValue * allocated.level,
+            amount: effectiveValue,
             layer: layer,
             meta: {
               type: "bell",
@@ -207,11 +205,13 @@ export function provideBellEvaluation(
         bellEquippedApi.allocatedNodes.entries(),
       ).filter(([_, value]) => value.constellationId === activeBellId);
 
-      return `bell:${activeBellId}|` +
+      return (
+        `bell:${activeBellId}|` +
         allocated
           .map(([key, value]) => `${key}:${value.level}`)
           .sort()
-          .join("|");
+          .join("|")
+      );
     },
   };
 

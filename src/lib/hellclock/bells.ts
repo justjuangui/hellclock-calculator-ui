@@ -12,6 +12,7 @@ import type {
   AllocatedNode,
   StatModifierNodeAffixDefinition,
 } from "./constellations";
+import type { ModifierType } from "./relics";
 
 // Re-export shared types for convenience
 export type {
@@ -90,6 +91,18 @@ export class BellsHelper {
     }));
   }
 
+  getStatValueAtLevel(
+    value: number,
+    level: number,
+    modifierType: ModifierType,
+  ): number {
+    if (modifierType === "Additive") {
+      return value * level;
+    }
+
+    return (value - 1.0) * level + 1.0;
+  }
+
   // Get bell by ID
   getBellById(id: number): GreatBellSkillTreeDefinition | undefined {
     return this.bells.get(id);
@@ -118,10 +131,7 @@ export class BellsHelper {
   }
 
   // Get nodes that depend on a given node
-  getDependentNodes(
-    bellId: number,
-    nodeId: string,
-  ): SkillTreeNodeDefinition[] {
+  getDependentNodes(bellId: number, nodeId: string): SkillTreeNodeDefinition[] {
     const bell = this.getBellById(bellId);
     if (!bell) return [];
     return bell.nodes.filter((node) =>
@@ -361,7 +371,11 @@ export class BellsHelper {
             // Multiply by level (use 1 if not allocated to show per-point value)
             const effectiveLevel = allocatedLevel === 0 ? 1 : allocatedLevel;
             const formattedValue = formatStatModNumber(
-              statAffix.value * effectiveLevel,
+              this.getStatValueAtLevel(
+                statAffix.value,
+                effectiveLevel,
+                statAffix.statModifierType,
+              ),
               statDefinition.eStatFormat,
               statAffix.statModifierType || "Additive",
               1,
