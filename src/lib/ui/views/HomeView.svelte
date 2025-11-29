@@ -7,7 +7,7 @@
   import { useWorldTierEquipped } from "$lib/context/worldtierequipped.svelte";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import type { GamePack } from "$lib/engine/types";
-  import { spriteUrl, parseRGBA01ToCss } from "$lib/hellclock/utils";
+  import { spriteUrl, parseRGBA01ToCss, parseRGBA01ToCssLightened } from "$lib/hellclock/utils";
   import { translate } from "$lib/hellclock/lang";
   import { ESingType, formatStatNumber } from "$lib/hellclock/formats";
   import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
@@ -106,7 +106,7 @@
       Build Overview
       {#if worldTierApi.selectedWorldTier}
         <span
-          style="color: {parseRGBA01ToCss(worldTierApi.selectedWorldTier.worldTierColor)}"
+          style="color: {parseRGBA01ToCssLightened(worldTierApi.selectedWorldTier.worldTierColor)}"
           >(World Tier {worldTierApi.selectedWorldTier.worldTierRomanNumber} - {translate(worldTierApi.selectedWorldTier.worldTierLocalizationKey, lang)})</span
         >
       {/if}

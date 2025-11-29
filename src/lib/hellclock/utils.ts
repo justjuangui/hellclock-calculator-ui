@@ -17,6 +17,76 @@ export function parseRGBA01ToCss(rgbaStr: string | undefined): string {
   return `rgba(${r},${g},${b},${a ?? 1})`;
 }
 
+/**
+ * Parse RGBA (0-1 range) to CSS with minimum lightness for dark theme contrast.
+ * Uses HSL-based lightening to preserve the original color's hue.
+ */
+export function parseRGBA01ToCssLightened(
+  rgbaStr: string | undefined,
+  minLightness = 0.5,
+): string {
+  if (!rgbaStr) return "rgba(200,200,200,1)";
+  const nums = rgbaStr
+    .replace(/rgba?\s*\(|\)/gi, "")
+    .split(",")
+    .map((s) => parseFloat(s.trim()));
+
+  let [r, g, b, a] = nums;
+  r = r ?? 0;
+  g = g ?? 0;
+  b = b ?? 0;
+
+  // Convert RGB to HSL
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+
+  // Boost lightness if too dark
+  if (l < minLightness) {
+    l = minLightness;
+  }
+
+  // Convert HSL back to RGB
+  let r2: number, g2: number, b2: number;
+  if (s === 0) {
+    r2 = g2 = b2 = l;
+  } else {
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r2 = hue2rgb(p, q, h + 1 / 3);
+    g2 = hue2rgb(p, q, h);
+    b2 = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return `rgba(${Math.round(r2 * 255)},${Math.round(g2 * 255)},${Math.round(b2 * 255)},${a ?? 1})`;
+}
+
 export function parseRGBA01ToPixiHex(rgbaStr: string | undefined): { color: number; alpha: number } {
   if (!rgbaStr) return { color: 0x000000, alpha: 1 };
   const nums = rgbaStr
