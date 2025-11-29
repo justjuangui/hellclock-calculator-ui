@@ -184,13 +184,11 @@ export function provideRelicEvaluation(
     relicHelper: RelicsHelper,
     mods: RelicModCollection,
   ): void {
-    let range = relicHelper.getAffixValueRange(affix.id, tier, rank);
-    let value = normalizedValueFromRange(
+    let value = relicHelper.getAffixValueFromRoll(
+      affix.id,
       valueNormalized,
-      0,
-      1,
-      range[0],
-      range[1],
+      tier,
+      rank,
     );
 
     if (affix.type === "StatModifierAffixDefinition") {

@@ -279,7 +279,7 @@ export type StatModifierDefinition = {
   eStatDefinition: string;
   modifierType: StatModifierType;
   value: number;
-}
+};
 
 export type RelicAffix = {
   name: string;
@@ -308,13 +308,15 @@ export type RelicAffix = {
   skillDefinition?: AffixSkillDefinition;
   // StatModifierAffixDefinition specific fields
   applyRollToAdditionalStatModifiers?: boolean;
-  additionalStatModifierDefinitions?: StatModifierDefinition[]; 
+  additionalStatModifierDefinitions?: StatModifierDefinition[];
   // SkillBehaviorAffixDefinition specific fields
   rollVariableName?: string;
   descriptionValuePrefix?: string;
   additionalLocalizationVariables?: SkillBehaviorLocalizationVariable[];
   behaviorData?: SkillBehaviorData;
   relicUpgradeModifierConfig?: RelicUpgradeModifierConfig;
+  upgradeModifierOverride?: Record<string, number>;
+  modifierType?: ModifierType;
 };
 
 export type RelicSizeConfig = {
@@ -675,10 +677,16 @@ export class RelicsHelper {
     }
 
     if (selectedPrimaryAffixes?.length) {
-      const suffix = translate(selectedPrimaryAffixes[0].nameLocalizationKey, lang);
+      const suffix = translate(
+        selectedPrimaryAffixes[0].nameLocalizationKey,
+        lang,
+      );
       displayName += ` of ${suffix}`;
     } else if (selectedSecondaryAffixes?.length) {
-      const suffix = translate(selectedSecondaryAffixes[0].nameLocalizationKey, lang);
+      const suffix = translate(
+        selectedSecondaryAffixes[0].nameLocalizationKey,
+        lang,
+      );
       displayName += ` of ${suffix}`;
     }
 
@@ -807,33 +815,52 @@ export class RelicsHelper {
   }
 
   /**
-   * Get affix value range for a specific tier
+   * Get affix value form roll for a specific tier
    */
-  getAffixValueRange(
+  getAffixValueFromRoll(
     affixId: number,
+    roll: number,
     tier: number,
     rank: number,
-  ): [number, number] {
+  ): number {
     const affix = this.getRelicAffixById(affixId);
-    if (!affix) return [0, 0];
+    if (!affix) return 0;
 
     let rankModifier = 1.0;
-    if (
+    let modifierType = "";
+    if (affix.upgradeModifierOverride && affix.upgradeModifierOverride[rank]) {
+      rankModifier = affix.upgradeModifierOverride[rank];
+      modifierType = affix.modifierType!;
+    } else if (
       affix.relicUpgradeModifierConfig &&
       affix.relicUpgradeModifierConfig.upgradeModifier &&
       affix.relicUpgradeModifierConfig.upgradeModifier[rank]
     ) {
       rankModifier = affix.relicUpgradeModifierConfig.upgradeModifier[rank];
+      modifierType = affix.relicUpgradeModifierConfig.modifierType;
     }
     const tierRange = affix.tierRollRanges.find((range) => range.tier === tier);
+
     if (tierRange) {
-      return [
-        tierRange.rollRange[0] * rankModifier,
-        tierRange.rollRange[1] * rankModifier,
-      ];
+      let value = normalizedValueFromRange(
+        roll,
+        0.0,
+        1.0,
+        tierRange.rollRange[0],
+        tierRange.rollRange[1],
+      );
+
+      if (modifierType === "Additive") {
+        value += rankModifier;
+      } else if (modifierType === "Multiplicative") {
+        value *= rankModifier;
+      } else if (modifierType === "MultiplicativeAdditive") {
+        value = (value - 1.0) * rankModifier + 1.0;
+      }
+      return value;
     }
 
-    return [0, 0];
+    return 0;
   }
 
   /**
@@ -1160,13 +1187,11 @@ export class RelicsHelper {
       return affixName;
     }
 
-    let range = this.getAffixValueRange(affix.id, tier, rank);
-    let value = normalizedValueFromRange(
+    let value = this.getAffixValueFromRoll(
+      affix.id,
       valueNormalized,
-      0,
-      1,
-      range[0],
-      range[1],
+      tier,
+      rank,
     );
 
     // Format based on affix type

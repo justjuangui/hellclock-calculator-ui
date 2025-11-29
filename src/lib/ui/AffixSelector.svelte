@@ -47,15 +47,12 @@
   }: Props = $props();
 
   function getAffixDisplayValue(affix: RelicAffix, value: number): string {
-    let range = relicsHelper.getAffixValueRange(affix.id, tier, rank);
-    let fromNormalized = normalizedValueFromRange(
+    let fromNormalized = relicsHelper.getAffixValueFromRoll(
+      affix.id,
       value,
-      0,
-      1,
-      range[0],
-      range[1],
+      tier,
+      rank,
     );
-
     if (affix.type === "StatModifierAffixDefinition") {
       const statDef = statsHelper.getStatByName(affix.eStatDefinition!);
       if (!statDef) return String(fromNormalized);
@@ -85,7 +82,10 @@
     } else if (affix.type === "RegenOnKillAffixDefinition") {
       const statDef = statsHelper.getStatByName(affix.eStatRegen!);
       if (!statDef) return String(fromNormalized);
-      const clampvalue = statsHelper.getValueForStat(affix.eStatRegen!, fromNormalized);
+      const clampvalue = statsHelper.getValueForStat(
+        affix.eStatRegen!,
+        fromNormalized,
+      );
 
       return formatStatModNumber(
         clampvalue,
