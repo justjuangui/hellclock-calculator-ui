@@ -45,7 +45,7 @@ export class V1Adapter implements ImportAdapter {
   }
 
   parseSkills(saveData: unknown): ParsedSkill[] {
-    const data = saveData as SaveFile;
+    const data = saveData as SaveFile
     const skillSlots = data.skillSlots as SaveFileSkillSlot[];
     const skillLevels = data._skillAndLevels as SaveFileSkillLevel[];
 
@@ -104,7 +104,7 @@ export class V1Adapter implements ImportAdapter {
       // Parse regular affixes
       const affixes: ParsedAffix[] = (item._affixesData ?? []).map((a) => ({
         affixId: a._relicAffixDefinitionId,
-        rollValue: a._rollValue,
+        rollValue: Math.fround(a._rollValue),
         tier: a._tier,
         locked: a._locked,
       }));
@@ -116,7 +116,7 @@ export class V1Adapter implements ImportAdapter {
         category: ia._eImplicitAffixCategory,
         affix: {
           affixId: ia._relicAffixData._relicAffixDefinitionId,
-          rollValue: ia._relicAffixData._rollValue,
+          rollValue: Math.fround(ia._relicAffixData._rollValue),
           tier: ia._relicAffixData._tier,
           locked: ia._relicAffixData._locked,
         },
@@ -203,7 +203,7 @@ export class V1Adapter implements ImportAdapter {
     return items.map((g) => ({
       defId: g._gearDefinitionHashId,
       variantIndex: g._variantIndex,
-      multiplier: g._multiplier,
+      multiplier: Math.fround(g._multiplier),
     }));
   }
 
@@ -237,7 +237,9 @@ export class V1Adapter implements ImportAdapter {
    */
   parseBells(saveData: unknown): ParsedBell[] {
     const data = saveData as SaveFile;
-    const bellData = data.greatBellSkillTreeData as SaveFileBellSkillTree | undefined;
+    const bellData = data.greatBellSkillTreeData as
+      | SaveFileBellSkillTree
+      | undefined;
 
     if (!bellData) return [];
 
