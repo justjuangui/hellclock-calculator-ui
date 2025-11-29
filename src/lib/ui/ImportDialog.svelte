@@ -40,6 +40,7 @@
 
   // Dialog ref
   let dialog: HTMLDialogElement;
+  let fileInput: HTMLInputElement | null = null;
 
   // State
   let saveData: unknown = $state(null);
@@ -96,6 +97,9 @@
   }
 
   function reset() {
+    if (fileInput) {
+      fileInput.value = "";
+    }
     saveData = null;
     fileName = "";
     preview = null;
@@ -245,6 +249,7 @@
         </button>
       </div>
       <input
+        bind:this={fileInput}
         id="save-file-input"
         type="file"
         accept=".json"
