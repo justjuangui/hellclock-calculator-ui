@@ -1,13 +1,15 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { RelicRarity, RelicsHelper } from "$lib/hellclock/relics";
-  import { useRelicInventory } from "$lib/context/relicequipped.svelte";
+  import { useRelicInventory, type RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
   import {
     parseRGBA01ToCss,
   } from "$lib/hellclock/utils";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import GameTooltip from "./GameTooltip.svelte";
-    import type { SkillsHelper } from "$lib/hellclock/skills";
+  import MouseTooltip from "./MouseTooltip.svelte";
+  import { mouseTooltip, type MouseTooltipState } from "$lib/actions/mouseTooltip";
+  import type { SkillsHelper } from "$lib/hellclock/skills";
 
   interface Props {
     onRelicSlotClicked?: (
@@ -68,6 +70,25 @@
 
   // Props for relic selection
   const { onRelicSlotClicked }: Props = $props();
+
+  // Tooltip state tracking
+  let activeTooltip = $state<{
+    relic: RelicItemWithPosition;
+    state: MouseTooltipState;
+  } | null>(null);
+
+  function handleTooltipState(relic: RelicItemWithPosition) {
+    return (state: MouseTooltipState) => {
+      if (state.visible) {
+        activeTooltip = { relic, state };
+      } else if (
+        activeTooltip?.relic.position.x === relic.position.x &&
+        activeTooltip?.relic.position.y === relic.position.y
+      ) {
+        activeTooltip = null;
+      }
+    };
+  }
 
   // Handle cell click (place/remove relics or open selector)
   function onCellClick(x: number, y: number) {
@@ -142,11 +163,11 @@
               role="button"
               tabindex="0"
               class={`
-                tooltip tooltip-top
                 relative cursor-pointer transition-colors rounded-sm border col-span-(--this-col) row-span-(--this-row)
                 bg-base-200 border-[color:var(--rarity-color)] hover:shadow-[0_0_8px_var(--rarity-color)]
               `}
               style={`--this-col: ${cell.relic.width};--this-row: ${cell.relic.height};--rarity-color: ${parseRGBA01ToCss(relicsHelper.getRelicRarityColor(cell.relic.rarity as RelicRarity))};`}
+              use:mouseTooltip={{ onStateChange: handleTooltipState(cell.relic), enabled: true }}
               onclick={() => onCellClick(cell.x, cell.y)}
               onkeydown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -156,7 +177,6 @@
               }}
               aria-label="Occupied slot"
             >
-              <GameTooltip lines={relicsHelper.getTooltipLines(cell.relic, lang, statsHelper, skillsHelper)} />
               <!-- Relic sprite -->
               <img
                 src={cell.relic.sprite}
@@ -213,6 +233,18 @@
       </div>
     </div>
   </div>
+
+  <!-- Mouse-following tooltip portal -->
+  <MouseTooltip
+    visible={!!activeTooltip}
+    mouseX={activeTooltip?.state.mouseX ?? 0}
+    mouseY={activeTooltip?.state.mouseY ?? 0}
+    placement="right"
+  >
+    {#if activeTooltip}
+      <GameTooltip lines={relicsHelper.getTooltipLines(activeTooltip.relic, lang, statsHelper, skillsHelper)} />
+    {/if}
+  </MouseTooltip>
 </div>
 
 <style>
