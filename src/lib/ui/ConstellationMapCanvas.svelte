@@ -12,6 +12,7 @@
   import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
   import { spriteUrl, parseRGBA01ToPixiHex } from "$lib/hellclock/utils";
   import GameTooltip from "$lib/ui/GameTooltip.svelte";
+  import MouseTooltip from "$lib/ui/MouseTooltip.svelte";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import type { SkillsHelper } from "$lib/hellclock/skills";
 
@@ -430,6 +431,17 @@
         }
       });
 
+      nodeContainer.on("pointermove", (event) => {
+        if (hoveredNode?.node.GUID === node.GUID && app?.canvas) {
+          const rect = app.canvas.getBoundingClientRect();
+          hoveredNode = {
+            ...hoveredNode,
+            screenX: event.global.x + rect.left,
+            screenY: event.global.y + rect.top,
+          };
+        }
+      });
+
       nodeContainer.on("pointerout", () => {
         nodeContainer.scale.set(1);
         hoveredNode = null;
@@ -561,29 +573,28 @@
 {/if}
 
 <!-- Tooltip Overlay -->
-{#if hoveredNode}
-  {@const nodeLevel = constellationEquippedApi.getNodeLevel(
-    hoveredNode.constellation.id,
-    hoveredNode.node.GUID,
-  )}
-  {@const tooltipLines = constellationsHelper.getTooltipLines(
-    hoveredNode.constellation,
-    hoveredNode.node,
-    lang,
-    nodeLevel,
-    statsHelper,
-    skillsHelper,
-  )}
-  <div
-    class="fixed z-50 pointer-events-none w-64"
-    style="left: {hoveredNode.screenX + 20}px; top: {hoveredNode.screenY +
-      20}px;"
-  >
-    <div class="bg-base-100 border border-base-300 rounded-lg shadow-xl p-3">
-      <GameTooltip lines={tooltipLines} />
-    </div>
-  </div>
-{/if}
+<MouseTooltip
+  visible={!!hoveredNode}
+  mouseX={hoveredNode?.screenX ?? 0}
+  mouseY={hoveredNode?.screenY ?? 0}
+  placement="right"
+>
+  {#if hoveredNode}
+    {@const nodeLevel = constellationEquippedApi.getNodeLevel(
+      hoveredNode.constellation.id,
+      hoveredNode.node.GUID,
+    )}
+    {@const tooltipLines = constellationsHelper.getTooltipLines(
+      hoveredNode.constellation,
+      hoveredNode.node,
+      lang,
+      nodeLevel,
+      statsHelper,
+      skillsHelper,
+    )}
+    <GameTooltip lines={tooltipLines} />
+  {/if}
+</MouseTooltip>
 
 <style>
   .constellation-map-canvas {

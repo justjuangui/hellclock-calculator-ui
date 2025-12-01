@@ -11,6 +11,7 @@
   import { useBellEquipped } from "$lib/context/bellequipped.svelte";
   import { spriteUrl } from "$lib/hellclock/utils";
   import GameTooltip from "$lib/ui/GameTooltip.svelte";
+  import MouseTooltip from "$lib/ui/MouseTooltip.svelte";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import type { SkillsHelper } from "$lib/hellclock/skills";
 
@@ -297,6 +298,17 @@
         }
       });
 
+      nodeContainer.on("pointermove", (event) => {
+        if (hoveredNode?.node.GUID === node.GUID && app?.canvas) {
+          const rect = app.canvas.getBoundingClientRect();
+          hoveredNode = {
+            ...hoveredNode,
+            screenX: event.global.x + rect.left,
+            screenY: event.global.y + rect.top,
+          };
+        }
+      });
+
       nodeContainer.on("pointerout", () => {
         nodeContainer.scale.set(1);
         hoveredNode = null;
@@ -400,12 +412,14 @@
   {/if}
 
   <!-- Tooltip -->
-  {#if hoveredNode && bellsHelper && statsHelper && skillsHelper}
-    <div
-      class="fixed z-50 pointer-events-none w-64"
-      style="left: {hoveredNode.screenX + 20}px; top: {hoveredNode.screenY + 20}px;"
+  {#if bellsHelper && statsHelper && skillsHelper}
+    <MouseTooltip
+      visible={!!hoveredNode}
+      mouseX={hoveredNode?.screenX ?? 0}
+      mouseY={hoveredNode?.screenY ?? 0}
+      placement="right"
     >
-      <div class="bg-base-100 border border-base-300 rounded-lg shadow-xl p-3">
+      {#if hoveredNode}
         <GameTooltip
           lines={bellsHelper.getTooltipLines(
             hoveredNode.bell,
@@ -419,7 +433,7 @@
             skillsHelper,
           )}
         />
-      </div>
-    </div>
+      {/if}
+    </MouseTooltip>
   {/if}
 </div>
