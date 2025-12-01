@@ -1,5 +1,6 @@
-import { type LangText } from "$lib/hellclock/lang";
-import type { StatMod, StatModifierType } from "$lib/hellclock/stats";
+import { type LangText, translate } from "$lib/hellclock/lang";
+import type { StatMod, StatModifierType, StatsHelper } from "$lib/hellclock/stats";
+import { type TooltipLine, parseRGBA01ToCss, fmtValue } from "$lib/hellclock/utils";
 
 export type GearSlot =
   | "WEAPON"
@@ -322,5 +323,44 @@ export class GearsHelper {
       });
 
     return items;
+  }
+
+  /**
+   * Get tooltip lines for a gear item
+   */
+  getTooltipLines(
+    gear: GearItem | undefined,
+    lang: string,
+    statsHelper: StatsHelper,
+  ): TooltipLine[] {
+    if (!gear) {
+      return [{ text: "Empty", type: "info" }];
+    }
+
+    const lines: TooltipLine[] = [
+      {
+        text: `${translate(gear.localizedName, lang)} (T${gear.tier})`,
+        color: gear.color ? parseRGBA01ToCss(gear.color) : undefined,
+        icon: gear.sprite,
+        type: "header",
+      },
+    ];
+
+    lines.push({ text: "", type: "divider" });
+
+    for (const mod of gear.mods) {
+      lines.push({
+        text: fmtValue(
+          mod,
+          lang,
+          statsHelper,
+          gear.multiplierRange[0],
+          gear.multiplierRange[1],
+        ),
+        type: "affix",
+      });
+    }
+
+    return lines;
   }
 }

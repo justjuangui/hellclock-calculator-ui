@@ -1,14 +1,16 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte";
-  import type { GearsHelper, GearSlot } from "$lib/hellclock/gears";
+  import type { GearsHelper, GearSlot, GearItem } from "$lib/hellclock/gears";
   import { translate } from "$lib/hellclock/lang";
   import type { StatsHelper } from "$lib/hellclock/stats";
   import {
     parseRGBA01ToCss,
     prettySlot,
     spriteUrl,
-    tooltipText,
   } from "$lib/hellclock/utils";
+  import MouseTooltip from "./MouseTooltip.svelte";
+  import GameTooltip from "./GameTooltip.svelte";
+  import { mouseTooltip, type MouseTooltipState } from "$lib/actions/mouseTooltip";
 
   let { blessedGear, equipped, onSlotClicked } = $props();
   const lang = getContext<string>("lang") || "en";
@@ -55,6 +57,23 @@
     allSlots = defaultOrder.filter((s) => unique.includes(s) as boolean);
     if (!allSlots.length) allSlots = unique;
   });
+
+  // Tooltip state tracking
+  let activeTooltip = $state<{
+    slot: GearSlot;
+    item: GearItem;
+    state: MouseTooltipState;
+  } | null>(null);
+
+  function handleTooltipState(slot: GearSlot, item: GearItem) {
+    return (state: MouseTooltipState) => {
+      if (state.visible) {
+        activeTooltip = { slot, item, state };
+      } else if (activeTooltip?.slot === slot) {
+        activeTooltip = null;
+      }
+    };
+  }
 </script>
 
 <div>
@@ -69,6 +88,10 @@
           aria-label={slotLabel[s]}
           class={`relative cursor-pointer aspect-square rounded border-2 flex items-center justify-center transition-colors ${equipped[s]?.color ? "border-[var(--color)] bg-[var(--color)]/10" : "border-base-300 bg-base-200 hover:bg-base-100"}`}
           style={`--color: ${equipped[s]?.color ? parseRGBA01ToCss(equipped[s]!.color) : "transparent"}`}
+          use:mouseTooltip={{
+            onStateChange: handleTooltipState(s, equipped[s]),
+            enabled: !!equipped[s]
+          }}
           onkeydown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               onSlotClicked(blessedGear, s, equipped[s] ? true : false);
@@ -89,13 +112,6 @@
               >{slotLabel[s]}</span
             >
           {/if}
-          <div class="tooltip absolute inset-0">
-            <div class="tooltip-content">
-              {#each tooltipText(equipped[s], lang, statsHelper) as line}
-                <p class="text-xs">{line}</p>
-              {/each}
-            </div>
-          </div>
           {#if equipped[s]}
             <span
               class="badge border-[var(--color)] badge-xs absolute -top-1 -right-1"
@@ -105,4 +121,18 @@
         </div>
       {/each}
   </div>
+
+  <!-- Mouse-following tooltip portal -->
+  <MouseTooltip
+    visible={!!activeTooltip}
+    mouseX={activeTooltip?.state.mouseX ?? 0}
+    mouseY={activeTooltip?.state.mouseY ?? 0}
+    placement="right"
+  >
+    {#if activeTooltip}
+      <GameTooltip
+        lines={gearsHelper.getTooltipLines(activeTooltip.item, lang, statsHelper)}
+      />
+    {/if}
+  </MouseTooltip>
 </div>
