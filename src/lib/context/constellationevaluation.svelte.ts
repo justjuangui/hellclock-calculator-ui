@@ -150,6 +150,31 @@ export function provideConstellationEvaluation(
       }
     }
 
+    // Add devotion point stats
+    // Map category colors to stat names
+    const devotionStatMap: Record<string, string> = {
+      "Red": "FuryPoints",
+      "Green": "DisciplinePoints",
+      "Blue": "FaithPoints",
+    };
+
+    for (const [category, statName] of Object.entries(devotionStatMap)) {
+      const points = constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
+      if (points > 0) {
+        mods[statName] = [{
+          source: `Devotion (${statName})`,
+          amount: points,
+          layer: "simple",
+          meta: {
+            type: "constellation",
+            constellationId: "devotion",
+            nodeId: category,
+            value: String(points),
+          },
+        }];
+      }
+    }
+
     return mods;
   }
 

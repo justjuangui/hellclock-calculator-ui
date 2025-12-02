@@ -144,6 +144,20 @@ export function provideSkillEvaluation(
           },
         });
       }
+
+      // Add skill level stat
+      const skillLevelStatName = `Skill_${skill.skill.name.replaceAll(" ", "")}_Level`;
+      mods[skillLevelStatName] = [{
+        source: `Skill ${translate(skill.skill.localizedName, lang)} Level`,
+        amount: skill.selectedLevel,
+        layer: "simple",
+        meta: {
+          type: "skill",
+          id: String(skill.skill.id),
+          slot: slot,
+          value: String(skill.selectedLevel),
+        },
+      }];
     });
 
     return mods;
