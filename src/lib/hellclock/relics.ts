@@ -201,7 +201,7 @@ export type AddSkillStatModifierSkillEffectData = BaseSkillEffect & {
 
 export type AddCharacterStatModifierSkillEffectData = BaseSkillEffect & {
   type: "AddCharacterStatModifierSkillEffectData";
-  modifiers: any[]; // Could be expanded with specific modifier types
+  statModifiers: SkillEffectStatModifierDefinition[];
 };
 
 export type DamageTargetSkillEffectData = BaseSkillEffect & {

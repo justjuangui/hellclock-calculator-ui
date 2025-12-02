@@ -1,9 +1,12 @@
 import type {
-  AddSkillValueModifierSkillEffectData,
   AddStatusToTargetSkillEffectData,
   RelicAffix,
   RelicsHelper,
 } from "$lib/hellclock/relics";
+import {
+  effectConverterRegistry,
+  type EffectConverterContext,
+} from "$lib/context/relic-effect-converters";
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import type { StatusHelper } from "$lib/hellclock/status";
@@ -21,6 +24,7 @@ export type RelicModSource = {
   source: string;
   amount: number;
   layer: string;
+  calculation?: string;
   meta: {
     type: string;
     id: string;
@@ -207,6 +211,8 @@ export function provideRelicEvaluation(
         relicName,
         positionKey,
         affixType,
+        tier,
+        rank,
         mods,
       );
     }
@@ -218,72 +224,33 @@ export function provideRelicEvaluation(
     relicName: string,
     positionKey: string,
     affixType: string,
+    tier: number,
+    rank: number,
     mods: RelicModCollection,
   ): void {
-    // For now only support for SkillDefinition behavior affixes
-    if (affix.behaviorData?.skillDefinition?.name) {
-      for (const effect of affix.behaviorData.effects?.filter(
-        (e) =>
-          e.type === "AddSkillValueModifierSkillEffectData" &&
-          e.effectTrigger === "Always",
-      ) ?? []) {
-        const addEffect = effect as AddSkillValueModifierSkillEffectData;
-        for (const modifier of addEffect.modifiers) {
-          const skillValueModifierName =
-            modifier.skillValueModifierKey.replaceAll(" ", "");
+    if (!affix.behaviorData?.skillDefinition?.name) return;
 
-          if (skillValueModifierName.includes("!Status")) {
-            continue;
-          }
-          let layer = "add";
-          const modifierType = modifier.modifierType.toLowerCase();
-          if (modifierType === "multiplicative") {
-            layer = "mult";
-          } else if (modifierType === "multiplicativeadditive") {
-            layer = "multadd";
-          }
-          const statName =
-            `skill_${affix.behaviorData.skillDefinition.name}_${skillValueModifierName}`.replaceAll(
-              " ",
-              "",
-            );
+    const context: EffectConverterContext = {
+      relicName,
+      positionKey,
+      affixId: affix.id,
+      affixType,
+      tier,
+      rank,
+      affixValue: value,
+      variables: affix.behaviorData.variables?.variables || [],
+      rollVariableName: affix.rollVariableName || "",
+      skillName: affix.behaviorData.skillDefinition.name,
+    };
 
+    for (const effect of affix.behaviorData.effects || []) {
+      const conversionResult = effectConverterRegistry.convert(effect, context);
+      if (conversionResult) {
+        for (const { statName, modSource } of conversionResult.mods) {
           if (!(statName in mods)) {
             mods[statName] = [];
           }
-
-          let valueToUse = value;
-
-          if (affix.rollVariableName !== modifier.value.valueOrName) {
-            // Search for variable if exists and get the baseValue
-            const varValue = affix.behaviorData.variables.variables.find(
-              (v) => v.name === modifier.value.valueOrName,
-            );
-
-            if (varValue) {
-              valueToUse = varValue.baseValue;
-            } else {
-              valueToUse = Number(modifier.value.valueOrName) || 0;
-            }
-          }
-          mods[statName].push({
-            source: `${relicName} (${affixType})`,
-            amount: getValueFromMultiplier(
-              valueToUse,
-              modifier.modifierType,
-              1,
-              1,
-              1,
-            ),
-            layer: layer || "base",
-            meta: {
-              type: "relic",
-              id: String(affix.id),
-              position: positionKey,
-              affixType: affixType,
-              value: String(valueToUse),
-            },
-          });
+          mods[statName].push(modSource);
         }
       }
     }

@@ -17,6 +17,8 @@ export type UnifiedModSource = {
   source: string;
   amount: number;
   layer: string;
+  condition?: string;
+  calculation?: string;
   meta: {
     type: string;
     id: string;
@@ -262,6 +264,7 @@ export function provideEvaluationManager(
         source: source.source,
         amount: source.amount,
         layer: source.layer,
+        condition: source.condition,
         meta: {
           type: source.meta.type,
           id: source.meta.id,
@@ -285,6 +288,7 @@ export function provideEvaluationManager(
         source: source.source,
         amount: source.amount,
         layer: source.layer,
+        calculation: source.calculation,
         meta: {
           type: source.meta.type,
           id: source.meta.id,
