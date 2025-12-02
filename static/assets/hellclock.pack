@@ -6,6 +6,13 @@ pack "hellclock" {
     Fire: 4
   }
   group_templates {
+    simple {
+      layers:[simple]
+      pipeline:[simple]
+      phases {
+        simple =  sum_by(group: SELF, layer: "simple")
+      }
+    }
     common {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -129,7 +136,9 @@ pack "hellclock" {
     }
   }
   stats {
-    
+    FuryPoints: FuryPoints.Stats using simple
+    DisciplinePoints: DisciplinePoints.Stats using simple
+    FaithPoints: FaithPoints.Stats using simple
     BaseDamage: BaseDamage.DEFAULT using common
     CriticalChance: CriticalChance.PERCENTAGE using common
     CriticalDamage: CriticalDamage.PERCENTAGE using common
@@ -261,6 +270,7 @@ pack "hellclock" {
     MinimumAttackSpeed: MinimumAttackSpeed.PERCENTAGE using common
     MinimumMovementSpeed: MinimumMovementSpeed.PERCENTAGE using common
     SkillProjectileDamage: SkillProjectileDamage.PERCENTAGE using common
+    skill_BasicAttackDefinition_Level: skill_BasicAttackDefinition_Level.skill using simple
     skill_BasicAttackDefinition_Dmg_Total: skill_BasicAttackDefinition_Dmg_Total.skill using common
     skill_BasicAttackDefinition_CurrentManaCost: skill_BasicAttackDefinition_CurrentManaCost.skill using common
     skill_BasicAttackDefinition_Dmg_Physical: skill_BasicAttackDefinition_Dmg_Physical.skill using common
@@ -293,6 +303,7 @@ pack "hellclock" {
     skill_BasicAttackDefinition_PierceDamageModifier: skill_BasicAttackDefinition_PierceDamageModifier.skill using common
     skill_BasicAttackDefinition_BulletCountModifier: skill_BasicAttackDefinition_BulletCountModifier.skill using BulletCountModifier
     skill_BasicAttackDefinition_BounceAmountModifier: skill_BasicAttackDefinition_BounceAmountModifier.skill using common
+    skill_SplitshotDefinition_Level: skill_SplitshotDefinition_Level.skill using simple
     skill_SplitshotDefinition_Dmg_Total: skill_SplitshotDefinition_Dmg_Total.skill using common
     skill_SplitshotDefinition_CurrentManaCost: skill_SplitshotDefinition_CurrentManaCost.skill using common
     skill_SplitshotDefinition_Dmg_Physical: skill_SplitshotDefinition_Dmg_Physical.skill using common
@@ -329,6 +340,7 @@ pack "hellclock" {
     skill_SplitshotDefinition_ProjectileWidthModifier: skill_SplitshotDefinition_ProjectileWidthModifier.skill using common
     skill_SplitshotDefinition_ChargedShotEnabledModifier: skill_SplitshotDefinition_ChargedShotEnabledModifier.skill using common
     skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier: skill_SplitshotDefinition_ChargedShotDamagePerBulletModifier.skill using common
+    skill_ShadowDashDefinition_Level: skill_ShadowDashDefinition_Level.skill using simple
     skill_ShadowDashDefinition_Dmg_Total: skill_ShadowDashDefinition_Dmg_Total.skill using common
     skill_ShadowDashDefinition_CurrentManaCost: skill_ShadowDashDefinition_CurrentManaCost.skill using common
     skill_ShadowDashDefinition_Dmg_Physical: skill_ShadowDashDefinition_Dmg_Physical.skill using common
@@ -360,6 +372,7 @@ pack "hellclock" {
     skill_ShadowDashDefinition_DistanceModifier: skill_ShadowDashDefinition_DistanceModifier.skill using common
     skill_ShadowDashDefinition_RadiusModifier: skill_ShadowDashDefinition_RadiusModifier.skill using RadiusModifier
     skill_ShadowDashDefinition_DashSpeedModifier: skill_ShadowDashDefinition_DashSpeedModifier.skill using common
+    skill_RepeaterDefinition_Level: skill_RepeaterDefinition_Level.skill using simple
     skill_RepeaterDefinition_Dmg_Total: skill_RepeaterDefinition_Dmg_Total.skill using common
     skill_RepeaterDefinition_CurrentManaCost: skill_RepeaterDefinition_CurrentManaCost.skill using common
     skill_RepeaterDefinition_Dmg_Physical: skill_RepeaterDefinition_Dmg_Physical.skill using common
@@ -393,6 +406,7 @@ pack "hellclock" {
     skill_RepeaterDefinition_CanPierceModifier: skill_RepeaterDefinition_CanPierceModifier.skill using common
     skill_RepeaterDefinition_PierceDamageModifier: skill_RepeaterDefinition_PierceDamageModifier.skill using common
     skill_RepeaterDefinition_BounceAmountModifier: skill_RepeaterDefinition_BounceAmountModifier.skill using common
+    skill_ReflexesDefinition_Level: skill_ReflexesDefinition_Level.skill using simple
     skill_ReflexesDefinition_Dmg_Total: skill_ReflexesDefinition_Dmg_Total.skill using common
     skill_ReflexesDefinition_CurrentManaCost: skill_ReflexesDefinition_CurrentManaCost.skill using common
     skill_ReflexesDefinition_Dmg_Physical: skill_ReflexesDefinition_Dmg_Physical.skill using common
@@ -432,6 +446,7 @@ pack "hellclock" {
     skill_ReflexesDefinition_RegenKnifeonKillTargetModifier: skill_ReflexesDefinition_RegenKnifeonKillTargetModifier.skill using common
     skill_ReflexesDefinition_BounceToAnotherTargetModifier: skill_ReflexesDefinition_BounceToAnotherTargetModifier.skill using common
     skill_ReflexesDefinition_BounceAmountModifier: skill_ReflexesDefinition_BounceAmountModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_Level: skill_PrayerOfHealthSkillDefinition_Level.skill using simple
     skill_PrayerOfHealthSkillDefinition_Dmg_Total: skill_PrayerOfHealthSkillDefinition_Dmg_Total.skill using common
     skill_PrayerOfHealthSkillDefinition_CurrentManaCost: skill_PrayerOfHealthSkillDefinition_CurrentManaCost.skill using common
     skill_PrayerOfHealthSkillDefinition_Dmg_Physical: skill_PrayerOfHealthSkillDefinition_Dmg_Physical.skill using common
@@ -473,6 +488,7 @@ pack "hellclock" {
     skill_PrayerOfHealthSkillDefinition_BaseDamageOverrideModifier: skill_PrayerOfHealthSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_EDamageTypeModifier: skill_PrayerOfHealthSkillDefinition_EDamageTypeModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_SpecialStartDamageModModifier: skill_PrayerOfHealthSkillDefinition_SpecialStartDamageModModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_Level: skill_PrayerOfVengeanceSkillDefinition_Level.skill using simple
     skill_PrayerOfVengeanceSkillDefinition_Dmg_Total: skill_PrayerOfVengeanceSkillDefinition_Dmg_Total.skill using common
     skill_PrayerOfVengeanceSkillDefinition_CurrentManaCost: skill_PrayerOfVengeanceSkillDefinition_CurrentManaCost.skill using common
     skill_PrayerOfVengeanceSkillDefinition_Dmg_Physical: skill_PrayerOfVengeanceSkillDefinition_Dmg_Physical.skill using common
@@ -502,6 +518,7 @@ pack "hellclock" {
     skill_PrayerOfVengeanceSkillDefinition_IgnoreCooldownModifier: skill_PrayerOfVengeanceSkillDefinition_IgnoreCooldownModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_SkillCharacterMovementSpeedModifier: skill_PrayerOfVengeanceSkillDefinition_SkillCharacterMovementSpeedModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_ActivationBuffDurationModifier: skill_PrayerOfVengeanceSkillDefinition_ActivationBuffDurationModifier.skill using common
+    skill_TheOldBellSkillDefinition_Level: skill_TheOldBellSkillDefinition_Level.skill using simple
     skill_TheOldBellSkillDefinition_Dmg_Total: skill_TheOldBellSkillDefinition_Dmg_Total.skill using common
     skill_TheOldBellSkillDefinition_CurrentManaCost: skill_TheOldBellSkillDefinition_CurrentManaCost.skill using common
     skill_TheOldBellSkillDefinition_Dmg_Physical: skill_TheOldBellSkillDefinition_Dmg_Physical.skill using common
@@ -531,6 +548,7 @@ pack "hellclock" {
     skill_TheOldBellSkillDefinition_IgnoreCooldownModifier: skill_TheOldBellSkillDefinition_IgnoreCooldownModifier.skill using common
     skill_TheOldBellSkillDefinition_SkillCharacterMovementSpeedModifier: skill_TheOldBellSkillDefinition_SkillCharacterMovementSpeedModifier.skill using common
     skill_TheOldBellSkillDefinition_RadiusModifier: skill_TheOldBellSkillDefinition_RadiusModifier.skill using RadiusModifier
+    skill_JudgementDefinition_Level: skill_JudgementDefinition_Level.skill using simple
     skill_JudgementDefinition_Dmg_Total: skill_JudgementDefinition_Dmg_Total.skill using common
     skill_JudgementDefinition_CurrentManaCost: skill_JudgementDefinition_CurrentManaCost.skill using common
     skill_JudgementDefinition_Dmg_Physical: skill_JudgementDefinition_Dmg_Physical.skill using common
@@ -566,6 +584,7 @@ pack "hellclock" {
     skill_JudgementDefinition_IntensityModifier: skill_JudgementDefinition_IntensityModifier.skill using common
     skill_JudgementDefinition_IntervalModifier: skill_JudgementDefinition_IntervalModifier.skill using common
     skill_JudgementDefinition_StatusDurationModifier: skill_JudgementDefinition_StatusDurationModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_Level: skill_DoubleKnivesSkillDefinition_Level.skill using simple
     skill_DoubleKnivesSkillDefinition_Dmg_Total: skill_DoubleKnivesSkillDefinition_Dmg_Total.skill using common
     skill_DoubleKnivesSkillDefinition_CurrentManaCost: skill_DoubleKnivesSkillDefinition_CurrentManaCost.skill using common
     skill_DoubleKnivesSkillDefinition_Dmg_Physical: skill_DoubleKnivesSkillDefinition_Dmg_Physical.skill using common
@@ -598,6 +617,7 @@ pack "hellclock" {
     skill_DoubleKnivesSkillDefinition_SpinSpeedModifier: skill_DoubleKnivesSkillDefinition_SpinSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_MoveSpeedModifier: skill_DoubleKnivesSkillDefinition_MoveSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier: skill_DoubleKnivesSkillDefinition_NoMoveSpeedPenaltyModifier.skill using common
+    skill_PassageSkillDefinition_Level: skill_PassageSkillDefinition_Level.skill using simple
     skill_PassageSkillDefinition_Dmg_Total: skill_PassageSkillDefinition_Dmg_Total.skill using common
     skill_PassageSkillDefinition_CurrentManaCost: skill_PassageSkillDefinition_CurrentManaCost.skill using common
     skill_PassageSkillDefinition_Dmg_Physical: skill_PassageSkillDefinition_Dmg_Physical.skill using common
@@ -637,6 +657,7 @@ pack "hellclock" {
     skill_PassageSkillDefinition_BaseDamageOverrideModifier: skill_PassageSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_PassageSkillDefinition_EDamageTypeModifier: skill_PassageSkillDefinition_EDamageTypeModifier.skill using common
     skill_PassageSkillDefinition_SpecialStartDamageModModifier: skill_PassageSkillDefinition_SpecialStartDamageModModifier.skill using common
+    skill_LassoSkillDefinition_Level: skill_LassoSkillDefinition_Level.skill using simple
     skill_LassoSkillDefinition_Dmg_Total: skill_LassoSkillDefinition_Dmg_Total.skill using common
     skill_LassoSkillDefinition_CurrentManaCost: skill_LassoSkillDefinition_CurrentManaCost.skill using common
     skill_LassoSkillDefinition_Dmg_Physical: skill_LassoSkillDefinition_Dmg_Physical.skill using common
@@ -670,6 +691,7 @@ pack "hellclock" {
     skill_LassoSkillDefinition_ChanceToBleedModifier: skill_LassoSkillDefinition_ChanceToBleedModifier.skill using common
     skill_LassoSkillDefinition_BleedDurationModifier: skill_LassoSkillDefinition_BleedDurationModifier.skill using common
     skill_LassoSkillDefinition_BleedIntensityModifier: skill_LassoSkillDefinition_BleedIntensityModifier.skill using common
+    skill_FeitorsLashSkillDefinition_Level: skill_FeitorsLashSkillDefinition_Level.skill using simple
     skill_FeitorsLashSkillDefinition_Dmg_Total: skill_FeitorsLashSkillDefinition_Dmg_Total.skill using common
     skill_FeitorsLashSkillDefinition_CurrentManaCost: skill_FeitorsLashSkillDefinition_CurrentManaCost.skill using common
     skill_FeitorsLashSkillDefinition_Dmg_Physical: skill_FeitorsLashSkillDefinition_Dmg_Physical.skill using common
@@ -699,6 +721,7 @@ pack "hellclock" {
     skill_FeitorsLashSkillDefinition_IgnoreCooldownModifier: skill_FeitorsLashSkillDefinition_IgnoreCooldownModifier.skill using common
     skill_FeitorsLashSkillDefinition_SkillCharacterMovementSpeedModifier: skill_FeitorsLashSkillDefinition_SkillCharacterMovementSpeedModifier.skill using common
     skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier: skill_FeitorsLashSkillDefinition_SlashAreaAngleModifier.skill using SlashAreaAngleModifier
+    skill_SlowTimeSkillDefinition_Level: skill_SlowTimeSkillDefinition_Level.skill using simple
     skill_SlowTimeSkillDefinition_Dmg_Total: skill_SlowTimeSkillDefinition_Dmg_Total.skill using common
     skill_SlowTimeSkillDefinition_CurrentManaCost: skill_SlowTimeSkillDefinition_CurrentManaCost.skill using common
     skill_SlowTimeSkillDefinition_Dmg_Physical: skill_SlowTimeSkillDefinition_Dmg_Physical.skill using common
@@ -734,6 +757,7 @@ pack "hellclock" {
     skill_SlowTimeSkillDefinition_IntensityModifier: skill_SlowTimeSkillDefinition_IntensityModifier.skill using common
     skill_SlowTimeSkillDefinition_IntervalModifier: skill_SlowTimeSkillDefinition_IntervalModifier.skill using common
     skill_SlowTimeSkillDefinition_StatusDurationModifier: skill_SlowTimeSkillDefinition_StatusDurationModifier.skill using common
+    skill_UsePotionSkillDefinition_Level: skill_UsePotionSkillDefinition_Level.skill using simple
     skill_UsePotionSkillDefinition_Dmg_Total: skill_UsePotionSkillDefinition_Dmg_Total.skill using common
     skill_UsePotionSkillDefinition_CurrentManaCost: skill_UsePotionSkillDefinition_CurrentManaCost.skill using common
     skill_UsePotionSkillDefinition_Dmg_Physical: skill_UsePotionSkillDefinition_Dmg_Physical.skill using common
@@ -766,6 +790,7 @@ pack "hellclock" {
     skill_UsePotionSkillDefinition_BarrierRegenModifier: skill_UsePotionSkillDefinition_BarrierRegenModifier.skill using common
     skill_UsePotionSkillDefinition_ManaRegenModifier: skill_UsePotionSkillDefinition_ManaRegenModifier.skill using common
     skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier: skill_UsePotionSkillDefinition_CanUseWithFullLifeModifier.skill using common
+    skill_ClosedBodySkillDefinition_Level: skill_ClosedBodySkillDefinition_Level.skill using simple
     skill_ClosedBodySkillDefinition_Dmg_Total: skill_ClosedBodySkillDefinition_Dmg_Total.skill using common
     skill_ClosedBodySkillDefinition_CurrentManaCost: skill_ClosedBodySkillDefinition_CurrentManaCost.skill using common
     skill_ClosedBodySkillDefinition_Dmg_Physical: skill_ClosedBodySkillDefinition_Dmg_Physical.skill using common
@@ -806,6 +831,7 @@ pack "hellclock" {
     skill_ClosedBodySkillDefinition_DamageModModifier: skill_ClosedBodySkillDefinition_DamageModModifier.skill using common
     skill_ClosedBodySkillDefinition_BaseDamageOverrideModifier: skill_ClosedBodySkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_ClosedBodySkillDefinition_EDamageTypeModifier: skill_ClosedBodySkillDefinition_EDamageTypeModifier.skill using common
+    skill_BombardmentSkillDefinition_Level: skill_BombardmentSkillDefinition_Level.skill using simple
     skill_BombardmentSkillDefinition_Dmg_Total: skill_BombardmentSkillDefinition_Dmg_Total.skill using common
     skill_BombardmentSkillDefinition_CurrentManaCost: skill_BombardmentSkillDefinition_CurrentManaCost.skill using common
     skill_BombardmentSkillDefinition_Dmg_Physical: skill_BombardmentSkillDefinition_Dmg_Physical.skill using common
@@ -849,6 +875,7 @@ pack "hellclock" {
     skill_BombardmentSkillDefinition_DamageModModifier: skill_BombardmentSkillDefinition_DamageModModifier.skill using common
     skill_BombardmentSkillDefinition_BaseDamageOverrideModifier: skill_BombardmentSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_BombardmentSkillDefinition_EDamageTypeModifier: skill_BombardmentSkillDefinition_EDamageTypeModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_Level: skill_SummonTheGuardSkillDefinition_Level.skill using simple
     skill_SummonTheGuardSkillDefinition_Dmg_Total: skill_SummonTheGuardSkillDefinition_Dmg_Total.skill using common
     skill_SummonTheGuardSkillDefinition_CurrentManaCost: skill_SummonTheGuardSkillDefinition_CurrentManaCost.skill using common
     skill_SummonTheGuardSkillDefinition_Dmg_Physical: skill_SummonTheGuardSkillDefinition_Dmg_Physical.skill using common
@@ -885,6 +912,7 @@ pack "hellclock" {
     skill_SummonTheGuardSkillDefinition_EnableCompanionBuffModifier: skill_SummonTheGuardSkillDefinition_EnableCompanionBuffModifier.skill using common
     skill_SummonTheGuardSkillDefinition_EnableAmountBuffModifier: skill_SummonTheGuardSkillDefinition_EnableAmountBuffModifier.skill using common
     skill_SummonTheGuardSkillDefinition_EnableAlternativeSkillsModifier: skill_SummonTheGuardSkillDefinition_EnableAlternativeSkillsModifier.skill using common
+    skill_MatadeiraSkillDefinition_Level: skill_MatadeiraSkillDefinition_Level.skill using simple
     skill_MatadeiraSkillDefinition_Dmg_Total: skill_MatadeiraSkillDefinition_Dmg_Total.skill using common
     skill_MatadeiraSkillDefinition_CurrentManaCost: skill_MatadeiraSkillDefinition_CurrentManaCost.skill using common
     skill_MatadeiraSkillDefinition_Dmg_Physical: skill_MatadeiraSkillDefinition_Dmg_Physical.skill using common
@@ -929,6 +957,7 @@ pack "hellclock" {
     skill_MatadeiraSkillDefinition_BaseDamageOverrideModifier: skill_MatadeiraSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_MatadeiraSkillDefinition_EDamageTypeModifier: skill_MatadeiraSkillDefinition_EDamageTypeModifier.skill using common
     skill_MatadeiraSkillDefinition_SpecialStartDamageModModifier: skill_MatadeiraSkillDefinition_SpecialStartDamageModModifier.skill using common
+    skill_HolyRosarySkillDefinition_Level: skill_HolyRosarySkillDefinition_Level.skill using simple
     skill_HolyRosarySkillDefinition_Dmg_Total: skill_HolyRosarySkillDefinition_Dmg_Total.skill using common
     skill_HolyRosarySkillDefinition_CurrentManaCost: skill_HolyRosarySkillDefinition_CurrentManaCost.skill using common
     skill_HolyRosarySkillDefinition_Dmg_Physical: skill_HolyRosarySkillDefinition_Dmg_Physical.skill using common
@@ -966,6 +995,7 @@ pack "hellclock" {
     skill_HolyRosarySkillDefinition_UseSummonAsTargetModifier: skill_HolyRosarySkillDefinition_UseSummonAsTargetModifier.skill using common
     skill_HolyRosarySkillDefinition_ExpansionSpeedModifier: skill_HolyRosarySkillDefinition_ExpansionSpeedModifier.skill using common
     skill_HolyRosarySkillDefinition_BaseOrbitRadiusModifier: skill_HolyRosarySkillDefinition_BaseOrbitRadiusModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_Level: skill_VeilofQuilsSkillDefinition_Level.skill using simple
     skill_VeilofQuilsSkillDefinition_Dmg_Total: skill_VeilofQuilsSkillDefinition_Dmg_Total.skill using common
     skill_VeilofQuilsSkillDefinition_CurrentManaCost: skill_VeilofQuilsSkillDefinition_CurrentManaCost.skill using common
     skill_VeilofQuilsSkillDefinition_Dmg_Physical: skill_VeilofQuilsSkillDefinition_Dmg_Physical.skill using common
@@ -999,6 +1029,7 @@ pack "hellclock" {
     skill_VeilofQuilsSkillDefinition_ProjectilePierceAmountModifier: skill_VeilofQuilsSkillDefinition_ProjectilePierceAmountModifier.skill using common
     skill_VeilofQuilsSkillDefinition_ProjectileAmountModifier: skill_VeilofQuilsSkillDefinition_ProjectileAmountModifier.skill using ProjectileAmountModifier
     skill_VeilofQuilsSkillDefinition_PierceDamageModifier: skill_VeilofQuilsSkillDefinition_PierceDamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_Level: skill_SummonBruteSkillDefinition_Level.skill using simple
     skill_SummonBruteSkillDefinition_Dmg_Total: skill_SummonBruteSkillDefinition_Dmg_Total.skill using common
     skill_SummonBruteSkillDefinition_CurrentManaCost: skill_SummonBruteSkillDefinition_CurrentManaCost.skill using common
     skill_SummonBruteSkillDefinition_Dmg_Physical: skill_SummonBruteSkillDefinition_Dmg_Physical.skill using common
@@ -1048,6 +1079,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_DamageModModifier: skill_SummonBruteSkillDefinition_DamageModModifier.skill using common
     skill_SummonBruteSkillDefinition_BaseDamageOverrideModifier: skill_SummonBruteSkillDefinition_BaseDamageOverrideModifier.skill using common
     skill_SummonBruteSkillDefinition_EDamageTypeModifier: skill_SummonBruteSkillDefinition_EDamageTypeModifier.skill using common
+    skill_SummonMarksmenSkillDefinition_Level: skill_SummonMarksmenSkillDefinition_Level.skill using simple
     skill_SummonMarksmenSkillDefinition_Dmg_Total: skill_SummonMarksmenSkillDefinition_Dmg_Total.skill using common
     skill_SummonMarksmenSkillDefinition_CurrentManaCost: skill_SummonMarksmenSkillDefinition_CurrentManaCost.skill using common
     skill_SummonMarksmenSkillDefinition_Dmg_Physical: skill_SummonMarksmenSkillDefinition_Dmg_Physical.skill using common
@@ -1082,7 +1114,6 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier: skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier.skill using common
   }
   formulas {
-    
     // =====================================
     // BasicAttackDefinition CONVERSION FORMULA
     // =====================================
