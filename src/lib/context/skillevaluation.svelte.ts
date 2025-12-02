@@ -8,6 +8,7 @@ export type SkillModSource = {
   source: string;
   amount: number;
   layer: string;
+  condition?: string;
   meta: {
     type: string;
     id: string;
@@ -55,6 +56,23 @@ export function provideSkillEvaluation(
     Object.entries(skillSlotsApi.skillsEquipped).forEach(([slot, skill]) => {
       if (!skill) return;
 
+      // Add skill level stat
+      const skillLevelStatName = `skill_${skill.skill.name.replaceAll(" ", "")}_Level`;
+
+      mods[skillLevelStatName] = [
+        {
+          source: `Skill ${translate(skill.skill.localizedName, lang)} Level`,
+          amount: skill.selectedLevel,
+          layer: "simple",
+          meta: {
+            type: "skill",
+            id: String(skill.skill.id),
+            slot: slot,
+            value: String(skill.selectedLevel),
+          },
+        },
+      ];
+
       // Add base value modifiers
       const baseValMods = skillsHelper?.getSkillBaseValueModsById(
         skill.skill.name,
@@ -69,7 +87,8 @@ export function provideSkillEvaluation(
         if (baseValMod.value.startsWith("IGNORE")) {
           continue;
         }
-        const skillGroup = `skill_${skill.skill.name}_${baseValMod.id}`.replaceAll(" ", "");
+        const skillGroup =
+          `skill_${skill.skill.name}_${baseValMod.id}`.replaceAll(" ", "");
         if (!(skillGroup in mods)) {
           mods[skillGroup] = [];
         }
@@ -80,8 +99,9 @@ export function provideSkillEvaluation(
           amount = Number(val) ?? 0;
         } else if (baseValMod.value.startsWith("RANDOM:")) {
           let [_, valRange] = baseValMod.value.split(":");
-          const range = (skill.skill as any)[valRange] ?? [0,0];
-          amount = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0]
+          const range = (skill.skill as any)[valRange] ?? [0, 0];
+          amount =
+            Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
         } else if (baseValMod.value.startsWith("DEEP:")) {
           const deepEval = baseValMod.value.replace("DEEP:", "").split(":");
           let val;
@@ -106,58 +126,47 @@ export function provideSkillEvaluation(
         });
       }
 
-      // Add level-based modifiers
-      let valueModByLevel = skill.skill.modifiersPerLevel[skill.selectedLevel];
-      if (!valueModByLevel) {
-        console.warn(
-          `ValueModifiers not found for skill ${skill.skill.name} at level ${skill.selectedLevel}, using level 7`,
-        );
-        valueModByLevel = skill.skill.modifiersPerLevel[7] ?? [];
-      }
+      // Add level-based modifiers for ALL levels with conditions
+      for (const [levelKey, levelModifiers] of Object.entries(
+        skill.skill.modifiersPerLevel,
+      )) {
+        for (const modifier of levelModifiers) {
+          // Skip status modifiers
+          if (modifier.skillValueModifierKey.includes("!Status")) {
+            continue;
+          }
 
-      for (const modifier of valueModByLevel) {
-        // For now Skip status
-        if (modifier.skillValueModifierKey.includes("!Status")) {
-          continue;
-        }
-        const [statInfo, layer] = mapSkillModForEval(modifier).split(".");
-        const statName = `skill_${skill.skill.name}_${statInfo}`.replaceAll(" ", "");
-        if (!(statName in mods)) {
-          mods[statName] = [];
-        }
-        mods[statName].push({
-          source: `Skill ${translate(skill.skill.localizedName, lang)} Level ${skill.selectedLevel}`,
-          amount: getValueFromMultiplier(
-            modifier.value,
-            modifier.modifierType,
-            1,
-            1,
-            1,
-          ),
-          layer: layer || "base",
-          meta: {
-            type: "skill",
-            id: String(skill.skill.id),
-            slot: slot,
-            level: String(skill.selectedLevel),
-            value: String(modifier.value),
-          },
-        });
-      }
+          const [statInfo, layer] = mapSkillModForEval(modifier).split(".");
+          const statName = `skill_${skill.skill.name}_${statInfo}`.replaceAll(
+            " ",
+            "",
+          );
 
-      // Add skill level stat
-      const skillLevelStatName = `Skill_${skill.skill.name.replaceAll(" ", "")}_Level`;
-      mods[skillLevelStatName] = [{
-        source: `Skill ${translate(skill.skill.localizedName, lang)} Level`,
-        amount: skill.selectedLevel,
-        layer: "simple",
-        meta: {
-          type: "skill",
-          id: String(skill.skill.id),
-          slot: slot,
-          value: String(skill.selectedLevel),
-        },
-      }];
+          if (!(statName in mods)) {
+            mods[statName] = [];
+          }
+
+          mods[statName].push({
+            source: `Skill ${translate(skill.skill.localizedName, lang)} Level ${levelKey}`,
+            amount: getValueFromMultiplier(
+              modifier.value,
+              modifier.modifierType,
+              1,
+              1,
+              1,
+            ),
+            layer: layer || "base",
+            condition: `${skillLevelStatName} == ${levelKey}`,
+            meta: {
+              type: "skill",
+              id: String(skill.skill.id),
+              slot: slot,
+              level: levelKey,
+              value: String(modifier.value),
+            },
+          });
+        }
+      }
     });
 
     return mods;
