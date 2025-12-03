@@ -1,6 +1,6 @@
 import { translate, type LangText } from "$lib/hellclock/lang";
 import type { StatsHelper } from "$lib/hellclock/stats";
-import { type TooltipLine } from "$lib/hellclock/utils";
+import { formatIndexed, type TooltipLine } from "$lib/hellclock/utils";
 import { formatStatModNumber } from "./formats";
 import type { SkillsHelper } from "./skills";
 import type {
@@ -11,6 +11,7 @@ import type {
   AllocatedNodesMap,
   AllocatedNode,
   StatModifierNodeAffixDefinition,
+  CharacterIncrementNodeAffixDefinition,
 } from "./constellations";
 import type { ModifierType } from "./relics";
 
@@ -390,6 +391,14 @@ export class BellsHelper {
           }
         } else if (affix.type === "SkillBehaviorNodeAffixDefinition") {
           affixText = translate(affix.description, lang);
+        } else if (affix.type === "CharacterIncrementNodeAffixDefinition") {
+          const charAffix = affix as CharacterIncrementNodeAffixDefinition;
+          const effectiveLevel = allocatedLevel === 0 ? 1 : allocatedLevel;
+          const effectiveValue = charAffix.valuePerLevel * effectiveLevel;
+          affixText = formatIndexed(
+            translate(charAffix.description, lang),
+            effectiveValue.toString(),
+          );
         } else {
           affixText = affix.name;
         }
