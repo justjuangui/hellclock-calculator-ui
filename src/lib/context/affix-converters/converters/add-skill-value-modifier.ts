@@ -181,6 +181,12 @@ export const addSkillValueModifierConverter: EffectConverter<AddSkillValueModifi
         // Check if this is multi-skill targeting
         if (!behaviorData?.affectMultipleSkills) {
           // Single skill (current behavior)
+          if (skillName == null || skillName === "") {
+            console.warn(
+              `effect targets single skill but no skillName in context - ${effect.name}`,
+            );
+            continue;
+          }
           result.mods.push(buildDirectSkillMod(modifier, skillName, context));
         } else {
           // Multi-skill targeting based on useListOfSkills

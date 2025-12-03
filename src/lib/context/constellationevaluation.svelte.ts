@@ -260,6 +260,12 @@ export function provideConstellationEvaluation(
     mods: ConstellationModCollection,
     broadcasts: BroadcastContribution[],
   ): void {
+    if (!affix.behaviorData) {
+      console.warn(
+        `Affix behavior data missing for ${constellationName} - ${nodeName} - ${nodeId}`,
+      );
+      return;
+    }
     // Calculate value based on level
     const affixValue = affix.valuePerLevel * nodeLevel;
 
