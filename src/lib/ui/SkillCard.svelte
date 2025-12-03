@@ -1,8 +1,9 @@
 <script lang="ts">
   import { translate } from "$lib/hellclock/lang";
-  import type { SkillSelected } from "$lib/hellclock/skills";
+  import type { SkillSelected, SkillSlotDefinition } from "$lib/hellclock/skills";
   import { getContext } from "svelte";
   import { useEvaluationManager } from "$lib/context/evaluation.svelte";
+  import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
   import type { SkillDisplayHelper } from "$lib/hellclock/skillcard-helper";
   import SkillCardHeader from "./skillcard/SkillCardHeader.svelte";
   import SkillCardSummary from "./skillcard/SkillCardSummary.svelte";
@@ -22,6 +23,12 @@
   const skillDisplayHelper = getContext<SkillDisplayHelper>("skillDisplayHelper");
   const lang = getContext<string>("lang") || "en";
   const evaluationManager = useEvaluationManager();
+  const skillEquipped = useSkillEquipped();
+
+  function handleLevelChange(newLevel: number) {
+    const updatedSkill = { ...skill, selectedLevel: newLevel };
+    skillEquipped.set(slotId as SkillSlotDefinition, updatedSkill);
+  }
 
   // Component state
   let expanded = $state(false);
@@ -82,6 +89,7 @@
         {expanded}
         {loading}
         onToggle={toggleExpanded}
+        onLevelChange={handleLevelChange}
       />
     {/if}
 

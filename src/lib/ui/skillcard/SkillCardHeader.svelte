@@ -12,6 +12,7 @@
   } from "$lib/hellclock/skillcard-formats";
   import { translate } from "$lib/hellclock/lang";
   import { spriteUrl } from "$lib/hellclock/utils";
+  import { useMaxSkillLevel } from "$lib/context/maxskilllevel.svelte";
 
   import { getValueClasses } from "$lib/hellclock/skillcard-styles";
 
@@ -24,6 +25,7 @@
     expanded?: boolean;
     loading?: boolean;
     onToggle?: () => void;
+    onLevelChange?: (newLevel: number) => void;
   }
 
   const {
@@ -35,7 +37,28 @@
     expanded = false,
     loading = false,
     onToggle,
+    onLevelChange,
   }: Props = $props();
+
+  // Max skill level context
+  const maxSkillLevelApi = useMaxSkillLevel();
+  const maxLevel = $derived.by(() => maxSkillLevelApi.maxSkillLevel);
+  const minLevel = 0;  // 0-indexed internally
+
+  function handleIncrement(e: MouseEvent) {
+    e.stopPropagation();
+    // maxLevel - 1 because selectedLevel is 0-indexed
+    if (skill.selectedLevel < maxLevel - 1 && onLevelChange) {
+      onLevelChange(skill.selectedLevel + 1);
+    }
+  }
+
+  function handleDecrement(e: MouseEvent) {
+    e.stopPropagation();
+    if (skill.selectedLevel > minLevel && onLevelChange) {
+      onLevelChange(skill.selectedLevel - 1);
+    }
+  }
 
   const skillId = $derived(skill.skill.name);
 
@@ -59,9 +82,14 @@
   });
 
   const levelValue = $derived(() => {
-    if (!levelRow) return `Lv. ${skill.selectedLevel}`;
+    // Display selectedLevel + 1 (0-indexed internally, 1-indexed visually)
+    if (!levelRow) return `Lv. ${skill.selectedLevel + 1}`;
     const resolved = resolveRowConfig(levelRow, globalDefaults);
-    const value = resolveValue(levelRow, skill, evaluationResult, skillId);
+    let value = resolveValue(levelRow, skill, evaluationResult, skillId);
+    // Add +1 for visual display since selectedLevel is 0-indexed
+    if (typeof value === 'number') {
+      value = value + 1;
+    }
     const formatted = formatValue(value, resolved.format);
     return applyPrefixSuffix(formatted, resolved.prefix, resolved.suffix);
   });
@@ -125,10 +153,34 @@
   <div class="flex-1 text-left">
     <div class="flex items-center gap-2 mb-1">
       <h3 class="font-bold">{nameValue()}</h3>
-      <div
-        class="badge badge-sm {expanded ? 'badge-primary' : 'badge-outline'}"
-      >
-        {levelValue()}
+      <div class="flex items-center gap-1">
+        {#if onLevelChange && maxLevel > 0}
+          <button
+            class="btn btn-xs btn-circle btn-ghost"
+            onclick={handleDecrement}
+            disabled={skill.selectedLevel <= minLevel}
+            title="Decrease level"
+            type="button"
+          >
+            -
+          </button>
+        {/if}
+        <div
+          class="badge badge-sm {expanded ? 'badge-primary' : 'badge-outline'}"
+        >
+          {levelValue()}
+        </div>
+        {#if onLevelChange && maxLevel > 0}
+          <button
+            class="btn btn-xs btn-circle btn-ghost"
+            onclick={handleIncrement}
+            disabled={skill.selectedLevel >= maxLevel - 1}
+            title="Increase level (max: {maxLevel})"
+            type="button"
+          >
+            +
+          </button>
+        {/if}
       </div>
     </div>
     <div class="flex gap-1 flex-wrap">

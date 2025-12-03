@@ -4,6 +4,7 @@
   import type { StatsHelper } from "$lib/hellclock/stats";
   import { fmtValue, spriteUrl } from "$lib/hellclock/utils";
   import { getContext } from "svelte";
+  import { useMaxSkillLevel } from "$lib/context/maxskilllevel.svelte";
 
   interface Props {
     skills: SkillSelected[];
@@ -13,6 +14,9 @@
   const statsHelper = getContext<StatsHelper>("statsHelper");
   const lang = getContext<string>("lang") || "en";
   const { skills, onSkillSelected }: Props = $props();
+
+  const maxSkillLevelApi = useMaxSkillLevel();
+  const maxLevel = $derived.by(() => maxSkillLevelApi.maxSkillLevel);
 
   let search = $state("");
   let scroller: HTMLDivElement | null = null;
@@ -81,16 +85,23 @@
                       {translate(sk.skill.localizedName, lang)}
                     </div>
                     <div class="flex w-full">
-                      <div class="grow text-xs opacity-70">
-                        Lv. {sk.selectedLevel}
-                      </div>
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        bind:value={sk.selectedLevel}
-                        class="range range-primary range-xs w-[100px]"
-                      />
+                      {#if maxLevel > 0}
+                        <div class="grow text-xs opacity-70">
+                          Lv. {Math.min(sk.selectedLevel, maxLevel - 1) + 1}
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max={maxLevel - 1}
+                          value={Math.min(sk.selectedLevel, maxLevel - 1)}
+                          oninput={(e) => sk.selectedLevel = Number(e.currentTarget.value)}
+                          class="range range-primary range-xs w-[100px]"
+                        />
+                      {:else}
+                        <div class="grow text-xs opacity-50">
+                          Allocate bell nodes to unlock skill levels
+                        </div>
+                      {/if}
                     </div>
                   </div>
                 </div>
