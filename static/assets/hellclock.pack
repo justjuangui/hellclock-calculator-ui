@@ -33,8 +33,10 @@ pack "hellclock" {
           + (flag("ProxyPhysicalToLightning") ? sum_by(group: "PhysicalDamage", layer: "add") : 0)
         mult = add * prod_by(group: SELF, layer: "mult")
           * (flag("ProxyPhysicalToLightning") ? prod_by(group: "PhysicalDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyPhysicalToLightning") ? (1 + sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyPhysicalToLightning") ? sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
@@ -47,8 +49,10 @@ pack "hellclock" {
           + (flag("ProxyAdditionalPhysicalToAdditionalLightning") ? sum_by(group: "AdditionalPhysicalDamage", layer: "add") : 0)
         mult = add * prod_by(group: SELF, layer: "mult")
           * (flag("ProxyAdditionalPhysicalToAdditionalLightning") ? prod_by(group: "AdditionalPhysicalDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyAdditionalPhysicalToAdditionalLightning") ? (1 + sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyAdditionalPhysicalToAdditionalLightning") ? sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
@@ -65,10 +69,12 @@ pack "hellclock" {
           * (flag("ProxyPhysicalToFire") ? prod_by(group: "PhysicalDamage", layer: "mult") : 1)
           * (flag("ProxyLightningToFire") ? prod_by(group: "LightningDamage", layer: "mult") : 1)
           * (flag("ProxyPlagueToFire") ? prod_by(group: "PlagueDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyPhysicalToFire") ? (1 + sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyLightningToFire") ? (1 + sum_by(group: "LightningDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyPlagueToFire") ? (1 + sum_by(group: "PlagueDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyPhysicalToFire") ? sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyLightningToFire") ? sum_by(group: "LightningDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyPlagueToFire") ? sum_by(group: "PlagueDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
@@ -85,10 +91,12 @@ pack "hellclock" {
           * (flag("ProxyAdditionalPhysicalToAdditionalFire") ? prod_by(group: "AdditionalPhysicalDamage", layer: "mult") : 1)
           * (flag("ProxyAdditionalLightningToAdditionalFire") ? prod_by(group: "AdditionalLightningDamage", layer: "mult") : 1)
           * (flag("ProxyAdditionalPlagueToAdditionalFire") ? prod_by(group: "AdditionalPlagueDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyAdditionalPhysicalToAdditionalFire") ? (1 + sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyAdditionalLightningToAdditionalFire") ? (1 + sum_by(group: "AdditionalLightningDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyAdditionalPlagueToAdditionalFire") ? (1 + sum_by(group: "AdditionalPlagueDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyAdditionalPhysicalToAdditionalFire") ? sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyAdditionalLightningToAdditionalFire") ? sum_by(group: "AdditionalLightningDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyAdditionalPlagueToAdditionalFire") ? sum_by(group: "AdditionalPlagueDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
@@ -103,9 +111,11 @@ pack "hellclock" {
         mult = add * prod_by(group: SELF, layer: "mult")
           * (flag("ProxyPhysicalToPlague") ? prod_by(group: "PhysicalDamage", layer: "mult") : 1)
           * (flag("ProxyLightningToPlague") ? prod_by(group: "LightningDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyPhysicalToPlague") ? (1 + sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyLightningToPlague") ? (1 + sum_by(group: "LightningDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyPhysicalToPlague") ? sum_by(group: "PhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyLightningToPlague") ? sum_by(group: "LightningDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
@@ -120,9 +130,11 @@ pack "hellclock" {
         mult = add * prod_by(group: SELF, layer: "mult")
           * (flag("ProxyAdditionalPhysicalToAdditionalPlague") ? prod_by(group: "AdditionalPhysicalDamage", layer: "mult") : 1)
           * (flag("ProxyAdditionalLightningToAdditionalPlague") ? prod_by(group: "AdditionalLightningDamage", layer: "mult") : 1)
-        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
-          * (flag("ProxyAdditionalPhysicalToAdditionalPlague") ? (1 + sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1)) : 1)
-          * (flag("ProxyAdditionalLightningToAdditionalPlague") ? (1 + sum_by(group: "AdditionalLightningDamage", layer: "multadd", transform: val - 1)) : 1)
+        multadd = mult * (
+          1 + sum_by(group: SELF, layer: "multadd", transform: val - 1)
+            + (flag("ProxyAdditionalPhysicalToAdditionalPlague") ? sum_by(group: "AdditionalPhysicalDamage", layer: "multadd", transform: val - 1) : 0)
+            + (flag("ProxyAdditionalLightningToAdditionalPlague") ? sum_by(group: "AdditionalLightningDamage", layer: "multadd", transform: val - 1) : 0)
+        )
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
