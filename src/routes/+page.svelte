@@ -277,7 +277,7 @@
 </div>
 
 <dialog class="modal" open={showExplain}>
-  <div class="modal-box max-w-5xl">
+  <div class="modal-box max-w-5xl h-[90vh] flex flex-col">
     <h3 class="font-bold text-lg flex items-center gap-2">
       Explain: {formatStatName(explainTitle)}
     </h3>
@@ -293,7 +293,7 @@
         <span>{explainError}</span>
       </div>
     {:else if explainData}
-      <div class="mt-4">
+      <div class="mt-4 flex-1 flex flex-col min-h-0">
         <!-- Summary -->
         <div class="mb-4 p-3 bg-base-200 rounded-lg">
           <h4 class="font-semibold text-sm mb-2">Summary</h4>
@@ -323,14 +323,14 @@
 
         <!-- Phase View -->
         {#if activeExplainTab === "phases"}
-          <div class="overflow-y-auto max-h-96">
+          <div class="overflow-y-auto flex-1 min-h-0">
             <PhaseDebugView node={explainData.debug} />
           </div>
         {/if}
 
         <!-- Debug View -->
         {#if activeExplainTab === "debug"}
-          <div class="space-y-2">
+          <div class="flex-1 flex flex-col min-h-0 space-y-2">
             <div class="flex gap-2">
               <button
                 class="btn btn-sm btn-outline"
@@ -345,7 +345,7 @@
                 Collapse All
               </button>
             </div>
-            <div class="overflow-y-auto max-h-96">
+            <div class="overflow-y-auto flex-1 min-h-0">
               <XNodeTree node={explainData.debug} {expandAll} />
             </div>
           </div>
