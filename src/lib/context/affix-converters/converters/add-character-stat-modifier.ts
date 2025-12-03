@@ -7,21 +7,23 @@ import type {
   EffectConverter,
   EffectConverterContext,
   EffectConversionResult,
-  RelicModSourceWithCalculation,
+  ModSource,
+  AnyModMeta,
 } from "../types";
+import { buildModMeta, buildSourceLabel } from "../types";
 import { getBaseValue, buildCalculationExpression } from "../variable-modifiers";
+import { getLayerFromModifierType, normalizeStatName } from "../layer-mapping";
 
 /**
  * Converter for AddCharacterStatModifierSkillEffectData effects.
  * These effects add modifiers to character stats (like CriticalDamage, Life, etc.)
+ * Works for both relic and constellation systems.
  */
 export const addCharacterStatModifierConverter: EffectConverter<AddCharacterStatModifierSkillEffectData> =
   {
     effectType: "AddCharacterStatModifierSkillEffectData",
 
-    canHandle(
-      effect: AddCharacterStatModifierSkillEffectData,
-    ): boolean {
+    canHandle(effect: AddCharacterStatModifierSkillEffectData): boolean {
       // Handle effects with Always trigger or characterEffectTrigger Always
       if (effect.effectTrigger === "Always") {
         return true;
@@ -64,28 +66,14 @@ export const addCharacterStatModifierConverter: EffectConverter<AddCharacterStat
 function convertStatModifier(
   statModifier: SkillEffectStatModifierDefinition,
   context: EffectConverterContext,
-): { statName: string; modSource: RelicModSourceWithCalculation } | null {
-  const {
-    relicName,
-    positionKey,
-    affixId,
-    affixType,
-    affixValue,
-    variables,
-    rollVariableName,
-  } = context;
+): { statName: string; modSource: ModSource<AnyModMeta> } | null {
+  const { affixValue, variables, rollVariableName } = context;
 
   // Get stat name and clean it
-  const statName = statModifier.eStatDefinition.replaceAll(" ", "");
+  const statName = normalizeStatName(statModifier.eStatDefinition);
 
   // Determine layer from modifier type
-  let layer = "add";
-  const modifierType = statModifier.modifierType.toLowerCase();
-  if (modifierType === "multiplicative") {
-    layer = "mult";
-  } else if (modifierType === "multiplicativeadditive") {
-    layer = "multadd";
-  }
+  const layer = getLayerFromModifierType(statModifier.modifierType);
 
   // Resolve base value from variable reference
   const baseValue = getBaseValue(
@@ -107,17 +95,14 @@ function convertStatModifier(
   // Build calculation expression if there are dynamic modifiers
   const calculation = buildCalculationExpression(statModifier.value);
 
-  const modSource: RelicModSourceWithCalculation = {
-    source: `${relicName} (${affixType})`,
+  // Build system-specific metadata
+  const meta = buildModMeta(context, effectiveValue);
+
+  const modSource: ModSource<AnyModMeta> = {
+    source: buildSourceLabel(context),
     amount: effectiveValue,
     layer,
-    meta: {
-      type: "relic",
-      id: String(affixId),
-      position: positionKey,
-      affixType,
-      value: String(effectiveValue),
-    },
+    meta,
   };
 
   if (calculation) {

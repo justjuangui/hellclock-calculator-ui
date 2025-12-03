@@ -8,74 +8,76 @@ import type {
  * Mapping of variable modifiers to their corresponding stat references
  * Based on constellation evaluation: Green->DisciplinePoints, Red->FuryPoints, Blue->FaithPoints
  */
-export const VARIABLE_MODIFIER_STAT_MAP: Record<string, VariableModifierMapping> =
-  {
-    MultiplyByGreenDevotionAmount: {
-      modifier: "MultiplyByGreenDevotionAmount",
-      statReference: "DisciplinePoints",
-      operation: "multiply",
-    },
-    MultiplyByRedDevotionAmount: {
-      modifier: "MultiplyByRedDevotionAmount",
-      statReference: "FuryPoints",
-      operation: "multiply",
-    },
-    MultiplyByBlueDevotionAmount: {
-      modifier: "MultiplyByBlueDevotionAmount",
-      statReference: "FaithPoints",
-      operation: "multiply",
-    },
-    MultiplyByMaximumLife: {
-      modifier: "MultiplyByMaximumLife",
-      statReference: "Life",
-      operation: "multiply",
-    },
-    MultiplyByCurrentMana: {
-      modifier: "MultiplyByCurrentMana",
-      statReference: "Mana",
-      operation: "multiply",
-    },
-    MultiplyByMissingLife: {
-      modifier: "MultiplyByMissingLife",
-      statReference: "MissingLife",
-      operation: "multiply",
-    },
-    MultiplyByMissingManaRatio: {
-      modifier: "MultiplyByMissingManaRatio",
-      statReference: "MissingManaRatio",
-      operation: "multiply",
-    },
-    MultiplyBySkillDamage: {
-      modifier: "MultiplyBySkillDamage",
-      statReference: "SkillDamage",
-      operation: "multiply",
-    },
-    MultiplyByStatusStacks: {
-      modifier: "MultiplyByStatusStacks",
-      statReference: "StatusStacks",
-      operation: "multiply",
-    },
-    MultiplyByTargetStatusStacks: {
-      modifier: "MultiplyByTargetStatusStacks",
-      statReference: "TargetStatusStacks",
-      operation: "multiply",
-    },
-    MultiplyByCurrentSummonAmount: {
-      modifier: "MultiplyByCurrentSummonAmount",
-      statReference: "CurrentSummonAmount",
-      operation: "multiply",
-    },
-    MultiplyByDamageDealt: {
-      modifier: "MultiplyByDamageDealt",
-      statReference: "DamageDealt",
-      operation: "multiply",
-    },
-    MultiplyByBarrier: {
-      modifier: "MultiplyByBarrier",
-      statReference: "Barrier",
-      operation: "multiply",
-    },
-  };
+export const VARIABLE_MODIFIER_STAT_MAP: Record<
+  string,
+  VariableModifierMapping
+> = {
+  MultiplyByGreenDevotionAmount: {
+    modifier: "MultiplyByGreenDevotionAmount",
+    statReference: "DisciplinePoints",
+    operation: "multiply",
+  },
+  MultiplyByRedDevotionAmount: {
+    modifier: "MultiplyByRedDevotionAmount",
+    statReference: "FuryPoints",
+    operation: "multiply",
+  },
+  MultiplyByBlueDevotionAmount: {
+    modifier: "MultiplyByBlueDevotionAmount",
+    statReference: "FaithPoints",
+    operation: "multiply",
+  },
+  MultiplyByMaximumLife: {
+    modifier: "MultiplyByMaximumLife",
+    statReference: "Life",
+    operation: "multiply",
+  },
+  MultiplyByCurrentMana: {
+    modifier: "MultiplyByCurrentMana",
+    statReference: "Mana",
+    operation: "multiply",
+  },
+  MultiplyByMissingLife: {
+    modifier: "MultiplyByMissingLife",
+    statReference: "MissingLife",
+    operation: "multiply",
+  },
+  MultiplyByMissingManaRatio: {
+    modifier: "MultiplyByMissingManaRatio",
+    statReference: "MissingManaRatio",
+    operation: "multiply",
+  },
+  MultiplyBySkillDamage: {
+    modifier: "MultiplyBySkillDamage",
+    statReference: "SkillDamage",
+    operation: "multiply",
+  },
+  MultiplyByStatusStacks: {
+    modifier: "MultiplyByStatusStacks",
+    statReference: "StatusStacks",
+    operation: "multiply",
+  },
+  MultiplyByTargetStatusStacks: {
+    modifier: "MultiplyByTargetStatusStacks",
+    statReference: "TargetStatusStacks",
+    operation: "multiply",
+  },
+  MultiplyByCurrentSummonAmount: {
+    modifier: "MultiplyByCurrentSummonAmount",
+    statReference: "CurrentSummonAmount",
+    operation: "multiply",
+  },
+  MultiplyByDamageDealt: {
+    modifier: "MultiplyByDamageDealt",
+    statReference: "DamageDealt",
+    operation: "multiply",
+  },
+  MultiplyByBarrier: {
+    modifier: "MultiplyByBarrier",
+    statReference: "Barrier",
+    operation: "multiply",
+  },
+};
 
 /**
  * Parse eSkillEffectVariableModifier string into array of modifiers.
@@ -152,7 +154,9 @@ export function buildCalculationExpression(
   let expression = "val";
   let hasStatModifier = false;
 
-  const useMultipliedModifier = hasUseMultipliedModifier(variableRef.eSkillEffectVariableModifier);
+  const useMultipliedModifier = hasUseMultipliedModifier(
+    variableRef.eSkillEffectVariableModifier,
+  );
   for (const modifier of modifiers) {
     const mapping = VARIABLE_MODIFIER_STAT_MAP[modifier];
     if (mapping) {
