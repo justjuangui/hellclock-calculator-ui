@@ -288,7 +288,7 @@ export class ImportApplier {
       const affix = this.relicsHelper.getRelicAffixById(implicit.affix.affixId);
       if (!affix) continue;
 
-      const normalizedValue = Math.min(implicit.affix.rollValue / 1.2, 1);
+      const normalizedValue = implicit.affix.rollValue;
       const category = implicit.category;
 
       if (category === 3) {
