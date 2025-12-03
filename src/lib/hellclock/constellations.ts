@@ -23,7 +23,8 @@ export type NodeAffixType =
   | "SkillBehaviorNodeAffixDefinition"
   | "SkillEquipNodeAffixDefinition"
   | "SkillUnlockNodeAffixDefinition"
-  | "StatusIntensityNodeAffixDefinition";
+  | "StatusIntensityNodeAffixDefinition"
+  | "StatProxyModifierNodeAffixDefinition";
 
 export interface NodeAffixBase {
   name: string;
@@ -413,6 +414,12 @@ export interface StatusIntensityNodeAffixDefinition extends NodeAffixBase {
   eModifierType: StatModifierType;
 }
 
+export interface StatProxyModifierNodeAffixDefinition extends NodeAffixBase {
+  type: "StatProxyModifierNodeAffixDefinition";
+  sourceStat: string; // e.g., "PhysicalDamage", "AdditionalPhysicalDamage"
+  targetStat: string; // e.g., "PlagueDamage", "AdditionalPlagueDamage"
+}
+
 export type NodeAffix =
   | StatModifierNodeAffixDefinition
   | UnlockSkillNodeAffixDefinition
@@ -424,7 +431,8 @@ export type NodeAffix =
   | SkillBehaviorNodeAffixDefinition
   | SkillEquipNodeAffixDefinition
   | SkillUnlockNodeAffixDefinition
-  | StatusIntensityNodeAffixDefinition;
+  | StatusIntensityNodeAffixDefinition
+  | StatProxyModifierNodeAffixDefinition;
 
 // Edge definition for node dependencies
 export interface SkillTreeNodeEdgeData {
@@ -876,6 +884,9 @@ export class ConstellationsHelper {
 
       // Add affixes
       for (const affix of node.affixes) {
+        // Skip affixes with hideDescription: true
+        if (affix.hideDescription) continue;
+
         let affixText = "";
 
         if (affix.type === "StatModifierNodeAffixDefinition") {
