@@ -2,6 +2,7 @@ import type {
   WorldTierStatModifier,
   WorldTiersHelper,
 } from "$lib/hellclock/worldtiers";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 import { getContext, setContext } from "svelte";
 import { useWorldTierEquipped } from "./worldtierequipped.svelte";
 
@@ -19,7 +20,8 @@ export type WorldTierModSource = {
 export type WorldTierModCollection = Record<string, WorldTierModSource[]>;
 
 export type WorldTierEvaluationAPI = {
-  getWorldTierMods: () => WorldTierModCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
   get worldTierHash(): string;
 };
 
@@ -82,8 +84,25 @@ export function provideWorldTierEvaluation(
     return mods;
   }
 
+  function getContribution(): EvaluationContribution {
+    const worldTierMods = getWorldTierMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(worldTierMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: [] };
+  }
+
   const api: WorldTierEvaluationAPI = {
-    getWorldTierMods,
+    getContribution,
 
     get worldTierHash(): string {
       return worldTierEquippedApi.worldTierHash;

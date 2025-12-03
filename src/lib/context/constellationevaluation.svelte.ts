@@ -3,17 +3,27 @@ import type {
   StatModifierNodeAffixDefinition,
   StatusNodeAffixDefinition,
   StatProxyModifierNodeAffixDefinition,
+  SkillBehaviorNodeAffixDefinition,
 } from "$lib/hellclock/constellations";
 import type { StatsHelper } from "$lib/hellclock/stats";
-import type {
-  SkillBehaviorStatusDefinition,
-  StatusHelper,
-} from "$lib/hellclock/status";
-import { getValueFromMultiplier, formatStatModNumber } from "$lib/hellclock/formats";
+import type { StatusHelper } from "$lib/hellclock/status";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import {
+  getValueFromMultiplier,
+  formatStatModNumber,
+} from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
+import {
+  getLayerFromModifierType,
+  normalizeStatName,
+  createProxyFlagName,
+  effectConverterRegistry,
+  type ConstellationConverterContext,
+  type BroadcastContribution,
+} from "$lib/context/affix-converters";
 
 export type ConstellationModSource = {
   source: string;
@@ -50,11 +60,8 @@ export type ConstellationFlagCollection = Record<
 >;
 
 export type ConstellationEvaluationAPI = {
-  // Get current constellation modifications for evaluation
-  getConstellationMods: () => ConstellationModCollection;
-
-  // Get current constellation flags for evaluation
-  getConstellationFlags: () => ConstellationFlagCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
 
   // Check if constellations have changed (for cache invalidation)
   get constellationHash(): string;
@@ -71,42 +78,15 @@ export function provideConstellationEvaluation(
   const constellationEquippedApi = useConstellationEquipped();
   const statusEvaluationApi = useStatusEvaluation();
 
-  function mapStatModifierForEval(
-    statName: string,
-    modifierType: string,
-  ): string {
-    // Normalize stat name
-    let normalizedStatName = statName.replaceAll(" ", "");
-
-    // Map modifier type to suffix
-    let suffix = "";
-    const lowerModifierType = modifierType.toLowerCase();
-    if (lowerModifierType === "additive") {
-      suffix = ".add";
-    } else if (lowerModifierType === "multiplicative") {
-      suffix = ".mult";
-    } else if (lowerModifierType === "multiplicativeadditive") {
-      suffix = ".multadd";
-    }
-
-    return normalizedStatName + suffix;
-  }
-
-  /**
-   * Create proxy flag name from source/target stats
-   * Removes "Damage" word from stat names
-   * Example: "PhysicalDamage" + "PlagueDamage" → "ProxyPhysicalToPlague"
-   */
-  function createProxyFlagName(sourceStat: string, targetStat: string): string {
-    const cleanSource = sourceStat.replace("Damage", "");
-    const cleanTarget = targetStat.replace("Damage", "");
-    return `Proxy${cleanSource}To${cleanTarget}`;
-  }
+  // Store broadcasts collected during the last getConstellationMods call
+  let lastCollectedBroadcasts: BroadcastContribution[] = [];
 
   function getConstellationMods(): ConstellationModCollection {
     const mods: ConstellationModCollection = {};
+    const broadcasts: BroadcastContribution[] = [];
 
     if (!constellationsHelper) {
+      lastCollectedBroadcasts = [];
       return mods;
     }
 
@@ -136,7 +116,7 @@ export function provideConstellationEvaluation(
           const statAffix = affix as StatModifierNodeAffixDefinition;
 
           // Map the stat to the format expected by the engine
-          const statKey = statAffix.eStatDefinition.replaceAll(" ", "");
+          const statKey = normalizeStatName(statAffix.eStatDefinition);
 
           if (!(statKey in mods)) {
             mods[statKey] = [];
@@ -153,20 +133,14 @@ export function provideConstellationEvaluation(
           );
 
           // Determine layer based on modifier type
-          let layer = "base";
-          const lowerModifierType = statAffix.statModifierType.toLowerCase();
-          if (lowerModifierType === "additive") {
-            layer = "add";
-          } else if (lowerModifierType === "multiplicative") {
-            layer = "mult";
-          } else if (lowerModifierType === "multiplicativeadditive") {
-            layer = "multadd";
-          }
+          const layer = getLayerFromModifierType(statAffix.statModifierType);
 
           // Generate description from stat value and label
           let affixDescription = "";
           if (statsHelper) {
-            const statDef = statsHelper.getStatByName(statAffix.eStatDefinition);
+            const statDef = statsHelper.getStatByName(
+              statAffix.eStatDefinition,
+            );
             if (statDef) {
               const formattedValue = formatStatModNumber(
                 statAffix.value,
@@ -176,7 +150,10 @@ export function provideConstellationEvaluation(
                 0,
                 1,
               );
-              const statLabel = statsHelper.getLabelForStat(statAffix.eStatDefinition, lang);
+              const statLabel = statsHelper.getLabelForStat(
+                statAffix.eStatDefinition,
+                lang,
+              );
               affixDescription = `${formattedValue} ${statLabel}`;
             }
           }
@@ -193,6 +170,17 @@ export function provideConstellationEvaluation(
               value: String(statAffix.value),
             },
           });
+        } else if (affix.type === "SkillBehaviorNodeAffixDefinition") {
+          processSkillBehaviorAffix(
+            affix as SkillBehaviorNodeAffixDefinition,
+            constellationName,
+            nodeName,
+            allocated.constellationId,
+            allocated.nodeId,
+            allocated.level,
+            mods,
+            broadcasts,
+          );
         }
         // TODO: Handle other affix types:
         // - UnlockSkillNodeAffixDefinition
@@ -204,30 +192,122 @@ export function provideConstellationEvaluation(
     // Add devotion point stats
     // Map category colors to stat names
     const devotionStatMap: Record<string, string> = {
-      "Red": "FuryPoints",
-      "Green": "DisciplinePoints",
-      "Blue": "FaithPoints",
+      Red: "FuryPoints",
+      Green: "DisciplinePoints",
+      Blue: "FaithPoints",
     };
 
     for (const [category, statName] of Object.entries(devotionStatMap)) {
-      const points = constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
+      const points =
+        constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
       if (points > 0) {
-        mods[statName] = [{
-          source: `Devotion (${statName})`,
-          amount: points,
-          layer: "simple",
-          meta: {
-            type: "constellation",
-            constellationId: "devotion",
-            nodeId: category,
-            level: "1",
-            value: String(points),
+        mods[statName] = [
+          {
+            source: `Devotion (${statName})`,
+            amount: points,
+            layer: "simple",
+            meta: {
+              type: "constellation",
+              constellationId: "devotion",
+              nodeId: category,
+              level: "1",
+              value: String(points),
+            },
           },
-        }];
+        ];
       }
     }
 
+    // Store broadcasts for getConstellationBroadcasts
+    lastCollectedBroadcasts = broadcasts;
+
     return mods;
+  }
+
+  function getContribution(): EvaluationContribution {
+    const constellationMods = getConstellationMods();
+    const constellationFlags = getConstellationFlags();
+
+    // Convert mods to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(constellationMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    // Convert flags to unified type
+    const flags: EvaluationContribution["flags"] = {};
+    for (const [flagName, sources] of Object.entries(constellationFlags)) {
+      flags[flagName] = sources.map((s) => ({
+        source: s.source,
+        enabled: s.enabled,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags, broadcasts: lastCollectedBroadcasts };
+  }
+
+  function processSkillBehaviorAffix(
+    affix: SkillBehaviorNodeAffixDefinition,
+    constellationName: string,
+    nodeName: string,
+    constellationId: number,
+    nodeId: string,
+    nodeLevel: number,
+    mods: ConstellationModCollection,
+    broadcasts: BroadcastContribution[],
+  ): void {
+    // Calculate value based on level
+    const affixValue = affix.valuePerLevel * nodeLevel;
+
+    const context: ConstellationConverterContext = {
+      system: "constellation",
+      sourceName: `${constellationName} - ${nodeName}`,
+      sourceType: "node",
+      constellationId: String(constellationId),
+      nodeId,
+      nodeLevel,
+      affixId: 0, // Constellation affixes don't have IDs like relics
+      affixValue,
+      variables: affix.behaviorData.variables?.variables || [],
+      rollVariableName: "", // Constellations don't have roll variables
+      skillName: affix.behaviorData.skillDefinition.name || "",
+      // Add behavior data for multi-skill targeting
+      behaviorData: {
+        affectMultipleSkills: affix.behaviorData.affectMultipleSkills || false,
+        useListOfSkills: String(affix.behaviorData.useListOfSkills || ""),
+        listOfSkills: affix.behaviorData.listOfSkills || [],
+        skillTagFilter: affix.behaviorData.skillTagFilter || "",
+      },
+    };
+
+    for (const effect of affix.behaviorData.effects || []) {
+      // Cast to SkillEffect since constellation and relic effect types are structurally compatible
+      const conversionResult = effectConverterRegistry.convert(
+        effect as any,
+        context,
+      );
+      if (conversionResult) {
+        // Collect mods
+        for (const { statName, modSource } of conversionResult.mods) {
+          if (!(statName in mods)) {
+            mods[statName] = [];
+          }
+          mods[statName].push(modSource as ConstellationModSource);
+        }
+        // Collect broadcasts
+        if (conversionResult.broadcasts) {
+          for (const broadcast of conversionResult.broadcasts) {
+            broadcasts.push(broadcast);
+          }
+        }
+      }
+    }
   }
 
   function getConstellationFlags(): ConstellationFlagCollection {
@@ -268,8 +348,14 @@ export function provideConstellationEvaluation(
           // Generate description from stat labels
           let affixDescription = "";
           if (statsHelper) {
-            const sourceLabel = statsHelper.getLabelForStat(proxyAffix.sourceStat, lang);
-            const targetLabel = statsHelper.getLabelForStat(proxyAffix.targetStat, lang);
+            const sourceLabel = statsHelper.getLabelForStat(
+              proxyAffix.sourceStat,
+              lang,
+            );
+            const targetLabel = statsHelper.getLabelForStat(
+              proxyAffix.targetStat,
+              lang,
+            );
             affixDescription = `${sourceLabel} → ${targetLabel}`;
           }
 
@@ -364,8 +450,7 @@ export function provideConstellationEvaluation(
   });
 
   const api: ConstellationEvaluationAPI = {
-    getConstellationMods,
-    getConstellationFlags,
+    getContribution,
 
     get constellationHash() {
       // Create a hash of allocated constellation nodes for cache invalidation

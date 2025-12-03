@@ -11,36 +11,7 @@ import { useConstellationEvaluation } from "$lib/context/constellationevaluation
 import { useBellEvaluation } from "$lib/context/bellevaluation.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 import { useWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
-
-// Unified mod source type for evaluation
-export type UnifiedModSource = {
-  source: string;
-  amount: number;
-  layer: string;
-  condition?: string;
-  calculation?: string;
-  meta: {
-    type: string;
-    id: string;
-    slot: string;
-    [key: string]: any; // Allow additional meta properties
-  };
-};
-
-export type UnifiedModCollection = Record<string, UnifiedModSource[]>;
-
-export type UnifiedFlagSource = {
-  source: string;
-  enabled: boolean;
-  meta: {
-    type: string;
-    id: string;
-    slot: string;
-    [key: string]: any;
-  };
-};
-
-export type UnifiedFlagCollection = Record<string, UnifiedFlagSource[]>;
+import { mergeContributions } from "$lib/context/evaluation-types";
 
 export type EvaluationResult = {
   values: Record<string, any>;
@@ -244,202 +215,27 @@ export function provideEvaluationManager(
 
     await buildActor();
 
-    // Collect modifications from gear, skills, relics, constellations, bells, statuses, and world tier
-    const gearMods = gearEvaluationAPI.getGearMods();
-    const skillMods = skillEvaluationAPI.getSkillMods();
-    const relicMods = relicEvaluationAPI.getRelicMods();
-    const constellationMods = constellationEvaluationAPI.getConstellationMods();
-    const bellMods = bellEvaluationAPI.getBellMods();
-    const statusMods = statusEvaluationAPI.getStatusMods();
-    const worldTierMods = worldTierEvaluationAPI.getWorldTierMods();
-
-    // Collect flags from constellations
-    const constellationFlags = constellationEvaluationAPI.getConstellationFlags();
-
-    // Merge all modifications into unified collection
-    const allMods: UnifiedModCollection = {};
-
-    // Add gear mods
-    Object.entries(gearMods).forEach(([statName, sources]) => {
-      allMods[statName] = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.id,
-          slot: source.meta.slot,
-          value: source.meta.value,
-        },
-      }));
-    });
-
-    // Add skill mods, merging with existing gear mods
-    Object.entries(skillMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        condition: source.condition,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.id,
-          slot: source.meta.slot,
-          level: source.meta.level,
-          base: source.meta.base,
-          value: source.meta.value,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Add relic mods, merging with existing gear and skill mods
-    Object.entries(relicMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        calculation: source.calculation,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.id,
-          slot: source.meta.position, // Use position as slot for relics
-          affixType: source.meta.affixType,
-          value: source.meta.value,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Add constellation mods, merging with existing gear, skill, and relic mods
-    Object.entries(constellationMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.constellationId,
-          slot: source.meta.nodeId,
-          constellationId: source.meta.constellationId,
-          nodeId: source.meta.nodeId,
-          level: source.meta.level,
-          value: source.meta.value,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Add bell mods, merging with existing mods
-    Object.entries(bellMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.bellId,
-          slot: source.meta.nodeId,
-          bellId: source.meta.bellId,
-          nodeId: source.meta.nodeId,
-          level: source.meta.level,
-          value: source.meta.value,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Add status mods, merging with existing gear, skill, relic, constellation, and bell mods
-    Object.entries(statusMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        meta: {
-          type: source.meta.type,
-          id: String(source.meta.statusId),
-          slot: source.meta.statusName,
-          statusId: source.meta.statusId,
-          statusName: source.meta.statusName,
-          intensity: source.meta.intensity,
-          stacks: source.meta.stacks,
-          originalSource: source.meta.originalSource,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Add world tier mods, merging with existing mods
-    Object.entries(worldTierMods).forEach(([statName, sources]) => {
-      const unifiedSources = sources.map((source) => ({
-        source: source.source,
-        amount: source.amount,
-        layer: source.layer,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.id,
-          slot: "global", // World tiers apply globally
-          statDefinition: source.meta.statDefinition,
-        },
-      }));
-
-      if (statName in allMods) {
-        allMods[statName] = [...allMods[statName], ...unifiedSources];
-      } else {
-        allMods[statName] = unifiedSources;
-      }
-    });
-
-    // Merge all flags into unified collection
-    const allFlags: UnifiedFlagCollection = {};
-
-    // Add constellation flags
-    Object.entries(constellationFlags).forEach(([flagName, sources]) => {
-      allFlags[flagName] = sources.map((source) => ({
-        source: source.source,
-        enabled: source.enabled,
-        meta: {
-          type: source.meta.type,
-          id: source.meta.constellationId,
-          slot: source.meta.nodeId,
-          constellationId: source.meta.constellationId,
-          nodeId: source.meta.nodeId,
-          level: source.meta.level,
-        },
-      }));
-    });
+    // Collect all contributions using the unified API
+    const contribution = mergeContributions(
+      gearEvaluationAPI.getContribution(),
+      skillEvaluationAPI.getContribution(),
+      relicEvaluationAPI.getContribution(),
+      constellationEvaluationAPI.getContribution(),
+      bellEvaluationAPI.getContribution(),
+      statusEvaluationAPI.getContribution(),
+      worldTierEvaluationAPI.getContribution(),
+    );
 
     // TODO: From now Only Player stats is setted, need to add target stats if any and Summons
-    const payload = {
+    const payload: {
+      setEntity: Record<string, { stats: typeof contribution.mods; flags: typeof contribution.flags }>;
+      broadcast?: Record<string, typeof contribution.broadcasts>;
+      outputs: Record<string, string[]>;
+    } = {
       setEntity: {
         player: {
-          stats: allMods,
-          flags: allFlags,
+          stats: contribution.mods,
+          flags: contribution.flags,
         },
       },
       outputs: {
@@ -449,6 +245,13 @@ export function provideEvaluationManager(
         ),
       },
     };
+
+    // Add broadcasts if any exist
+    if (contribution.broadcasts.length > 0) {
+      payload.broadcast = {
+        player: contribution.broadcasts,
+      };
+    }
 
     console.debug("Evaluating stats with payload:", payload);
 

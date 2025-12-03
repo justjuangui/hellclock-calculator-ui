@@ -8,6 +8,7 @@ import type {
   StatusNodeAffixDefinition,
 } from "$lib/hellclock/constellations";
 import type { StatusHelper } from "$lib/hellclock/status";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
@@ -30,8 +31,8 @@ export type BellModSource = {
 export type BellModCollection = Record<string, BellModSource[]>;
 
 export type BellEvaluationAPI = {
-  // Get current bell modifications for evaluation (only active bell)
-  getBellMods: () => BellModCollection;
+  // Get unified contribution for evaluation (only active bell)
+  getContribution: () => EvaluationContribution;
 
   // Check if bells have changed (for cache invalidation)
   get bellHash(): string;
@@ -193,8 +194,25 @@ export function provideBellEvaluation(
     syncBellStatusEffects();
   });
 
+  function getContribution(): EvaluationContribution {
+    const bellMods = getBellMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(bellMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: [] };
+  }
+
   const api: BellEvaluationAPI = {
-    getBellMods,
+    getContribution,
 
     get bellHash() {
       // Include active bell ID in hash since switching bells changes evaluation

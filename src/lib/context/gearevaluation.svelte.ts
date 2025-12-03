@@ -1,5 +1,6 @@
 import type { GearItem, GearSlot, GearsHelper } from "$lib/hellclock/gears";
 import type { StatsHelper, StatMod } from "$lib/hellclock/stats";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { fmtValue } from "$lib/hellclock/utils";
 import { translate } from "$lib/hellclock/lang";
@@ -21,8 +22,8 @@ export type GearModSource = {
 export type GearModCollection = Record<string, GearModSource[]>;
 
 export type GearEvaluationAPI = {
-  // Get current gear modifications for evaluation
-  getGearMods: () => GearModCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
 
   // Check if gear has changed (for cache invalidation)
   get gearHash(): string;
@@ -110,8 +111,25 @@ export function provideGearEvaluation(
     return mods;
   }
 
+  function getContribution(): EvaluationContribution {
+    const gearMods = getGearMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(gearMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: [] };
+  }
+
   const api: GearEvaluationAPI = {
-    getGearMods,
+    getContribution,
 
     get gearHash() {
       // Create a hash of equipped gear for cache invalidation

@@ -5,8 +5,11 @@ import type {
 } from "$lib/hellclock/relics";
 import {
   effectConverterRegistry,
-  type EffectConverterContext,
-} from "$lib/context/relic-effect-converters";
+  type RelicConverterContext,
+  type RelicModSource as SharedRelicModSource,
+  type BroadcastContribution,
+} from "$lib/context/affix-converters";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import type { StatusHelper } from "$lib/hellclock/status";
@@ -34,8 +37,8 @@ export type RelicModSource = {
 export type RelicModCollection = Record<string, RelicModSource[]>;
 
 export type RelicEvaluationAPI = {
-  // Get current relic modifications for evaluation
-  getRelicMods: () => RelicModCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
 
   // Check if relics have changed (for cache invalidation)
   get relicHash(): string;
@@ -74,8 +77,12 @@ export function provideRelicEvaluation(
     return statName;
   }
 
+  // Store broadcasts collected during the last getRelicMods call
+  let lastCollectedBroadcasts: BroadcastContribution[] = [];
+
   function getRelicMods(): RelicModCollection {
     const mods: RelicModCollection = {};
+    const broadcasts: BroadcastContribution[] = [];
 
     // Get all unique relics from the inventory
     const uniqueRelics = new SvelteMap<string, RelicItemWithPosition>();
@@ -104,6 +111,7 @@ export function provideRelicEvaluation(
             relic.rank,
             relicsHelper!,
             mods,
+            broadcasts,
           );
         }
       }
@@ -121,6 +129,7 @@ export function provideRelicEvaluation(
             relic.rank,
             relicsHelper!,
             mods,
+            broadcasts,
           );
         }
       }
@@ -137,6 +146,7 @@ export function provideRelicEvaluation(
           relic.rank,
           relicsHelper!,
           mods,
+          broadcasts,
         );
       }
 
@@ -152,6 +162,7 @@ export function provideRelicEvaluation(
           relic.rank,
           relicsHelper!,
           mods,
+          broadcasts,
         );
       }
 
@@ -167,11 +178,33 @@ export function provideRelicEvaluation(
           relic.rank,
           relicsHelper!,
           mods,
+          broadcasts,
         );
       }
     }
 
+    // Store broadcasts for getRelicBroadcasts
+    lastCollectedBroadcasts = broadcasts;
+
     return mods;
+  }
+
+  function getContribution(): EvaluationContribution {
+    const relicMods = getRelicMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(relicMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        calculation: s.calculation,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: lastCollectedBroadcasts };
   }
 
   function processAffix(
@@ -184,6 +217,7 @@ export function provideRelicEvaluation(
     rank: number,
     relicHelper: RelicsHelper,
     mods: RelicModCollection,
+    broadcasts: BroadcastContribution[],
   ): void {
     let value = relicHelper.getAffixValueFromRoll(
       affix.id,
@@ -211,6 +245,7 @@ export function provideRelicEvaluation(
         tier,
         rank,
         mods,
+        broadcasts,
       );
     }
   }
@@ -224,30 +259,47 @@ export function provideRelicEvaluation(
     tier: number,
     rank: number,
     mods: RelicModCollection,
+    broadcasts: BroadcastContribution[],
   ): void {
     if (!affix.behaviorData?.skillDefinition?.name) return;
 
-    const context: EffectConverterContext = {
-      relicName,
+    const context: RelicConverterContext = {
+      system: "relic",
+      sourceName: relicName,
+      sourceType: affixType,
       positionKey,
       affixId: affix.id,
-      affixType,
       tier,
       rank,
       affixValue: value,
       variables: affix.behaviorData.variables?.variables || [],
       rollVariableName: affix.rollVariableName || "",
       skillName: affix.behaviorData.skillDefinition.name,
+      // Add behavior data for multi-skill targeting
+      behaviorData: {
+        affectMultipleSkills: affix.behaviorData.affectMultipleSkills || false,
+        useListOfSkills: String(affix.behaviorData.useListOfSkills || ""),
+        listOfSkills: affix.behaviorData.listOfSkills || [],
+        skillTagFilter: affix.behaviorData.skillTagFilter || "",
+      },
     };
 
     for (const effect of affix.behaviorData.effects || []) {
       const conversionResult = effectConverterRegistry.convert(effect, context);
       if (conversionResult) {
+        // Collect mods
         for (const { statName, modSource } of conversionResult.mods) {
           if (!(statName in mods)) {
             mods[statName] = [];
           }
-          mods[statName].push(modSource);
+          // Cast to RelicModSource since we know we're in relic context
+          mods[statName].push(modSource as RelicModSource);
+        }
+        // Collect broadcasts
+        if (conversionResult.broadcasts) {
+          for (const broadcast of conversionResult.broadcasts) {
+            broadcasts.push(broadcast);
+          }
         }
       }
     }
@@ -431,7 +483,7 @@ export function provideRelicEvaluation(
   }
 
   const api: RelicEvaluationAPI = {
-    getRelicMods,
+    getContribution,
 
     get relicHash() {
       // Create a hash of equipped relics for cache invalidation

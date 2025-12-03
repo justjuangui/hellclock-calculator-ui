@@ -5,6 +5,7 @@ import type {
   StatusHelper,
   StatModifierStatusDefinition,
 } from "$lib/hellclock/status";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 
 export type StatusModSource = {
   source: string;
@@ -38,8 +39,8 @@ export type StatusEvaluationAPI = {
   // Get all active statuses
   getActiveStatuses: () => ActiveStatus[];
 
-  // Get stat modifications from all active statuses
-  getStatusMods: () => StatusModCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
 
   // Get hash for cache invalidation
   get statusHash(): string;
@@ -140,13 +141,30 @@ export function provideStatusEvaluation(
     return mods;
   }
 
+  function getContribution(): EvaluationContribution {
+    const statusMods = getStatusMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(statusMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: [] };
+  }
+
   const api: StatusEvaluationAPI = {
     addStatus,
     removeStatus,
     clearBySource,
     clearAll,
     getActiveStatuses,
-    getStatusMods,
+    getContribution,
 
     get statusHash() {
       // Create a hash of active statuses for cache invalidation

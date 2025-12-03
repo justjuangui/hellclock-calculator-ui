@@ -1,4 +1,5 @@
 import type { SkillsHelper, SkillUpgradeModifier } from "$lib/hellclock/skills";
+import type { EvaluationContribution } from "$lib/context/evaluation-types";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
@@ -22,8 +23,8 @@ export type SkillModSource = {
 export type SkillModCollection = Record<string, SkillModSource[]>;
 
 export type SkillEvaluationAPI = {
-  // Get current skill modifications for evaluation
-  getSkillMods: () => SkillModCollection;
+  // Get unified contribution for evaluation
+  getContribution: () => EvaluationContribution;
 
   // Check if skills have changed (for cache invalidation)
   get skillHash(): string;
@@ -172,8 +173,26 @@ export function provideSkillEvaluation(
     return mods;
   }
 
+  function getContribution(): EvaluationContribution {
+    const skillMods = getSkillMods();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(skillMods)) {
+      mods[statName] = sources.map((s) => ({
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        condition: s.condition,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags: {}, broadcasts: [] };
+  }
+
   const api: SkillEvaluationAPI = {
-    getSkillMods,
+    getContribution,
 
     get skillHash() {
       // Create a hash of equipped skills for cache invalidation
