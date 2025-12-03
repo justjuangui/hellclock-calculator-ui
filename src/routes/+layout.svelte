@@ -52,6 +52,7 @@
   import { provideWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
   import { provideBellEquipped } from "$lib/context/bellequipped.svelte";
   import { provideBellEvaluation } from "$lib/context/bellevaluation.svelte";
+  import { provideMaxSkillLevel } from "$lib/context/maxskilllevel.svelte";
   import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -87,6 +88,8 @@
   > | null = null;
   let bellEquippedContext: ReturnType<typeof provideBellEquipped> | null = null;
   let bellEvaluationContext: ReturnType<typeof provideBellEvaluation> | null =
+    null;
+  let maxSkillLevelContext: ReturnType<typeof provideMaxSkillLevel> | null =
     null;
 
   $effect(() => {
@@ -165,6 +168,10 @@
         statusHelper,
         "en",
       );
+    }
+
+    if (bellsHelper && skillsHelper && bellEquippedContext && !maxSkillLevelContext) {
+      maxSkillLevelContext = provideMaxSkillLevel(bellsHelper, skillsHelper);
     }
 
     if (
