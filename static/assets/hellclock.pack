@@ -98,8 +98,8 @@ pack "hellclock" {
       phases {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
-          + (flag("ProxyPhysicalToPlague") ? sum_by(group: "PhysicalDamage", layer: "add") : 0
-          + (flag("ProxyLightningToPlague") ? sum_by(group: "LightningDamage", layer: "add") : 0))
+          + (flag("ProxyPhysicalToPlague") ? sum_by(group: "PhysicalDamage", layer: "add") : 0)
+          + (flag("ProxyLightningToPlague") ? sum_by(group: "LightningDamage", layer: "add") : 0)
         mult = add * prod_by(group: SELF, layer: "mult")
           * (flag("ProxyPhysicalToPlague") ? prod_by(group: "PhysicalDamage", layer: "mult") : 1)
           * (flag("ProxyLightningToPlague") ? prod_by(group: "LightningDamage", layer: "mult") : 1)
