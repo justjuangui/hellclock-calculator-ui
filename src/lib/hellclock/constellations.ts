@@ -19,6 +19,7 @@ export type NodeAffixType =
   | "AttributeNodeAffixDefinition"
   | "StatusNodeAffixDefinition"
   | "DevotionIncrementNodeAffixDefinition"
+  | "CharacterIncrementNodeAffixDefinition"
   | "SkillBehaviorNodeAffixDefinition"
   | "SkillEquipNodeAffixDefinition"
   | "SkillUnlockNodeAffixDefinition"
@@ -75,6 +76,29 @@ export interface DevotionIncrementNodeAffixDefinition extends NodeAffixBase {
   type: "DevotionIncrementNodeAffixDefinition";
   valuePerLevel: number;
   eDevotionCategory: string; // e.g., "Red", "Green", "Blue"
+}
+
+// Character increment types for bell nodes
+export type CharacterIncrementType =
+  | "MaximumSkillLevelIncrementAmount"
+  | "HellClockTimerIncrease"
+  | "StartingGoldIncrease"
+  | "RedPortalSkippedLevelsIncrease"
+  | "RedPortalChanceIncrease"
+  | "BlessedGearShopDiscount"
+  | "RelicCostReduction"
+  | "SoulStonesRecycleGainBonus"
+  | "BlessingRedrawCostMultiplier"
+  | "BlessingSelectionIncrementAmount"
+  | "StartingPlayerLevelIncrementAmount"
+  | "BlessingBanishIncrementAmount"
+  | "RunsPerActIncrementAmount";
+
+export interface CharacterIncrementNodeAffixDefinition extends NodeAffixBase {
+  type: "CharacterIncrementNodeAffixDefinition";
+  eCharacterIncrement: CharacterIncrementType;
+  valuePerLevel: number;
+  eModifierType: StatModifierType;
 }
 
 // Skill behavior system enums and types
@@ -396,6 +420,7 @@ export type NodeAffix =
   | AttributeNodeAffixDefinition
   | StatusNodeAffixDefinition
   | DevotionIncrementNodeAffixDefinition
+  | CharacterIncrementNodeAffixDefinition
   | SkillBehaviorNodeAffixDefinition
   | SkillEquipNodeAffixDefinition
   | SkillUnlockNodeAffixDefinition
