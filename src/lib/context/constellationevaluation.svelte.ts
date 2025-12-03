@@ -200,22 +200,20 @@ export function provideConstellationEvaluation(
     for (const [category, statName] of Object.entries(devotionStatMap)) {
       const points =
         constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
-      if (points > 0) {
-        mods[statName] = [
-          {
-            source: `Devotion (${statName})`,
-            amount: points,
-            layer: "simple",
-            meta: {
-              type: "constellation",
-              constellationId: "devotion",
-              nodeId: category,
-              level: "1",
-              value: String(points),
-            },
+      mods[statName] = [
+        {
+          source: `Devotion (${statName})`,
+          amount: points,
+          layer: "simple",
+          meta: {
+            type: "constellation",
+            constellationId: "devotion",
+            nodeId: category,
+            level: "1",
+            value: String(points),
           },
-        ];
-      }
+        },
+      ];
     }
 
     // Store broadcasts for getConstellationBroadcasts
