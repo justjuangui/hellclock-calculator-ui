@@ -256,6 +256,22 @@ export class ImportOrchestrator {
       return result;
     }
 
+    // Import bells (before skills, so maxSkillLevel context is set)
+    if (options.bells && contexts.bellApi && adapter.parseBells) {
+      const bells = adapter.parseBells(saveData);
+      const validation = this.validator.validateBells(bells);
+
+      result.errors.push(...validation.errors);
+      result.warnings.push(...validation.warnings);
+
+      if (validation.data.length > 0) {
+        result.imported.bells = this.applier.applyBells(
+          validation.data,
+          contexts.bellApi,
+        );
+      }
+    }
+
     // Import skills
     if (options.skills) {
       const skills = adapter.parseSkills(saveData);
@@ -316,22 +332,6 @@ export class ImportOrchestrator {
         result.imported.gear = this.applier.applyGear(
           validation.data,
           contexts.gearApi,
-        );
-      }
-    }
-
-    // Import bells
-    if (options.bells && contexts.bellApi && adapter.parseBells) {
-      const bells = adapter.parseBells(saveData);
-      const validation = this.validator.validateBells(bells);
-
-      result.errors.push(...validation.errors);
-      result.warnings.push(...validation.warnings);
-
-      if (validation.data.length > 0) {
-        result.imported.bells = this.applier.applyBells(
-          validation.data,
-          contexts.bellApi,
         );
       }
     }

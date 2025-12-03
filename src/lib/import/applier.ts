@@ -70,13 +70,11 @@ export class ImportApplier {
       const skill = this.skillsHelper.getSkillById(parsed.skillId);
       if (!skill) continue;
 
-      // Cap level to max available
-      const maxLevel = this.skillsHelper.getMaxSkillLevel();
-      const level = Math.min(parsed.level + 1, maxLevel);
-
+      // Use parsed level directly (0-indexed)
+      // Bell should already be imported, maxLevel context is set
       api.set(slotDef, {
         skill,
-        selectedLevel: level,
+        selectedLevel: parsed.level,
       });
 
       appliedCount++;
