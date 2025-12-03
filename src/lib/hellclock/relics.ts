@@ -262,8 +262,8 @@ export type SkillEffect =
 export type SkillBehaviorData = {
   type: "SkillBehaviorData";
   affectMultipleSkills: boolean;
-  useListOfSkills: boolean;
-  listOfSkills: any[];
+  useListOfSkills: string; // "UseSkillTag" | "UseListOfSkills" | "UseSkillTagAndListOfSkills"
+  listOfSkills: Array<{ name: string; id: number; type: string }>;
   skillTagFilter: string;
   skillDefinition: {
     name: string;

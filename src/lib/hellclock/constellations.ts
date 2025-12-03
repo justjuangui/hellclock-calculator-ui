@@ -371,9 +371,9 @@ export type SkillEffectData =
 export interface SkillBehaviorData {
   type: "SkillBehaviorData";
   affectMultipleSkills: boolean;
-  useListOfSkills: boolean;
-  listOfSkills: any[]; // Array of skill references
-  skillTagFilter: string; // e.g., "Everything"
+  useListOfSkills: string; // "UseSkillTag" | "UseListOfSkills" | "UseSkillTagAndListOfSkills"
+  listOfSkills: Array<{ name: string; id: number; type: string }>; // Array of skill references
+  skillTagFilter: string; // e.g., "Everything", "Melee", "0"
   skillDefinition: Partial<any>; // Skill definition object
   variables: SkillEffectVariables;
   effects: SkillEffectData[];
