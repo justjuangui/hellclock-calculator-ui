@@ -10,10 +10,7 @@ import {
 import type { RelicItemWithPosition } from "$lib/context/relicequipped.svelte";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import type { StatusHelper } from "$lib/hellclock/status";
-import {
-  getValueFromMultiplier,
-  normalizedValueFromRange,
-} from "$lib/hellclock/formats";
+import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { fmtValue } from "$lib/hellclock/utils";
 import { getContext, setContext } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
