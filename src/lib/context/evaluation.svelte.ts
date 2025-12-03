@@ -29,6 +29,19 @@ export type UnifiedModSource = {
 
 export type UnifiedModCollection = Record<string, UnifiedModSource[]>;
 
+export type UnifiedFlagSource = {
+  source: string;
+  enabled: boolean;
+  meta: {
+    type: string;
+    id: string;
+    slot: string;
+    [key: string]: any;
+  };
+};
+
+export type UnifiedFlagCollection = Record<string, UnifiedFlagSource[]>;
+
 export type EvaluationResult = {
   values: Record<string, any>;
   error?: string;
@@ -240,6 +253,9 @@ export function provideEvaluationManager(
     const statusMods = statusEvaluationAPI.getStatusMods();
     const worldTierMods = worldTierEvaluationAPI.getWorldTierMods();
 
+    // Collect flags from constellations
+    const constellationFlags = constellationEvaluationAPI.getConstellationFlags();
+
     // Merge all modifications into unified collection
     const allMods: UnifiedModCollection = {};
 
@@ -399,11 +415,31 @@ export function provideEvaluationManager(
       }
     });
 
+    // Merge all flags into unified collection
+    const allFlags: UnifiedFlagCollection = {};
+
+    // Add constellation flags
+    Object.entries(constellationFlags).forEach(([flagName, sources]) => {
+      allFlags[flagName] = sources.map((source) => ({
+        source: source.source,
+        enabled: source.enabled,
+        meta: {
+          type: source.meta.type,
+          id: source.meta.constellationId,
+          slot: source.meta.nodeId,
+          constellationId: source.meta.constellationId,
+          nodeId: source.meta.nodeId,
+          level: source.meta.level,
+        },
+      }));
+    });
+
     // TODO: From now Only Player stats is setted, need to add target stats if any and Summons
     const payload = {
       setEntity: {
         player: {
           stats: allMods,
+          flags: allFlags,
         },
       },
       outputs: {

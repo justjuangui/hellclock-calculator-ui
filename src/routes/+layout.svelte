@@ -141,11 +141,13 @@
     if (
       constellationsHelper &&
       statusHelper &&
+      statsHelper &&
       !constellationEvaluationContext
     ) {
       constellationEvaluationContext = provideConstellationEvaluation(
         constellationsHelper,
         statusHelper,
+        statsHelper,
         "en",
       );
     }

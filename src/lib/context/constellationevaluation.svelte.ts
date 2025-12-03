@@ -2,12 +2,14 @@ import type {
   ConstellationsHelper,
   StatModifierNodeAffixDefinition,
   StatusNodeAffixDefinition,
+  StatProxyModifierNodeAffixDefinition,
 } from "$lib/hellclock/constellations";
+import type { StatsHelper } from "$lib/hellclock/stats";
 import type {
   SkillBehaviorStatusDefinition,
   StatusHelper,
 } from "$lib/hellclock/status";
-import { getValueFromMultiplier } from "$lib/hellclock/formats";
+import { getValueFromMultiplier, formatStatModNumber } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
@@ -31,9 +33,28 @@ export type ConstellationModCollection = Record<
   ConstellationModSource[]
 >;
 
+export type ConstellationFlagSource = {
+  source: string;
+  enabled: boolean;
+  meta: {
+    type: string;
+    constellationId: string;
+    nodeId: string;
+    level: string;
+  };
+};
+
+export type ConstellationFlagCollection = Record<
+  string,
+  ConstellationFlagSource[]
+>;
+
 export type ConstellationEvaluationAPI = {
   // Get current constellation modifications for evaluation
   getConstellationMods: () => ConstellationModCollection;
+
+  // Get current constellation flags for evaluation
+  getConstellationFlags: () => ConstellationFlagCollection;
 
   // Check if constellations have changed (for cache invalidation)
   get constellationHash(): string;
@@ -44,6 +65,7 @@ const constellationEvaluationKey = Symbol("constellation-evaluation");
 export function provideConstellationEvaluation(
   constellationsHelper?: ConstellationsHelper,
   statusHelper?: StatusHelper,
+  statsHelper?: StatsHelper,
   lang = "en",
 ): ConstellationEvaluationAPI {
   const constellationEquippedApi = useConstellationEquipped();
@@ -68,6 +90,17 @@ export function provideConstellationEvaluation(
     }
 
     return normalizedStatName + suffix;
+  }
+
+  /**
+   * Create proxy flag name from source/target stats
+   * Removes "Damage" word from stat names
+   * Example: "PhysicalDamage" + "PlagueDamage" → "ProxyPhysicalToPlague"
+   */
+  function createProxyFlagName(sourceStat: string, targetStat: string): string {
+    const cleanSource = sourceStat.replace("Damage", "");
+    const cleanTarget = targetStat.replace("Damage", "");
+    return `Proxy${cleanSource}To${cleanTarget}`;
   }
 
   function getConstellationMods(): ConstellationModCollection {
@@ -130,8 +163,26 @@ export function provideConstellationEvaluation(
             layer = "multadd";
           }
 
+          // Generate description from stat value and label
+          let affixDescription = "";
+          if (statsHelper) {
+            const statDef = statsHelper.getStatByName(statAffix.eStatDefinition);
+            if (statDef) {
+              const formattedValue = formatStatModNumber(
+                statAffix.value,
+                statDef.eStatFormat,
+                statAffix.statModifierType || "Additive",
+                1,
+                0,
+                1,
+              );
+              const statLabel = statsHelper.getLabelForStat(statAffix.eStatDefinition, lang);
+              affixDescription = `${formattedValue} ${statLabel}`;
+            }
+          }
+
           mods[statKey].push({
-            source: `${constellationName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}`,
+            source: `${constellationName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}${affixDescription ? `: ${affixDescription}` : ""}`,
             amount: effectiveValue * allocated.level, // Multiply by level if multi-level nodes
             layer: layer,
             meta: {
@@ -169,6 +220,7 @@ export function provideConstellationEvaluation(
             type: "constellation",
             constellationId: "devotion",
             nodeId: category,
+            level: "1",
             value: String(points),
           },
         }];
@@ -176,6 +228,70 @@ export function provideConstellationEvaluation(
     }
 
     return mods;
+  }
+
+  function getConstellationFlags(): ConstellationFlagCollection {
+    const flags: ConstellationFlagCollection = {};
+
+    if (!constellationsHelper) {
+      return flags;
+    }
+
+    for (const [
+      key,
+      allocated,
+    ] of constellationEquippedApi.allocatedNodes.entries()) {
+      if (allocated.level === 0) continue;
+
+      const node = constellationsHelper.getNodeById(
+        allocated.constellationId,
+        allocated.nodeId,
+      );
+      if (!node) continue;
+
+      const constellation = constellationsHelper.getConstellationById(
+        allocated.constellationId,
+      );
+      if (!constellation) continue;
+
+      const constellationName = translate(constellation.nameKey, lang);
+      const nodeName = translate(node.nameLocalizationKey, lang);
+
+      for (const affix of node.affixes) {
+        if (affix.type === "StatProxyModifierNodeAffixDefinition") {
+          const proxyAffix = affix as StatProxyModifierNodeAffixDefinition;
+          const flagKey = createProxyFlagName(
+            proxyAffix.sourceStat,
+            proxyAffix.targetStat,
+          );
+
+          // Generate description from stat labels
+          let affixDescription = "";
+          if (statsHelper) {
+            const sourceLabel = statsHelper.getLabelForStat(proxyAffix.sourceStat, lang);
+            const targetLabel = statsHelper.getLabelForStat(proxyAffix.targetStat, lang);
+            affixDescription = `${sourceLabel} → ${targetLabel}`;
+          }
+
+          if (!(flagKey in flags)) {
+            flags[flagKey] = [];
+          }
+
+          flags[flagKey].push({
+            source: `${constellationName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}${affixDescription ? `: ${affixDescription}` : ""}`,
+            enabled: true,
+            meta: {
+              type: "constellation",
+              constellationId: String(allocated.constellationId),
+              nodeId: allocated.nodeId,
+              level: String(allocated.level),
+            },
+          });
+        }
+      }
+    }
+
+    return flags;
   }
 
   // Sync status effects from constellation nodes to StatusEvaluation
@@ -249,6 +365,7 @@ export function provideConstellationEvaluation(
 
   const api: ConstellationEvaluationAPI = {
     getConstellationMods,
+    getConstellationFlags,
 
     get constellationHash() {
       // Create a hash of allocated constellation nodes for cache invalidation
