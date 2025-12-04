@@ -12,7 +12,10 @@ import type {
   BroadcastContribution,
 } from "../types";
 import { buildModMeta, buildSourceLabel } from "../types";
-import { getBaseValue, buildCalculationExpression } from "../variable-modifiers";
+import {
+  getBaseValue,
+  buildCalculationExpression,
+} from "../variable-modifiers";
 import { getLayerFromModifierType } from "../layer-mapping";
 
 /**
@@ -162,16 +165,13 @@ export const addSkillValueModifierConverter: EffectConverter<AddSkillValueModifi
       const result: EffectConversionResult = { mods: [], broadcasts: [] };
       const { skillName, behaviorData } = context;
 
-      debugger;
       if (!effect.modifiers || effect.modifiers.length === 0) {
         return result;
       }
 
       for (const modifier of effect.modifiers) {
-        const skillValueModifierName = modifier.skillValueModifierKey.replaceAll(
-          " ",
-          "",
-        );
+        const skillValueModifierName =
+          modifier.skillValueModifierKey.replaceAll(" ", "");
 
         // Skip status-related modifiers
         if (skillValueModifierName.includes("!Status")) {
@@ -195,7 +195,11 @@ export const addSkillValueModifierConverter: EffectConverter<AddSkillValueModifi
               // Broadcast only - skip if tag filter is "0" (no skill)
               if (behaviorData.skillTagFilter !== "0") {
                 result.broadcasts!.push(
-                  buildBroadcast(modifier, behaviorData.skillTagFilter, context),
+                  buildBroadcast(
+                    modifier,
+                    behaviorData.skillTagFilter,
+                    context,
+                  ),
                 );
               }
               break;
@@ -213,7 +217,11 @@ export const addSkillValueModifierConverter: EffectConverter<AddSkillValueModifi
               // Both broadcast AND direct skills
               if (behaviorData.skillTagFilter !== "0") {
                 result.broadcasts!.push(
-                  buildBroadcast(modifier, behaviorData.skillTagFilter, context),
+                  buildBroadcast(
+                    modifier,
+                    behaviorData.skillTagFilter,
+                    context,
+                  ),
                 );
               }
               for (const skill of behaviorData.listOfSkills) {
@@ -225,7 +233,9 @@ export const addSkillValueModifierConverter: EffectConverter<AddSkillValueModifi
 
             default:
               // Unknown mode - fall back to single skill
-              result.mods.push(buildDirectSkillMod(modifier, skillName, context));
+              result.mods.push(
+                buildDirectSkillMod(modifier, skillName, context),
+              );
           }
         }
       }
