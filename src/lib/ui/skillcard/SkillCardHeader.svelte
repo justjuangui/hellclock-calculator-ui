@@ -13,6 +13,7 @@
   import { translate } from "$lib/hellclock/lang";
   import { spriteUrl } from "$lib/hellclock/utils";
   import { useMaxSkillLevel } from "$lib/context/maxskilllevel.svelte";
+  import { useSkillTagEvaluation } from "$lib/context/skilltagevaluation.svelte";
 
   import { getValueClasses } from "$lib/hellclock/skillcard-styles";
 
@@ -44,6 +45,9 @@
   const maxSkillLevelApi = useMaxSkillLevel();
   const maxLevel = $derived.by(() => maxSkillLevelApi.maxSkillLevel);
   const minLevel = 0;  // 0-indexed internally
+
+  // Skill tag evaluation context
+  const skillTagApi = useSkillTagEvaluation();
 
   function handleIncrement(e: MouseEvent) {
     e.stopPropagation();
@@ -96,7 +100,7 @@
 
   const tagsValue = $derived(() => {
     if (!tagsRow) return skill.skill.skillTags || [];
-    const value = resolveValue(tagsRow, skill, evaluationResult, skillId);
+    const value = resolveValue(tagsRow, skill, evaluationResult, skillId, skillTagApi);
     if (Array.isArray(value)) return value;
     return [];
   });

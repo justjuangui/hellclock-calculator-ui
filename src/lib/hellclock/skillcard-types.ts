@@ -69,6 +69,7 @@ export interface RowConfig {
     | "evaluate"
     | "fromSkill"
     | "fromSkillSelected"
+    | "fromSkillTagApi"
     | "computed";
   value: string | number;
 
@@ -141,7 +142,7 @@ export interface SkillDisplayDefinitions {
 export interface ResolvedRowConfig {
   id: string;
   displayName?: string;
-  valueType: "const" | "evaluate" | "fromSkill" | "computed";
+  valueType: "const" | "evaluate" | "fromSkill" | "fromSkillSelected" | "fromSkillTagApi" | "computed";
   value: string | number;
   format: FormatConfig;
   conditions: ConditionsConfig;
@@ -151,7 +152,7 @@ export interface ResolvedRowConfig {
 }
 
 // Type for value type discriminator
-export type ValueType = "const" | "evaluate" | "fromSkill" | "computed";
+export type ValueType = "const" | "evaluate" | "fromSkill" | "fromSkillSelected" | "fromSkillTagApi" | "computed";
 
 // Re-export SkillSelected for convenience
 export type { SkillSelected };

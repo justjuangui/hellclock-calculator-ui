@@ -2,6 +2,7 @@
 // Resolves display values from evaluation results or skill properties
 
 import type { RowConfig, SkillSelected } from "./skillcard-types";
+import type { SkillTagEvaluationAPI } from "$lib/context/skilltagevaluation.svelte";
 
 /**
  * Build evaluation key from skill ID and short key
@@ -54,12 +55,14 @@ export function computeValue(
 
 /**
  * Resolve value for a row based on its valueType
+ * @param skillTagApi - Optional SkillTagEvaluationAPI for "fromSkillTagApi" valueType
  */
 export function resolveValue(
   row: RowConfig,
   skill: SkillSelected,
   evaluationResult: Record<string, unknown>,
   skillId: string,
+  skillTagApi?: SkillTagEvaluationAPI,
 ): unknown {
   switch (row.valueType) {
     case "const":
@@ -77,6 +80,24 @@ export function resolveValue(
     case "fromSkill": {
       const skillData = skill.skill as any as Record<string, unknown>;
       return skillData[row.value as string];
+    }
+
+    case "fromSkillTagApi": {
+      if (!skillTagApi) return [];
+      const normalizedSkillId = skillId.replaceAll(" ", "");
+
+      switch (row.value) {
+        case "baseTags":
+          return skillTagApi.getBaseTagsForSkill(normalizedSkillId);
+        case "damageTags":
+          return skillTagApi.getDamageTagsFromDistribution(normalizedSkillId, evaluationResult);
+        case "allTags":
+        default: {
+          const base = skillTagApi.getBaseTagsForSkill(normalizedSkillId);
+          const damage = skillTagApi.getDamageTagsFromDistribution(normalizedSkillId, evaluationResult);
+          return [...base, ...damage];
+        }
+      }
     }
 
     case "computed":
@@ -100,11 +121,12 @@ export function resolveRowValues(
   skill: SkillSelected,
   evaluationResult: Record<string, unknown>,
   skillId: string,
+  skillTagApi?: SkillTagEvaluationAPI,
 ): Map<string, unknown> {
   const values = new Map<string, unknown>();
 
   for (const row of rows) {
-    values.set(row.id, resolveValue(row, skill, evaluationResult, skillId));
+    values.set(row.id, resolveValue(row, skill, evaluationResult, skillId, skillTagApi));
   }
 
   return values;

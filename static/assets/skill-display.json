@@ -32,8 +32,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -400,8 +400,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -808,8 +808,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -1166,8 +1166,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -1544,8 +1544,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -1982,8 +1982,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -2440,8 +2440,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -2778,8 +2778,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -3116,8 +3116,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -3514,8 +3514,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -3882,8 +3882,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -4320,8 +4320,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -4698,8 +4698,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -5036,8 +5036,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -5434,8 +5434,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -5802,8 +5802,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -6250,8 +6250,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -6728,8 +6728,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -7136,8 +7136,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -7624,8 +7624,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -8042,8 +8042,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -8420,8 +8420,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
@@ -8958,8 +8958,8 @@
             {
               "id": "tags",
               "displayName": "Tags",
-              "valueType": "fromSkill",
-              "value": "skillTags",
+              "valueType": "fromSkillTagApi",
+              "value": "allTags",
               "format": {
                 "type": "tagList"
               }
