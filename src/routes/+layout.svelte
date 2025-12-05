@@ -53,6 +53,7 @@
   import { provideBellEquipped } from "$lib/context/bellequipped.svelte";
   import { provideBellEvaluation } from "$lib/context/bellevaluation.svelte";
   import { provideMaxSkillLevel } from "$lib/context/maxskilllevel.svelte";
+  import { provideSkillTagEvaluation } from "$lib/context/skilltagevaluation.svelte";
   import { AssetPreloader } from "$lib/pixi/AssetPreloader";
 
   providedEquipped(ESlotsType.BlessedGear);
@@ -91,10 +92,18 @@
     null;
   let maxSkillLevelContext: ReturnType<typeof provideMaxSkillLevel> | null =
     null;
+  let skillTagEvaluationContext: ReturnType<
+    typeof provideSkillTagEvaluation
+  > | null = null;
 
   $effect(() => {
     if (skillsHelper && !skillContext) {
       skillContext = provideSkillEquipped(undefined, skillsHelper);
+    }
+
+    // SkillTagEvaluation depends on skillContext being initialized
+    if (skillContext && !skillTagEvaluationContext) {
+      skillTagEvaluationContext = provideSkillTagEvaluation();
     }
 
     if (statusHelper && !statusEvaluationContext) {
