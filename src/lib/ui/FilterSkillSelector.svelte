@@ -59,7 +59,7 @@
       <p class="mt-4 opacity-70">No items available for this slot.</p>
     {:else}
       <div class="mt-4 grid gap-3 lg:grid-cols-2 pr-4">
-        {#each (skills ?? []).filter((i) => matches(i.skill, search)) as sk}
+        {#each (skills ?? []).filter((i) => matches(i.skill, search)) as sk, i (i)}
           <div>
             <div
               class="card bg-base-200 hover:bg-base-300 transition border-2 border-base-200"
@@ -111,7 +111,7 @@
                 <div
                   class="text-xs mt-1 space-y-1 flex flex-row flex-wrap gap-2"
                 >
-                  {#each sk.skill.skillTags as m}
+                  {#each sk.skill.skillTags as m, i (i)}
                     <div
                       class={`badge badge-outline badge-sm ${containsTag(sk.skill, m) ? "badge-accent" : ""} truncate`}
                     >
@@ -131,7 +131,7 @@
                 <div
                   class="text-xs mt-1 space-y-1 flex flex-col flex-1 justify-stretch"
                 >
-                  {#each sk.skill.statModifiersPerRankUpgrade as m}
+                  {#each sk.skill.statModifiersPerRankUpgrade as m, i (i)}
                     <div
                       class="badge badge-soft badge-accent truncate w-full flex"
                     >

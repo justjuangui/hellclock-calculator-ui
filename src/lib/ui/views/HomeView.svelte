@@ -18,9 +18,9 @@
   }>();
 
   const statsHelper = getContext<StatsHelper>("statsHelper");
-  const gamepack = getContext<GamePack>("gamepack");
+  const _gamepack = getContext<GamePack>("gamepack");
   const lang = getContext<string>("lang");
-  const worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
+  const _worldTiersHelper = getContext<WorldTiersHelper>("worldTiersHelper");
   const evaluationManager = useEvaluationManager();
   const blessedSlots = useEquipped(ESlotsType.BlessedGear);
   const trinketSlots = useEquipped(ESlotsType.TrinkedGear);
@@ -270,7 +270,7 @@
             )}
             {#if blessedGear.length > 0}
               <div class="flex gap-2 items-center flex-wrap">
-                {#each blessedGear as gearItem}
+                {#each blessedGear as gearItem, i (i)}
                   <img
                     src={spriteUrl(gearItem.sprite)}
                     alt={translate(gearItem.localizedName, lang)}
@@ -286,7 +286,7 @@
             )}
             {#if trinketGear.length > 0}
               <div class="flex gap-2 items-center flex-wrap">
-                {#each trinketGear as gearItem}
+                {#each trinketGear as gearItem, i (i)}
                   <img
                     src={spriteUrl(gearItem.sprite)}
                     alt={translate(gearItem.localizedName, lang)}
@@ -324,7 +324,7 @@
         <div class="mt-4">
           {#if equippedSkills.length > 0}
             <div class="flex gap-2 items-center">
-              {#each equippedSkills as skillData}
+              {#each equippedSkills as skillData, i (i)}
                 <img
                   src={spriteUrl(skillData.skill.icon)}
                   alt={translate(skillData.skill.localizedName, lang)}

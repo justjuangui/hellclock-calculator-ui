@@ -66,6 +66,7 @@
   const availableRarities = $derived.by(() => {
     if (!selectedSize || !relicsHelper) return [];
     const relics = relicsHelper.getRelicDefinitionsBySize(selectedSize);
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const rarities = new Set<RelicRarity>();
 
     relics.forEach((relic) => {
@@ -618,7 +619,7 @@
       <!-- Affix Tabs -->
       <div class="tabs tabs-bordered tabs-xs mb-3">
         {#if relicsHelper && selectedRelicDef && selectedRarity}
-          {#each affixTabs as tab}
+          {#each affixTabs as tab, i (i)}
             <button
               class="tab {activeAffixTab === tab ? 'tab-active' : ''}"
               onclick={() => (activeAffixTab = tab as any)}

@@ -49,7 +49,7 @@
   <!-- Navigation Items -->
   <nav class="flex-1 overflow-y-auto overflow-x-hidden py-2">
     <ul class="menu menu-vertical gap-1 px-2">
-      {#each navItems as item}
+      {#each navItems as item, i (i)}
         <li>
           <button
             class="flex items-center rounded-lg transition-colors"

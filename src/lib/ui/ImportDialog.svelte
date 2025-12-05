@@ -283,7 +283,7 @@
           <div class="ml-8 mt-2 mb-2">
             <span class="label-text text-sm opacity-70">Select Loadout:</span>
             <div class="flex flex-wrap gap-2 mt-1">
-              {#each gearLoadouts as loadout}
+              {#each gearLoadouts as loadout, i (i)}
                 <button
                   class="btn btn-sm"
                   class:btn-primary={selectedGearLoadoutIndex === loadout.index}
@@ -334,7 +334,7 @@
           <div class="ml-8 mt-2 mb-2">
             <span class="label-text text-sm opacity-70">Select Loadout:</span>
             <div class="flex flex-wrap gap-2 mt-1">
-              {#each loadouts as loadout}
+              {#each loadouts as loadout, i (i)}
                 <button
                   class="btn btn-sm"
                   class:btn-primary={selectedLoadoutIndex === loadout.index}
@@ -443,7 +443,7 @@
           </svg>
           <div>
             <h4 class="font-bold">Validation Errors</h4>
-            {#each preview.errors as error}
+            {#each preview.errors as error, i (i)}
               <p class="text-sm">{error.message}</p>
             {/each}
           </div>
@@ -467,7 +467,7 @@
           </svg>
           <div>
             <h4 class="font-bold">Warnings</h4>
-            {#each preview.warnings as warning}
+            {#each preview.warnings as warning, i (i)}
               <p class="text-sm">{warning.message}</p>
             {/each}
           </div>
@@ -519,7 +519,7 @@
           </svg>
           <div>
             <h4 class="font-bold">Import Failed</h4>
-            {#each importResult.errors as error}
+            {#each importResult.errors as error, i (i)}
               <p class="text-sm">{error.message}</p>
             {/each}
           </div>

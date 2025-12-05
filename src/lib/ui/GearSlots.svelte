@@ -81,7 +81,7 @@
     Click a slot to browse and equip items, to remove just click once again. Hover to see details.
   </p>
   <div class="grid grid-cols-3 gap-1">
-      {#each allSlots as s}
+      {#each allSlots as s, i (i)}
         <div
           role="button"
           tabindex="0"

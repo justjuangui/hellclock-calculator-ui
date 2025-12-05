@@ -63,7 +63,7 @@
       <p class="mt-4 opacity-70">No items available for this slot.</p>
     {:else}
       <div class="mt-4 grid gap-3 lg:grid-cols-2 pr-4">
-        {#each (items ?? []).filter((i) => matches(i, search)) as item}
+        {#each (items ?? []).filter((i) => matches(i, search)) as item, i (i)}
           <div
             class="card bg-base-200 hover:bg-base-300 transition border-2 border-[var(--color)]"
             style={`--color: ${parseRGBA01ToCss(item.color)}`}
@@ -103,7 +103,7 @@
               <div
                 class="text-xs mt-1 space-y-1 flex flex-col flex-1 justify-stretch"
               >
-                {#each item.mods as m}
+                {#each item.mods as m, i (i)}
                   <div
                     class="badge badge-soft badge-accent truncate w-full flex"
                   >

@@ -34,7 +34,7 @@
   const currentShape = $derived(relicInventory.getCurrentShape());
 
   // Create reactive trigger for relics Map changes
-  const occupiedPositions = $derived(relicInventory.getOccupiedPositions());
+  const _occupiedPositions = $derived(relicInventory.getOccupiedPositions());
 
   // Create grid state for rendering with explicit reactivity
   const gridCells = $derived.by(() => {
@@ -150,7 +150,7 @@
     <!-- Relic Grid with proper spacing - centered in available space -->
     <div class="flex justify-center flex-1">
       <div
-        class={`grid grid-cols-(--this-cols) grid-rows-(--this-rows) gap-1 border border-base-300/50 p-2 rounded bg-base-200/30`}
+        class="grid grid-cols-(--this-cols) grid-rows-(--this-rows) gap-1 border border-base-300/50 p-2 rounded bg-base-200/30"
         style={`
         --this-cols: repeat(${GRID_WIDTH}, ${CELL_SIZE}px);
         --this-rows: repeat(${GRID_HEIGHT}, ${CELL_SIZE}px);
@@ -192,7 +192,7 @@
               <!-- Rank indicator circles -->
               {#if cell.relic.rank > 0}
                 <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5">
-                  {#each Array(cell.relic.rank) as _}
+                  {#each Array(cell.relic.rank) as _, i (i)}
                     <div class="w-1 h-1 rounded-full bg-green-500"></div>
                   {/each}
                 </div>
@@ -211,7 +211,7 @@
                   : "bg-base-100/30 border-base-300/30 opacity-40 cursor-not-allowed"
               }
             `}
-              style={`--this-col: 1;--this-row: 1;`}
+              style="--this-col: 1;--this-row: 1;"
               onclick={() => cell.isValid && onCellClick(cell.x, cell.y)}
               onkeydown={(e) => {
                 if ((e.key === "Enter" || e.key === " ") && cell.isValid) {

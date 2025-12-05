@@ -144,7 +144,7 @@
       <div
         class="absolute top-full mt-2 w-full bg-base-100/95 backdrop-blur-md rounded-lg shadow-2xl border border-base-content/20 max-h-80 overflow-y-auto"
       >
-        {#each searchResults as result, index}
+        {#each searchResults as result, index (index)}
           <button
             class="w-full text-left px-4 py-3 hover:bg-base-200/50 transition-colors border-b border-base-content/10 last:border-0 {index ===
             selectedIndex

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { SummarySection, SkillSelected, DefaultsConfig, ResolvedRowConfig } from '$lib/hellclock/skillcard-types';
+  import type { SummarySection, SkillSelected, DefaultsConfig } from '$lib/hellclock/skillcard-types';
   import { resolveRowConfig } from '$lib/hellclock/skillcard-defaults';
   import { resolveValue } from '$lib/hellclock/skillcard-resolver';
   import { shouldShowRow } from '$lib/hellclock/skillcard-conditions';
@@ -41,7 +41,7 @@
   style="grid-template-columns: repeat({columns}, minmax(0, 1fr)); gap: {gap * 0.25}rem;"
 >
   {#if loading}
-    {#each Array(columns) as _}
+    {#each Array(columns) as _, i (i)}
       <div class="text-center">
         <div class="skeleton h-3 w-12 mx-auto mb-1"></div>
         <div class="skeleton h-4 w-16 mx-auto"></div>

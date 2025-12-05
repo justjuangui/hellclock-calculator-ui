@@ -10,7 +10,7 @@
 </script>
 
 <div class="tooltip-content">
-  {#each lines as line}
+  {#each lines as line, i (i)}
     {#if line.type === "header"}
       <p
         class="text-sm text-center font-semibold mb-1"
@@ -45,7 +45,7 @@
         {#if line.icon}
           <img src={spriteUrl(line.icon)} alt="" class="w-3 h-3 opacity-60" />
         {/if}
-        <p class="text-xs">{line.text}</p>
+        <p class="text-xs whitespace-pre-line">{line.text}</p>
       </div>
     {:else if line.type === "affixCol"}
       <div class="flex flex-col items-center gap-1 mb-0.5">
@@ -58,7 +58,7 @@
             />
           </div>
         {/if}
-        <p class="text-xs">{line.text}</p>
+        <p class="text-xs whitespace-pre-line">{line.text}</p>
       </div>
     {/if}
   {/each}

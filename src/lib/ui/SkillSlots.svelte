@@ -25,7 +25,7 @@
     Hover to see details.
   </p>
   <div class="flex flex-row gap-1">
-      {#each skillSlots as s}
+      {#each skillSlots as s, i (i)}
         <div class="tooltip tooltip-bottom">
           <div class="tooltip-content">
             {#if equipped[s]?.skill}

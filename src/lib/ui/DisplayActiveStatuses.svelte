@@ -82,7 +82,7 @@
           Buffs ({groupedStatuses().buffs.length})
         </h4>
         <div class="grid grid-cols-1 gap-2">
-          {#each groupedStatuses().buffs as status}
+          {#each groupedStatuses().buffs as status, i (i)}
             {@const statusName = getStatusName(status.statusId)}
             {@const statusIcon = getStatusIcon(status.statusId)}
             {@const statusMods = getStatusStatMods(
@@ -124,7 +124,7 @@
 
                   {#if statusMods.length > 0}
                     <div class="mt-2 space-y-1">
-                      {#each statusMods as mod}
+                      {#each statusMods as mod, i (i)}
                         <div class="text-sm flex items-center gap-2">
                           <span class="opacity-70">
                             {statsHelper?.getStatDisplayName(
@@ -154,7 +154,7 @@
           Debuffs ({groupedStatuses().debuffs.length})
         </h4>
         <div class="grid grid-cols-1 gap-2">
-          {#each groupedStatuses().debuffs as status}
+          {#each groupedStatuses().debuffs as status, i (i)}
             {@const statusName = getStatusName(status.statusId)}
             {@const statusIcon = getStatusIcon(status.statusId)}
             {@const statusMods = getStatusStatMods(
@@ -196,7 +196,7 @@
 
                   {#if statusMods.length > 0}
                     <div class="mt-2 space-y-1">
-                      {#each statusMods as mod}
+                      {#each statusMods as mod, i (i)}
                         <div class="text-sm flex items-center gap-2">
                           <span class="opacity-70">
                             {statsHelper?.getStatDisplayName(

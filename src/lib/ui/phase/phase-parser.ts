@@ -7,7 +7,6 @@ import {
 import {
   extractPhaseType,
   formatContributionValue,
-  formatNumber,
   formatNodeName,
   getPhaseColor,
   getPhaseDisplayName,

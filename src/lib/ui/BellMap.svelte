@@ -17,7 +17,7 @@
   } = $props();
 
   const lang = getContext<string>("lang") || "en";
-  const bellsHelper = getContext<BellsHelper>("bellsHelper");
+  const _bellsHelper = getContext<BellsHelper>("bellsHelper");
   const bellEquippedApi = useBellEquipped();
 
   // Derived values
@@ -28,13 +28,13 @@
   );
 
   // Get bell display name
-  function getBellName(id: number): string {
+  function _getBellName(id: number): string {
     const type = BELL_TYPES_BY_ID[id];
     return type ? `${type} Bell` : "Unknown Bell";
   }
 
   // Get bell color
-  function getBellColorClass(type: BellType): string {
+  function _getBellColorClass(type: BellType): string {
     switch (type) {
       case "Campaign":
         return "text-blue-400";
@@ -135,7 +135,7 @@
       value={activeBellId}
       onchange={handleBellChange}
     >
-      {#each Object.entries(BELL_IDS) as [type, id]}
+      {#each Object.entries(BELL_IDS) as [type, id], i (i)}
         <option value={id}>
           {type} Bell
         </option>

@@ -68,7 +68,7 @@
     <div class="flex items-center justify-between gap-2 mb-2">
       <h3 class="text-base font-semibold">Stats</h3>
       <div role="tablist" class="tabs tabs-border tabs-sm">
-        {#each groupMeta as g}
+        {#each groupMeta as g, i (i)}
           <button
             role="tab"
             class={`tab ${selectedGroup === g.key ? "tab-active" : ""} ${hasGroup(g.key) ? "" : "tab-disabled"}`}
@@ -96,7 +96,7 @@
       </div>
     {:else if sheet?.displayedStats?.[selectedGroup]?.length}
       <div class="space-y-1 mt-2">
-        {#each sheet.displayedStats[selectedGroup] ?? [] as stat}
+        {#each sheet.displayedStats[selectedGroup] ?? [] as stat, i (i)}
           <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-base-200 transition-colors group">
             <span class="text-sm font-medium">{statsHelper.getLabelForStat(stat)}</span>
             <div class="flex items-center gap-2">

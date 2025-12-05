@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, getContext } from "svelte";
-  import { Application, Container, Graphics, Sprite, Assets } from "pixi.js";
+  import { Application, Container, Graphics } from "pixi.js";
   import { Viewport } from "pixi-viewport";
   import type {
     BellsHelper,
@@ -9,7 +9,6 @@
   } from "$lib/hellclock/bells";
   import { BELL_TYPES_BY_ID } from "$lib/hellclock/bells";
   import { useBellEquipped } from "$lib/context/bellequipped.svelte";
-  import { spriteUrl } from "$lib/hellclock/utils";
   import GameTooltip from "$lib/ui/GameTooltip.svelte";
   import MouseTooltip from "$lib/ui/MouseTooltip.svelte";
   import type { StatsHelper } from "$lib/hellclock/stats";

@@ -11,7 +11,6 @@
   import {
     formatSkillEffectVariableModNumber,
     formatStatModNumber,
-    normalizedValueFromRange,
   } from "$lib/hellclock/formats";
   import { formatHCStyle, formatIndexed } from "$lib/hellclock/utils";
 
@@ -171,7 +170,7 @@
 
 {#if affixes.length > 0 && maxAffixes > 0}
   <div class="space-y-2">
-    {#each affixes as affix}
+    {#each affixes as affix, i (i)}
       {@const isSelected = selectedAffixes.some((a) => a.id === affix.id)}
       {@const tags = getTagsAffix(affix)}
       {@const [min, max] = [0, 1.2]}
@@ -236,7 +235,7 @@
           {/if}
           {#if tags.length > 0}
             <div class="card-actions">
-              {#each tags as tag}
+              {#each tags as tag, i (i)}
                 <div class="badge badge-soft badge-xs">{tag}</div>
               {/each}
             </div>

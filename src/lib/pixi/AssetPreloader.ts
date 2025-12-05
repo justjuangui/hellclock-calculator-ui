@@ -114,7 +114,7 @@ export class AssetPreloader {
   /**
    * Unload specific assets to free memory
    */
-  async unloadCategory(category: AssetCategory): Promise<void> {
+  async unloadCategory(_category: AssetCategory): Promise<void> {
     // Implementation can be added when needed
     // Use Assets.unload() to remove specific assets
   }

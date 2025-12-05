@@ -65,7 +65,7 @@
 
     <!-- Paths -->
     <div class="p-2 space-y-2">
-      {#each devotionPaths as path}
+      {#each devotionPaths as path, i (i)}
         <div
           class="flex items-center gap-2 p-2 rounded transition-colors hover:bg-base-200/30"
           class:justify-center={!isExpanded}

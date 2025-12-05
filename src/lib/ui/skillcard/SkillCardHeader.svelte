@@ -72,7 +72,7 @@
   // Resolve values
   const nameValue = $derived(() => {
     if (!nameRow) return skill.skill.name;
-    const resolved = resolveRowConfig(nameRow, globalDefaults);
+    const _resolved = resolveRowConfig(nameRow, globalDefaults);
     const value = resolveValue(nameRow, skill, evaluationResult, skillId);
     // localizedName is a LangText that needs translation
     if (value && typeof value === "object") {
@@ -184,7 +184,7 @@
       </div>
     </div>
     <div class="flex gap-1 flex-wrap">
-      {#each tagsValue() as tag}
+      {#each tagsValue() as tag, i (i)}
         <div class="badge badge-outline badge-xs">{tag}</div>
       {/each}
     </div>

@@ -4,7 +4,7 @@
     skillName?: string; // Optional skill name to construct stat keys
   }
 
-  const { evaluationResult, skillName }: Props = $props();
+  const { evaluationResult, skillName: _skillName }: Props = $props();
 
   // Damage type configuration
   const damageTypes = [
@@ -117,7 +117,7 @@
   <div>
     <div class="text-xs font-semibold mb-1.5 opacity-70">Damage Distribution</div>
     <div class="space-y-1">
-      {#each damageDistribution as damage}
+      {#each damageDistribution as damage, i (i)}
         <div class="flex items-center gap-2">
           <div class="w-20 text-xs">{damage.label}</div>
           <progress

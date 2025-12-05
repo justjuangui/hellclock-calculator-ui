@@ -152,8 +152,8 @@
 
   function calculatePositionInViewport(
     position: [number, number],
-    nodeViewPosition: [number, number, number],
-    nodeViewScale: [number, number, number],
+    _nodeViewPosition: [number, number, number],
+    _nodeViewScale: [number, number, number],
   ): [number, number] {
     const x = position[0];
     const y = -position[1];
@@ -468,7 +468,8 @@
 
   // React to allocation changes
   $effect(() => {
-    const hash = constellationEquippedApi.allocatedNodes.size;
+    // Track dependency for reactivity
+    constellationEquippedApi.allocatedNodes.size;
     if (app && viewport) {
       updateCanvas();
     }

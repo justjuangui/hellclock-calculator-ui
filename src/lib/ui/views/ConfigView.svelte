@@ -59,7 +59,7 @@
 
       <!-- World Tier Radio Buttons -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {#each allWorldTiers as tier}
+        {#each allWorldTiers as tier, i (i)}
           {@const tierKey = worldTiersHelper.getWorldTierKey(tier)}
           {@const isSelected = selectedTier && worldTiersHelper.getWorldTierKey(selectedTier) === tierKey}
           {@const tierColor = parseRGBA01ToCssLightened(tier.worldTierColor)}
@@ -124,7 +124,7 @@
               </tr>
             </thead>
             <tbody>
-              {#each selectedTier.playerStatModifiers as mod}
+              {#each selectedTier.playerStatModifiers as mod, i (i)}
                 <tr>
                   <td>
                     {statsHelper.getLabelForStat(mod.eStatDefinition) ||
