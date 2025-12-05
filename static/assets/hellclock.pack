@@ -429,6 +429,7 @@ pack "hellclock" {
     FuryPoints: FuryPoints.Stats using simple
     DisciplinePoints: DisciplinePoints.Stats using simple
     FaithPoints: FaithPoints.Stats using simple
+    CurrentSummonAmount: CurrentSummonAmount.Stats using simple
     BaseDamage: BaseDamage.DEFAULT using common
     CriticalChance: CriticalChance.PERCENTAGE using common
     CriticalDamage: CriticalDamage.PERCENTAGE using common
