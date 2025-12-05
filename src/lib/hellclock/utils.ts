@@ -87,7 +87,10 @@ export function parseRGBA01ToCssLightened(
   return `rgba(${Math.round(r2 * 255)},${Math.round(g2 * 255)},${Math.round(b2 * 255)},${a ?? 1})`;
 }
 
-export function parseRGBA01ToPixiHex(rgbaStr: string | undefined): { color: number; alpha: number } {
+export function parseRGBA01ToPixiHex(rgbaStr: string | undefined): {
+  color: number;
+  alpha: number;
+} {
   if (!rgbaStr) return { color: 0x000000, alpha: 1 };
   const nums = rgbaStr
     .replace(/rgba?\s*\(|\)/gi, "")
@@ -118,7 +121,7 @@ export function fmtValue(
   maxMultiplier = 1,
 ): string {
   const { value, selectedValue, eStatDefinition, modifierType } = mod;
-  let fValue = value;
+  const fValue = value;
   const statDefinition = statsHelper.getStatByName(eStatDefinition);
   if (!statDefinition) {
     return `${fValue} ${eStatDefinition}`;
@@ -156,8 +159,10 @@ export function formatIndexed(fmt: string, ...args: unknown[]): string {
 
 export function formatHCStyle(input: string): string {
   return input
-    .replace(/<[^>]*>/g, "")
-    .replace(/\s+/g, " ")
+    .replace(/<[^>]*>/g, "") // remove HTML tags
+    .replace(/[ \t]+\n/g, "\n") // trim spaces/tabs before newlines
+    .replace(/\n[ \t]+/g, "\n") // trim spaces/tabs after newlines
+    .replace(/[ \t]{2,}/g, " ") // collapse multiple spaces/tab
     .trim();
 }
 

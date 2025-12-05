@@ -1,5 +1,5 @@
 import { type LangText, translate } from "$lib/hellclock/lang";
-import type { StatMod, StatModifierType } from "$lib/hellclock/stats";
+import type { StatMod } from "$lib/hellclock/stats";
 
 // ============================================================================
 // Type Definitions for Status.json

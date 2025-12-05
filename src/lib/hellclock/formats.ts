@@ -32,7 +32,7 @@ export function formatStatNumber(
   if (singType == ESingType.Never) {
     value = Math.abs(value);
   }
-  let symbol = singType == ESingType.Always ? (value >= 0 ? "+" : "") : "";
+  const symbol = singType == ESingType.Always ? (value >= 0 ? "+" : "") : "";
   if (statFormat === "PERCENTAGE") {
     if (instanceFormat[lang] === undefined) {
       instanceFormat[lang] = new Intl.NumberFormat(lang, {
@@ -56,9 +56,9 @@ export function normalizedValueFromRange(
   toMin: number,
   toMax: number,
 ) {
-  let num = from - fromMin;
-  let num2 = fromMax - fromMin;
-  let num3 = num / num2;
+  const num = from - fromMin;
+  const num2 = fromMax - fromMin;
+  const num3 = num / num2;
   return (toMax - toMin) * num3 + toMin;
 }
 
@@ -94,7 +94,7 @@ export function getValueFromMultiplier(
   maxMultiplier: number,
 ) {
   let val = baseValue;
-  let normalize = normalizedValueFromRange(
+  const normalize = normalizedValueFromRange(
     multiplier,
     0,
     1,
@@ -154,7 +154,7 @@ export function formatStatModNumber(
   minMultiplier: number,
   maxMultiplier: number,
 ) {
-  let val = getValueFromMultiplier(
+  const val = getValueFromMultiplier(
     value,
     modifier,
     multiplier,

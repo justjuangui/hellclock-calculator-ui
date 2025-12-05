@@ -56,11 +56,11 @@ export class StatsHelper {
     let maximumValue = stat.maximumValue || 0;
     let minimumValue = stat.minimumValue || 0;
     if (stat.useStatForMaximumValue && stat.maximumValueStat) {
-      let otherStat = this.getStatByName(stat.maximumValueStat);
+      const otherStat = this.getStatByName(stat.maximumValueStat);
       maximumValue = otherStat ? otherStat.baseValue : maximumValue;
     }
     if (stat.useStatForMinimumValue && stat.minimumValueStat) {
-      let otherStat = this.getStatByName(stat.minimumValueStat);
+      const otherStat = this.getStatByName(stat.minimumValueStat);
       minimumValue = otherStat ? otherStat.baseValue : minimumValue;
     }
     return Math.min(Math.max(value, minimumValue), maximumValue);

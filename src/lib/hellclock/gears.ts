@@ -187,7 +187,7 @@ export class GearsHelper {
           []),
       ];
     } else {
-      let slot = this.slotDatabase.blessedGearSlotDefinitions?.find(
+      const slot = this.slotDatabase.blessedGearSlotDefinitions?.find(
         (sd) => sd.slot === gd.slot,
       );
       if (!slot) {
@@ -235,7 +235,7 @@ export class GearsHelper {
   }
 
   getGearItems(blessed: boolean, slotFilter?: GearSlot): GearItem[] {
-    let items: GearItem[] = [];
+    const items: GearItem[] = [];
     this.gearDefinitions
       .filter(
         (gd) =>
@@ -248,8 +248,8 @@ export class GearsHelper {
             ? this.gearRarity.gearDropRarityConfigs
             : [];
 
-          for (let rarityConfig of groupRarity) {
-            let slot = this.slotDatabase.regularGearSlotDefinitions?.find(
+          for (const rarityConfig of groupRarity) {
+            const slot = this.slotDatabase.regularGearSlotDefinitions?.find(
               (sd) => sd.slot === gd.slot,
             );
             if (!slot) {
@@ -293,7 +293,7 @@ export class GearsHelper {
             ? this.gearRarity.blessedGearRarity
             : undefined;
 
-          let mods = [
+          const mods = [
             ...(variant.value.statModifiersDefinitions?.map((s) => ({
               ...s,
             })) ?? []),

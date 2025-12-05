@@ -1,11 +1,15 @@
 import { translate, type LangText } from "$lib/hellclock/lang";
 import type { StatModifierType, StatsHelper } from "$lib/hellclock/stats";
 import {
+  formatHCStyle,
   formatIndexed,
   parseRGBA01ToCss,
   type TooltipLine,
 } from "$lib/hellclock/utils";
-import { formatStatModNumber } from "./formats";
+import {
+  formatSkillEffectVariableModNumber,
+  formatStatModNumber,
+} from "./formats";
 import type { SkillsHelper } from "./skills";
 
 // Position is [x, y] array
@@ -270,8 +274,7 @@ export interface AddStatusToTargetSkillEffectData extends BaseSkillEffectData {
   stackAmount: SkillEffectVariableReference;
 }
 
-export interface RemoveStatusFromTargetSkillEffectData
-  extends Partial<BaseSkillEffectData> {
+export interface RemoveStatusFromTargetSkillEffectData extends Partial<BaseSkillEffectData> {
   name?: string;
   type: "RemoveStatusFromTargetSkillEffectData";
   effectTarget: EffectTarget;
@@ -300,8 +303,7 @@ export interface SkillEffectStatModifierDefinition {
   listenToVariableModifiersUpdate: boolean;
 }
 
-export interface AddSkillStatModifierSkillEffectData
-  extends BaseSkillEffectData {
+export interface AddSkillStatModifierSkillEffectData extends BaseSkillEffectData {
   type: "AddSkillStatModifierSkillEffectData";
   statModifiers: SkillEffectStatModifierDefinition[];
 }
@@ -316,14 +318,12 @@ export interface SkillEffectSkillModifierDefinition {
   listenToVariableModifiersUpdate: boolean;
 }
 
-export interface AddSkillValueModifierSkillEffectData
-  extends BaseSkillEffectData {
+export interface AddSkillValueModifierSkillEffectData extends BaseSkillEffectData {
   type: "AddSkillValueModifierSkillEffectData";
   modifiers: SkillEffectSkillModifierDefinition[];
 }
 
-export interface AddCharacterStatModifierSkillEffectData
-  extends BaseSkillEffectData {
+export interface AddCharacterStatModifierSkillEffectData extends BaseSkillEffectData {
   type: "AddCharacterStatModifierSkillEffectData";
   statModifiers: SkillEffectStatModifierDefinition[];
 }
@@ -338,8 +338,7 @@ export interface DamageTargetSkillEffectData extends BaseSkillEffectData {
   damage: SkillEffectVariableReference;
 }
 
-export interface RechargeSkillCooldownSkillEffectData
-  extends BaseSkillEffectData {
+export interface RechargeSkillCooldownSkillEffectData extends BaseSkillEffectData {
   type: "RechargeSkillCooldownSkillEffectData";
   rechargeAmount: SkillEffectVariableReference;
 }
@@ -734,8 +733,8 @@ export class ConstellationsHelper {
   // Get all nodes that should be cascade-deallocated
   // Note: Constellation unlock checks removed to allow leapfrogging
   getCascadeDeallocations(
-    allocatedNodes: AllocatedNodesMap,
-    devotionCategoryPoints: Map<string, number>,
+    _allocatedNodes: AllocatedNodesMap,
+    _devotionCategoryPoints: Map<string, number>,
   ): Set<string> {
     // Return empty set - no cascade deallocation based on constellation lock status
     return new Set<string>();
@@ -760,7 +759,7 @@ export class ConstellationsHelper {
     // Find all nodes in this constellation that would remain allocated
     const orphanedNodes: string[] = [];
 
-    for (const [allocKey, allocated] of simulatedNodes.entries()) {
+    for (const [_allocKey, allocated] of simulatedNodes.entries()) {
       // Only check nodes in the same constellation
       if (allocated.constellationId !== constellationId) continue;
 
@@ -837,7 +836,7 @@ export class ConstellationsHelper {
     lang: string,
     allocatedLevel: number = 0,
     statsHelper: StatsHelper,
-    skillsHelper: SkillsHelper,
+    _skillsHelper: SkillsHelper,
   ): TooltipLine[] {
     const lines: TooltipLine[] = [];
     const devotionConfig = this.getDevotionConfigByCategory(
@@ -887,7 +886,9 @@ export class ConstellationsHelper {
         // Skip affixes with hideDescription: true
         if (affix.hideDescription) continue;
 
-        let affixText = "";
+        const desc = translate(affix.description, lang);
+        // check if have additional params
+        const extraParams: any[] = [];
 
         if (affix.type === "StatModifierNodeAffixDefinition") {
           const statDefinition = statsHelper.getStatByName(
@@ -906,7 +907,7 @@ export class ConstellationsHelper {
               affix.eStatDefinition,
               lang,
             );
-            affixText = `${formattedValue} ${statLabel}`;
+            extraParams.push(formattedValue, statLabel);
           }
         } else if (affix.type === "DevotionIncrementNodeAffixDefinition") {
           const devotionAffix = affix as DevotionIncrementNodeAffixDefinition;
@@ -914,22 +915,45 @@ export class ConstellationsHelper {
             devotionAffix.eDevotionCategory as any,
           );
           const valueText = `+${devotionAffix.valuePerLevel * (allocatedLevel === 0 ? 1 : allocatedLevel)}`;
-          affixText = formatIndexed(
-            translate(devotionAffix.description, lang),
+          extraParams.push(
             devotionConfig
               ? `${translate(devotionConfig.nameKey, lang)} Devotion`
               : "",
-            valueText,
           );
+          extraParams.push(valueText);
         } else if (affix.type === "SkillBehaviorNodeAffixDefinition") {
+          extraParams.push(
+            formatSkillEffectVariableModNumber(
+              affix.valuePerLevel,
+              affix.behaviorData!.variables.variables[0]
+                .eSkillEffectVariableFormat,
+            ),
+          );
           // normally this kind of node have descriptions
-          affixText = translate(affix.description, lang);
-        } else {
-          affixText = affix.name;
+          if (affix.additionalLocalizationVariables?.length) {
+            for (const varName of affix.additionalLocalizationVariables) {
+              const variable = affix.behaviorData!.variables.variables.find(
+                (v) =>
+                  v.name === varName.skillEffectVariableReference.valueOrName,
+              );
+              if (variable) {
+                extraParams.push(
+                  formatSkillEffectVariableModNumber(
+                    variable.baseValue,
+                    variable.eSkillEffectVariableFormat,
+                  ),
+                );
+              } else {
+                extraParams.push(
+                  varName.skillEffectVariableReference.valueOrName || "",
+                );
+              }
+            }
+          }
         }
 
         lines.push({
-          text: affixText,
+          text: formatIndexed(formatHCStyle(desc), ...extraParams),
           type: "affix",
           icon: "UI_AffixBullet",
         });

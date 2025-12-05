@@ -793,6 +793,10 @@ export class RelicsHelper {
     );
   }
 
+  getDefaultRelicUpgradeModifierConfig(): RelicUpgradeModifierConfig {
+    return this.relicInventoryConfig.defaultRelicUpgradeModifier;
+  }
+
   /**
    * Get implicit affixes for a given size and imbued type
    */
@@ -828,16 +832,24 @@ export class RelicsHelper {
 
     let rankModifier = 1.0;
     let modifierType = "";
-    if (affix.upgradeModifierOverride && affix.upgradeModifierOverride[rank]) {
+    if (
+      affix.upgradeModifierOverride &&
+      rank in affix.upgradeModifierOverride
+    ) {
       rankModifier = affix.upgradeModifierOverride[rank];
       modifierType = affix.modifierType!;
     } else if (
       affix.relicUpgradeModifierConfig &&
       affix.relicUpgradeModifierConfig.upgradeModifier &&
-      affix.relicUpgradeModifierConfig.upgradeModifier[rank]
+      rank in affix.relicUpgradeModifierConfig.upgradeModifier
     ) {
       rankModifier = affix.relicUpgradeModifierConfig.upgradeModifier[rank];
       modifierType = affix.relicUpgradeModifierConfig.modifierType;
+    } else {
+      // Use default modifier from inventory config
+      const defaultConfig = this.getDefaultRelicUpgradeModifierConfig();
+      rankModifier = defaultConfig.upgradeModifier[rank] || 1.0;
+      modifierType = defaultConfig.modifierType;
     }
     const tierRange = affix.tierRollRanges.find((range) => range.tier === tier);
 
@@ -1045,7 +1057,7 @@ export class RelicsHelper {
     // Corrupted affix (implicit)
     if (relic.selectedCorruptionAffix) {
       const value =
-        relic.implicitAffixValues?.[relic.selectedCorruptionAffix.id];
+        relic.corruptionAffixValues?.[relic.selectedCorruptionAffix.id];
       lines.push({
         text: this.formatRelicAffix(
           relic.selectedCorruptionAffix,
@@ -1186,12 +1198,16 @@ export class RelicsHelper {
       return affixName;
     }
 
-    let value = this.getAffixValueFromRoll(
+    const value = this.getAffixValueFromRoll(
       affix.id,
       valueNormalized,
       tier,
       rank,
     );
+
+    const desc = translate(affix.description, lang);
+    // check if have additional params
+    const extraParams: any[] = [];
 
     // Format based on affix type
     switch (affix.type) {
@@ -1213,11 +1229,11 @@ export class RelicsHelper {
               affix.eStatDefinition,
               lang,
             );
-            return `${formattedValue} ${statLabel}`;
+            extraParams.push(statLabel);
+            extraParams.push(formattedValue);
           }
         }
-        return `${value} ${affixName}`;
-
+        return formatIndexed(formatHCStyle(desc), ...extraParams);
       case "RegenOnKillAffixDefinition":
         const statsLabel = statsHelper!.getLabelForStat(
           affix.eStatRegen!,
@@ -1231,22 +1247,24 @@ export class RelicsHelper {
           0,
           1,
         );
-        return `${formattedRegen} ${statsLabel} on Kill`;
+
+        extraParams.push(statsLabel);
+        extraParams.push(formattedRegen);
+        return formatIndexed(formatHCStyle(desc), ...extraParams);
 
       case "SkillLevelAffixDefinition":
         const skill = skillsHelper?.getSkillById(affix.skillDefinition!.id);
         const skillName = translate(skill!.localizedName, lang);
-        return `+${value} to ${skillName} Level`;
-
+        extraParams.push(skillName);
+        extraParams.push(value);
+        extraParams.push(skillsHelper?.getMaxSkillUpgradeLevelBonus());
+        return formatIndexed(formatHCStyle(desc), ...extraParams);
       case "StatusMaxStacksAffixDefinition":
         const stackLabel = translate(affix.description, lang) || affix.name;
         return formatIndexed(formatHCStyle(stackLabel), `+${value}`);
       case "SkillBehaviorAffixDefinition":
-        const desc = translate(affix.description, lang);
-        // check if have additional params
-        const extraParams: any[] = [];
         if (affix.additionalLocalizationVariables?.length) {
-          for (let varName of affix.additionalLocalizationVariables) {
+          for (const varName of affix.additionalLocalizationVariables) {
             const variable = affix.behaviorData!.variables.variables.find(
               (v) =>
                 v.name === varName.skillEffectVariableReference.valueOrName,

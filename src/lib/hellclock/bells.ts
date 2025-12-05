@@ -1,4 +1,4 @@
-import { translate, type LangText } from "$lib/hellclock/lang";
+import { translate } from "$lib/hellclock/lang";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import { formatIndexed, type TooltipLine } from "$lib/hellclock/utils";
 import { formatStatModNumber } from "./formats";
@@ -256,7 +256,7 @@ export class BellsHelper {
     // Find all nodes in this bell that would remain allocated
     const orphanedNodes: string[] = [];
 
-    for (const [allocKey, allocated] of simulatedNodes.entries()) {
+    for (const [_allocKey, allocated] of simulatedNodes.entries()) {
       // Only check nodes in the same bell
       if (allocated.constellationId !== bellId) continue;
 
@@ -319,7 +319,7 @@ export class BellsHelper {
     lang: string,
     allocatedLevel: number = 0,
     statsHelper: StatsHelper,
-    skillsHelper: SkillsHelper,
+    _skillsHelper: SkillsHelper,
   ): TooltipLine[] {
     const lines: TooltipLine[] = [];
     const bellType = BELL_TYPES_BY_ID[bell.id];
