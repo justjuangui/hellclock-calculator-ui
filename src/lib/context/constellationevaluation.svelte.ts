@@ -91,7 +91,7 @@ export function provideConstellationEvaluation(
     }
 
     for (const [
-      key,
+      _key,
       allocated,
     ] of constellationEquippedApi.allocatedNodes.entries()) {
       if (allocated.level === 0) continue;
@@ -322,7 +322,7 @@ export function provideConstellationEvaluation(
     }
 
     for (const [
-      key,
+      _key,
       allocated,
     ] of constellationEquippedApi.allocatedNodes.entries()) {
       if (allocated.level === 0) continue;
@@ -394,7 +394,7 @@ export function provideConstellationEvaluation(
 
     // Process each allocated constellation node
     for (const [
-      key,
+      _key,
       allocated,
     ] of constellationEquippedApi.allocatedNodes.entries()) {
       if (allocated.level === 0) continue;

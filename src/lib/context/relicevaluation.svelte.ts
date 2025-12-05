@@ -6,7 +6,6 @@ import type {
 import {
   effectConverterRegistry,
   type RelicConverterContext,
-  type RelicModSource as SharedRelicModSource,
   type BroadcastContribution,
 } from "$lib/context/affix-converters";
 import type { EvaluationContribution } from "$lib/context/evaluation-types";
@@ -219,7 +218,8 @@ export function provideRelicEvaluation(
     mods: RelicModCollection,
     broadcasts: BroadcastContribution[],
   ): void {
-    let value = relicHelper.getAffixValueFromRoll(
+    debugger;
+    const value = relicHelper.getAffixValueFromRoll(
       affix.id,
       valueNormalized,
       tier,
@@ -261,7 +261,12 @@ export function provideRelicEvaluation(
     mods: RelicModCollection,
     broadcasts: BroadcastContribution[],
   ): void {
-    if (!affix.behaviorData?.skillDefinition?.name) return;
+    if (!affix.behaviorData) {
+      console.warn(
+        `Affix behavior data missing for affix ID ${affix.id} (${affix.name})`
+      );
+      return;
+    }
 
     const context: RelicConverterContext = {
       system: "relic",
@@ -433,7 +438,7 @@ export function provideRelicEvaluation(
     // handle additionalStatModifierDefinitions with applyRollToAdditionalStatModifiers
     if (affix.additionalStatModifierDefinitions?.length) {
       for (const addModDef of affix.additionalStatModifierDefinitions) {
-        let statNameAddModDef = addModDef.eStatDefinition;
+        const statNameAddModDef = addModDef.eStatDefinition;
         const modifierType = addModDef.modifierType.toLowerCase() || "additive";
         let layerAddModDef = "add";
         if (modifierType === "additive") {

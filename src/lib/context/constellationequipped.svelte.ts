@@ -61,17 +61,20 @@ export function provideConstellationEquipped(
 ): ConstellationEquippedAPI {
   const allocatedNodes = new SvelteMap<string, AllocatedNode>();
   const devotionCategoryPoints = new SvelteMap<string, number>();
-  let availableDevotionPoints = $state(initialDevotionPoints);
+  const availableDevotionPoints = $state(initialDevotionPoints);
 
   // Reactive effect to recalculate devotion category points whenever nodes change
   $effect(() => {
     if (!constellationsHelper) return;
 
     // Calculate new category points
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const newCategoryPoints = new Map<string, number>();
 
     // Track which constellations we've seen (for mastery checking)
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const constellationTotalSpent = new Map<number, number>();
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const constellationMaxPossible = new Map<number, number>();
 
     // Iterate through all allocated nodes
@@ -295,10 +298,14 @@ export function provideConstellationEquipped(
   const simulateDevotionPoints = (
     tempAllocatedNodes: AllocatedNodesMap,
   ): Map<string, number> => {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     if (!constellationsHelper) return new Map();
 
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const simulatedDevotionPoints = new Map<string, number>();
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const constellationTotalSpent = new Map<number, number>();
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const constellationMaxPossible = new Map<number, number>();
 
     // Calculate devotion points from node affixes
@@ -507,6 +514,7 @@ export function provideConstellationEquipped(
     if (nodes.length === 0) return 0;
 
     // Create pending list with target levels
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const pending = new Map<
       string,
       { constellationId: number; nodeId: string; targetLevel: number }

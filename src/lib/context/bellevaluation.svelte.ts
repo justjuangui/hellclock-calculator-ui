@@ -1,7 +1,4 @@
-import type {
-  BellsHelper,
-  GreatBellSkillTreeDefinition,
-} from "$lib/hellclock/bells";
+import type { BellsHelper } from "$lib/hellclock/bells";
 import { BELL_TYPES_BY_ID } from "$lib/hellclock/bells";
 import type {
   StatModifierNodeAffixDefinition,
@@ -9,7 +6,6 @@ import type {
 } from "$lib/hellclock/constellations";
 import type { StatusHelper } from "$lib/hellclock/status";
 import type { EvaluationContribution } from "$lib/context/evaluation-types";
-import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useBellEquipped } from "$lib/context/bellequipped.svelte";
@@ -65,7 +61,7 @@ export function provideBellEvaluation(
     const bellName = `${bellType} Bell`;
 
     // Only process nodes for the active bell
-    for (const [key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
+    for (const [_key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
       // Skip nodes not belonging to the active bell
       if (allocated.constellationId !== activeBellId) continue;
       if (allocated.level === 0) continue;
@@ -142,7 +138,7 @@ export function provideBellEvaluation(
     const bellName = `${bellType} Bell`;
 
     // Process each allocated bell node (only active bell)
-    for (const [key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
+    for (const [_key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
       // Skip nodes not belonging to the active bell
       if (allocated.constellationId !== activeBellId) continue;
       if (allocated.level === 0) continue;
@@ -188,9 +184,9 @@ export function provideBellEvaluation(
 
   // Use $effect to sync status effects when bell allocation or active bell changes
   $effect(() => {
-    // Track both node count and active bell ID
-    const _nodeCount = bellEquippedApi.allocatedNodes.size;
-    const _activeBellId = bellEquippedApi.activeBellId;
+    // Track dependencies for reactive updates
+    bellEquippedApi.allocatedNodes.size;
+    bellEquippedApi.activeBellId;
     syncBellStatusEffects();
   });
 

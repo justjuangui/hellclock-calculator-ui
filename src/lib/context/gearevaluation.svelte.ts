@@ -41,7 +41,7 @@ export function provideGearEvaluation(
 
   function mapModForEval(mod: StatMod): string {
     let statName = mod.eStatDefinition;
-    let modifierType = mod.modifierType.toLowerCase();
+    const modifierType = mod.modifierType.toLowerCase();
     if (modifierType === "additive") {
       statName = `${statName}.add`;
     } else if (modifierType === "multiplicative") {

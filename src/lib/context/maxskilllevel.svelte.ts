@@ -31,7 +31,7 @@ export function provideMaxSkillLevel(
     const activeBellId = bellEquippedApi.activeBellId;
 
     // Only check the active bell
-    for (const [key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
+    for (const [_key, allocated] of bellEquippedApi.allocatedNodes.entries()) {
       if (allocated.constellationId !== activeBellId) continue;
       if (allocated.level === 0) continue;
 

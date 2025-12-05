@@ -58,7 +58,7 @@ export function provideEvaluationManager(
   });
 
   let actor = $state<any>(null);
-  let target = $state<any>(null);
+  let _target = $state<any>(null);
   let actorBuilt = $state(false);
   let sheet = $state<any>(null);
 

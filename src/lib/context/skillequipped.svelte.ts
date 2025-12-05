@@ -4,7 +4,6 @@ import type {
   SkillsHelper,
   SkillValueGroup,
 } from "$lib/hellclock/skills";
-import type { Engine } from "$lib/engine";
 import { getContext, setContext } from "svelte";
 
 export type SkillEquippedMap = Partial<

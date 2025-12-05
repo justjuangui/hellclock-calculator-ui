@@ -71,7 +71,7 @@ export function provideBellEquipped(
 
   // Active bell (default to Campaign Bell)
   let activeBellId = $state(BELL_IDS.Campaign);
-  let availableBellPoints = $state(initialBellPoints);
+  const availableBellPoints = $state(initialBellPoints);
 
   // Helper function to create allocation key
   const getAllocationKey = (bellId: number, nodeId: string): string => {
@@ -306,6 +306,7 @@ export function provideBellEquipped(
     selectBell(bellId);
 
     // Create pending list with target levels
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const pending = new Map<
       string,
       { nodeId: string; targetLevel: number }

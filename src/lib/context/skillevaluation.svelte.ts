@@ -40,7 +40,7 @@ export function provideSkillEvaluation(
 
   function mapSkillModForEval(mod: SkillUpgradeModifier): string {
     let statName = mod.skillValueModifierKey.replaceAll(" ", "");
-    let modifierType = mod.modifierType.toLowerCase();
+    const modifierType = mod.modifierType.toLowerCase();
     if (modifierType === "additive") {
       statName = `${statName}.add`;
     } else if (modifierType === "multiplicative") {
@@ -74,6 +74,27 @@ export function provideSkillEvaluation(
         },
       ];
 
+      // If the skill contain summoned entities add in mods
+      // for now only check for summonAmount
+      const summonAmount = (skill.skill as any).summonAmount ?? 0;
+      if (summonAmount > 0) {
+        const currentSummonsStatName = `CurrentSummonAmount`;
+        if (!(currentSummonsStatName in mods)) {
+          mods[currentSummonsStatName] = [];
+        }
+        mods[currentSummonsStatName].push({
+          source: `Skill ${translate(skill.skill.localizedName, lang)} Summons`,
+          amount: summonAmount,
+          layer: "simple",
+          meta: {
+            type: "skill",
+            id: String(skill.skill.id),
+            slot: slot,
+            value: String(summonAmount),
+          },
+        });
+      }
+
       // Add base value modifiers
       const baseValMods = skillsHelper?.getSkillBaseValueModsById(
         skill.skill.name,
@@ -96,10 +117,10 @@ export function provideSkillEvaluation(
 
         let amount = 0;
         if (baseValMod.value.startsWith("CONST:N")) {
-          let [, , val] = baseValMod.value.split(":");
+          const [, , val] = baseValMod.value.split(":");
           amount = Number(val) ?? 0;
         } else if (baseValMod.value.startsWith("RANDOM:")) {
-          let [_, valRange] = baseValMod.value.split(":");
+          const [_, valRange] = baseValMod.value.split(":");
           const range = (skill.skill as any)[valRange] ?? [0, 0];
           amount =
             Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
