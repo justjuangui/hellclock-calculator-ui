@@ -16,20 +16,19 @@
   const metaEntries = (m?: Record<string, string | number>) =>
     Object.entries(m ?? {});
 
-  // Determine initial expanded state: first level expanded by default, or controlled by expandAll
-  let expanded = $state(expandAll !== null ? expandAll : depth === 0);
+  // Local state for user-controlled expansion (null = use default based on depth)
+  let localExpanded = $state<boolean | null>(null);
 
-  // React to expandAll changes
-  $effect(() => {
-    if (expandAll !== null) {
-      expanded = expandAll;
-    }
-  });
+  // Effective expanded state: expandAll takes precedence when set, otherwise use local state
+  let expanded = $derived(
+    expandAll !== null ? expandAll : (localExpanded ?? depth === 0)
+  );
 
-  const hasChildren = node.children && node.children.length > 0;
+  const hasChildren = $derived(node.children && node.children.length > 0);
 
   function toggleExpanded() {
-    expanded = !expanded;
+    // Toggle local state (only affects display when expandAll is null)
+    localExpanded = localExpanded === null ? !(depth === 0) : !localExpanded;
   }
 </script>
 
@@ -56,7 +55,7 @@
 
   {#if node.meta && metaEntries(node.meta).length}
     <div class="flex flex-wrap gap-1 text-xs opacity-70">
-      {#each metaEntries(node.meta) as [k, v]}
+      {#each metaEntries(node.meta) as [k, v] (k)}
         <span class="badge badge-ghost">{k}: {v}</span>
       {/each}
     </div>
@@ -64,7 +63,7 @@
 
   {#if node.details}
     <div class="text-xs opacity-60 ml-2">
-      {#each Object.entries(node.details) as [key, value]}
+      {#each Object.entries(node.details) as [key, value] (key)}
         <div><strong>{key}:</strong> {JSON.stringify(value)}</div>
       {/each}
     </div>
@@ -72,7 +71,7 @@
 
   {#if hasChildren && expanded}
     <div class="ml-3 border-l pl-3 space-y-3">
-      {#each node.children ?? [] as c}
+      {#each node.children ?? [] as c, i (i)}
         <XNodeTree node={c} depth={depth + 1} {expandAll} />
       {/each}
     </div>
