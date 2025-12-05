@@ -11,6 +11,7 @@ import { useConstellationEvaluation } from "$lib/context/constellationevaluation
 import { useBellEvaluation } from "$lib/context/bellevaluation.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 import { useWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
+import { useSkillTagEvaluation } from "$lib/context/skilltagevaluation.svelte";
 import { mergeContributions } from "$lib/context/evaluation-types";
 
 export type EvaluationResult = {
@@ -70,6 +71,7 @@ export function provideEvaluationManager(
   let lastBellHash = $state<string>("");
   let lastStatusHash = $state<string>("");
   let lastWorldTierHash = $state<string>("");
+  let lastSkillTagHash = $state<string>("");
 
   // Get evaluation APIs (these must be called after contexts are initialized)
   let gearEvaluationAPI: ReturnType<typeof useGearEvaluation> | null = null;
@@ -82,6 +84,8 @@ export function provideEvaluationManager(
   let statusEvaluationAPI: ReturnType<typeof useStatusEvaluation> | null = null;
   let worldTierEvaluationAPI: ReturnType<typeof useWorldTierEvaluation> | null =
     null;
+  let skillTagEvaluationAPI: ReturnType<typeof useSkillTagEvaluation> | null =
+    null;
 
   // Initialize APIs after contexts are available
   $effect(() => {
@@ -93,6 +97,7 @@ export function provideEvaluationManager(
       bellEvaluationAPI = useBellEvaluation();
       statusEvaluationAPI = useStatusEvaluation();
       worldTierEvaluationAPI = useWorldTierEvaluation();
+      skillTagEvaluationAPI = useSkillTagEvaluation();
     } catch {
       // APIs not available yet
     }
@@ -117,6 +122,7 @@ export function provideEvaluationManager(
       bellEvaluationAPI &&
       statusEvaluationAPI &&
       worldTierEvaluationAPI &&
+      skillTagEvaluationAPI &&
       actor &&
       sheet &&
       !statEvaluation.result &&
@@ -127,7 +133,7 @@ export function provideEvaluationManager(
     }
   });
 
-  // Reactive evaluation when gear, skills, relics, constellations, statuses, or world tier change
+  // Reactive evaluation when gear, skills, relics, constellations, statuses, world tier, or skill tags change
   $effect(() => {
     if (
       !gearEvaluationAPI ||
@@ -136,7 +142,8 @@ export function provideEvaluationManager(
       !constellationEvaluationAPI ||
       !bellEvaluationAPI ||
       !statusEvaluationAPI ||
-      !worldTierEvaluationAPI
+      !worldTierEvaluationAPI ||
+      !skillTagEvaluationAPI
     )
       return;
 
@@ -148,8 +155,9 @@ export function provideEvaluationManager(
     const currentBellHash = bellEvaluationAPI.bellHash;
     const currentStatusHash = statusEvaluationAPI.statusHash;
     const currentWorldTierHash = worldTierEvaluationAPI.worldTierHash;
+    const currentSkillTagHash = skillTagEvaluationAPI.skillTagHash;
 
-    // Check if equipment, status effects, or world tier have changed
+    // Check if equipment, status effects, world tier, or skill tags have changed
     if (
       currentGearHash !== lastGearHash ||
       currentSkillHash !== lastSkillHash ||
@@ -157,7 +165,8 @@ export function provideEvaluationManager(
       currentConstellationHash !== lastConstellationHash ||
       currentBellHash !== lastBellHash ||
       currentStatusHash !== lastStatusHash ||
-      currentWorldTierHash !== lastWorldTierHash
+      currentWorldTierHash !== lastWorldTierHash ||
+      currentSkillTagHash !== lastSkillTagHash
     ) {
       lastGearHash = currentGearHash;
       lastSkillHash = currentSkillHash;
@@ -166,6 +175,7 @@ export function provideEvaluationManager(
       lastBellHash = currentBellHash;
       lastStatusHash = currentStatusHash;
       lastWorldTierHash = currentWorldTierHash;
+      lastSkillTagHash = currentSkillTagHash;
 
       // Invalidate actor cache and trigger evaluation
       actorBuilt = false;
@@ -206,10 +216,11 @@ export function provideEvaluationManager(
       !constellationEvaluationAPI ||
       !bellEvaluationAPI ||
       !statusEvaluationAPI ||
-      !worldTierEvaluationAPI
+      !worldTierEvaluationAPI ||
+      !skillTagEvaluationAPI
     ) {
       throw new Error(
-        "Gear, Skill, Relic, Constellation, Bell, Status, and WorldTier evaluation APIs are required",
+        "Gear, Skill, Relic, Constellation, Bell, Status, WorldTier, and SkillTag evaluation APIs are required",
       );
     }
 
@@ -224,6 +235,7 @@ export function provideEvaluationManager(
       bellEvaluationAPI.getContribution(),
       statusEvaluationAPI.getContribution(),
       worldTierEvaluationAPI.getContribution(),
+      skillTagEvaluationAPI.getContribution(),
     );
 
     // TODO: From now Only Player stats is setted, need to add target stats if any and Summons
@@ -366,7 +378,7 @@ export function provideEvaluationManager(
     },
 
     setTarget: (newTarget) => {
-      target = newTarget;
+      _target = newTarget;
       actorBuilt = false;
     },
   };
