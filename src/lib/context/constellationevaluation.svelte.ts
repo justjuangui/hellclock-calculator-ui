@@ -279,7 +279,7 @@ export function provideConstellationEvaluation(
       affixId: 0, // Constellation affixes don't have IDs like relics
       affixValue,
       variables: affix.behaviorData.variables?.variables || [],
-      rollVariableName: "", // Constellations don't have roll variables
+      rollVariableName: "Roll",
       skillName: affix.behaviorData.skillDefinition.name || "",
       // Add behavior data for multi-skill targeting
       behaviorData: {
