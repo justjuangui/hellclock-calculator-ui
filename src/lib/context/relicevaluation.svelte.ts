@@ -218,7 +218,6 @@ export function provideRelicEvaluation(
     mods: RelicModCollection,
     broadcasts: BroadcastContribution[],
   ): void {
-    debugger;
     const value = relicHelper.getAffixValueFromRoll(
       affix.id,
       valueNormalized,
