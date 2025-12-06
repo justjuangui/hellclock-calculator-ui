@@ -160,6 +160,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_BasicAttackDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_BasicAttackDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_BasicAttackDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_BasicAttackDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_BasicAttackDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_SplitshotDefinition_BulletCountModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -167,6 +178,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_SplitshotDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_SplitshotDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_SplitshotDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_SplitshotDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_SplitshotDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -182,6 +204,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_ShadowDashDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_ShadowDashDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_ShadowDashDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_ShadowDashDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_ShadowDashDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_RepeaterDefinition_BulletCountModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -189,6 +222,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_RepeaterDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_RepeaterDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_RepeaterDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_RepeaterDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_RepeaterDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -215,6 +259,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_ReflexesDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_ReflexesDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_ReflexesDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_ReflexesDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_ReflexesDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_PrayerOfHealthSkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -222,6 +277,28 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_PrayerOfHealthSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_PrayerOfHealthSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_PrayerOfHealthSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_PrayerOfHealthSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_PrayerOfHealthSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_PrayerOfVengeanceSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_PrayerOfVengeanceSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_PrayerOfVengeanceSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_PrayerOfVengeanceSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_PrayerOfVengeanceSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -237,6 +314,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_TheOldBellSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_TheOldBellSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_TheOldBellSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_TheOldBellSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_TheOldBellSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_JudgementDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -244,6 +332,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_JudgementDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_JudgementDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_JudgementDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_JudgementDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_JudgementDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -259,6 +358,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_DoubleKnivesSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_DoubleKnivesSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_DoubleKnivesSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_DoubleKnivesSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_DoubleKnivesSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_PassageSkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -270,6 +380,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_PassageSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_PassageSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_PassageSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_PassageSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_PassageSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_LassoSkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -277,6 +398,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_LassoSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_LassoSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_LassoSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_LassoSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_LassoSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -303,6 +435,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_FeitorsLashSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_FeitorsLashSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_FeitorsLashSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_FeitorsLashSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_FeitorsLashSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_SlowTimeSkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -314,6 +457,28 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_SlowTimeSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_SlowTimeSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_SlowTimeSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_SlowTimeSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_SlowTimeSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_UsePotionSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_UsePotionSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_UsePotionSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_UsePotionSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_UsePotionSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_ClosedBodySkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -321,6 +486,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillAreaOfEffect
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_ClosedBodySkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_ClosedBodySkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_ClosedBodySkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_ClosedBodySkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_ClosedBodySkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -347,6 +523,28 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_BombardmentSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_BombardmentSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_BombardmentSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_BombardmentSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_BombardmentSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_SummonTheGuardSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_SummonTheGuardSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_SummonTheGuardSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_SummonTheGuardSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_SummonTheGuardSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_MatadeiraSkillDefinition_RadiusModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -369,6 +567,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_MatadeiraSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_MatadeiraSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_MatadeiraSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_MatadeiraSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_MatadeiraSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_HolyRosarySkillDefinition_ProjectileAmountModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -380,6 +589,17 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_HolyRosarySkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_HolyRosarySkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_HolyRosarySkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_HolyRosarySkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_HolyRosarySkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_VeilofQuilsSkillDefinition_ProjectileAmountModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
@@ -387,6 +607,17 @@ pack "hellclock" {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
         mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
+    skill_VeilofQuilsSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_VeilofQuilsSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_VeilofQuilsSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_VeilofQuilsSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_VeilofQuilsSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -413,13 +644,24 @@ pack "hellclock" {
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
     }
+    skill_SummonBruteSkillDefinition_DamageModifier {
+      layers:[base,add,mult,multadd,override]
+      pipeline:[base,add,mult,multadd,override]
+      phases {
+        base = sum_by(group: SELF, layer: "base")
+        add = base + sum_by(group: SELF, layer: "add")
+        mult = add * prod_by(group: SELF, layer: "mult") * (flag("skill_SummonBruteSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_SummonBruteSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_SummonBruteSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_SummonBruteSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
+        multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
+        override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
+      }
+    }
     skill_SummonMarksmenSkillDefinition_DamageModifier {
       layers:[base,add,mult,multadd,override]
       pipeline:[base,add,mult,multadd,override]
       phases {
         base = sum_by(group: SELF, layer: "base")
         add = base + sum_by(group: SELF, layer: "add")
-        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount
+        mult = add * prod_by(group: SELF, layer: "mult") * SkillProjectileAmount * (flag("skill_SummonMarksmenSkillDefinition_tag_Melee") ? SkillMeleeDamage : 1) * (flag("skill_SummonMarksmenSkillDefinition_tag_Marksman") ? SkillMarksmanDamage : 1) * (flag("skill_SummonMarksmenSkillDefinition_tag_Spell") ? SkillSpellDamage : 1) * (flag("skill_SummonMarksmenSkillDefinition_tag_Projectile") ? SkillProjectileDamage : 1)
         multadd = mult * (1 + sum_by(group: SELF, layer: "multadd", transform: val - 1))
         override = first_by(group: SELF, layer: "override") > 0 ? first_by(group: SELF, layer: "override")  : multadd
       }
@@ -430,6 +672,7 @@ pack "hellclock" {
     DisciplinePoints: DisciplinePoints.Stats using simple
     FaithPoints: FaithPoints.Stats using simple
     CurrentSummonAmount: CurrentSummonAmount.Stats using simple
+    CurrentBarrier: Barrier.Stats using simple
     BaseDamage: BaseDamage.DEFAULT using common
     CriticalChance: CriticalChance.PERCENTAGE using common
     CriticalDamage: CriticalDamage.PERCENTAGE using common
@@ -572,7 +815,7 @@ pack "hellclock" {
     skill_BasicAttackDefinition_Dst_Plague: skill_BasicAttackDefinition_Dst_Plague.skill using common
     skill_BasicAttackDefinition_Dmg_Fire: skill_BasicAttackDefinition_Dmg_Fire.skill using common
     skill_BasicAttackDefinition_Dst_Fire: skill_BasicAttackDefinition_Dst_Fire.skill using common
-    skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using common
+    skill_BasicAttackDefinition_DamageModifier: skill_BasicAttackDefinition_DamageModifier.skill using skill_BasicAttackDefinition_DamageModifier
     skill_BasicAttackDefinition_SkillSpeedModifier: skill_BasicAttackDefinition_SkillSpeedModifier.skill using common
     skill_BasicAttackDefinition_CooldownModifier: skill_BasicAttackDefinition_CooldownModifier.skill using common
     skill_BasicAttackDefinition_ChargesModifier: skill_BasicAttackDefinition_ChargesModifier.skill using common
@@ -605,7 +848,7 @@ pack "hellclock" {
     skill_SplitshotDefinition_Dst_Plague: skill_SplitshotDefinition_Dst_Plague.skill using common
     skill_SplitshotDefinition_Dmg_Fire: skill_SplitshotDefinition_Dmg_Fire.skill using common
     skill_SplitshotDefinition_Dst_Fire: skill_SplitshotDefinition_Dst_Fire.skill using common
-    skill_SplitshotDefinition_DamageModifier: skill_SplitshotDefinition_DamageModifier.skill using common
+    skill_SplitshotDefinition_DamageModifier: skill_SplitshotDefinition_DamageModifier.skill using skill_SplitshotDefinition_DamageModifier
     skill_SplitshotDefinition_SkillSpeedModifier: skill_SplitshotDefinition_SkillSpeedModifier.skill using common
     skill_SplitshotDefinition_CooldownModifier: skill_SplitshotDefinition_CooldownModifier.skill using common
     skill_SplitshotDefinition_ChargesModifier: skill_SplitshotDefinition_ChargesModifier.skill using common
@@ -642,7 +885,7 @@ pack "hellclock" {
     skill_ShadowDashDefinition_Dst_Plague: skill_ShadowDashDefinition_Dst_Plague.skill using common
     skill_ShadowDashDefinition_Dmg_Fire: skill_ShadowDashDefinition_Dmg_Fire.skill using common
     skill_ShadowDashDefinition_Dst_Fire: skill_ShadowDashDefinition_Dst_Fire.skill using common
-    skill_ShadowDashDefinition_DamageModifier: skill_ShadowDashDefinition_DamageModifier.skill using common
+    skill_ShadowDashDefinition_DamageModifier: skill_ShadowDashDefinition_DamageModifier.skill using skill_ShadowDashDefinition_DamageModifier
     skill_ShadowDashDefinition_SkillSpeedModifier: skill_ShadowDashDefinition_SkillSpeedModifier.skill using common
     skill_ShadowDashDefinition_CooldownModifier: skill_ShadowDashDefinition_CooldownModifier.skill using common
     skill_ShadowDashDefinition_ChargesModifier: skill_ShadowDashDefinition_ChargesModifier.skill using common
@@ -674,7 +917,7 @@ pack "hellclock" {
     skill_RepeaterDefinition_Dst_Plague: skill_RepeaterDefinition_Dst_Plague.skill using common
     skill_RepeaterDefinition_Dmg_Fire: skill_RepeaterDefinition_Dmg_Fire.skill using common
     skill_RepeaterDefinition_Dst_Fire: skill_RepeaterDefinition_Dst_Fire.skill using common
-    skill_RepeaterDefinition_DamageModifier: skill_RepeaterDefinition_DamageModifier.skill using common
+    skill_RepeaterDefinition_DamageModifier: skill_RepeaterDefinition_DamageModifier.skill using skill_RepeaterDefinition_DamageModifier
     skill_RepeaterDefinition_SkillSpeedModifier: skill_RepeaterDefinition_SkillSpeedModifier.skill using common
     skill_RepeaterDefinition_CooldownModifier: skill_RepeaterDefinition_CooldownModifier.skill using common
     skill_RepeaterDefinition_ChargesModifier: skill_RepeaterDefinition_ChargesModifier.skill using common
@@ -708,7 +951,7 @@ pack "hellclock" {
     skill_ReflexesDefinition_Dst_Plague: skill_ReflexesDefinition_Dst_Plague.skill using common
     skill_ReflexesDefinition_Dmg_Fire: skill_ReflexesDefinition_Dmg_Fire.skill using common
     skill_ReflexesDefinition_Dst_Fire: skill_ReflexesDefinition_Dst_Fire.skill using common
-    skill_ReflexesDefinition_DamageModifier: skill_ReflexesDefinition_DamageModifier.skill using common
+    skill_ReflexesDefinition_DamageModifier: skill_ReflexesDefinition_DamageModifier.skill using skill_ReflexesDefinition_DamageModifier
     skill_ReflexesDefinition_SkillSpeedModifier: skill_ReflexesDefinition_SkillSpeedModifier.skill using common
     skill_ReflexesDefinition_CooldownModifier: skill_ReflexesDefinition_CooldownModifier.skill using common
     skill_ReflexesDefinition_ChargesModifier: skill_ReflexesDefinition_ChargesModifier.skill using common
@@ -748,7 +991,7 @@ pack "hellclock" {
     skill_PrayerOfHealthSkillDefinition_Dst_Plague: skill_PrayerOfHealthSkillDefinition_Dst_Plague.skill using common
     skill_PrayerOfHealthSkillDefinition_Dmg_Fire: skill_PrayerOfHealthSkillDefinition_Dmg_Fire.skill using common
     skill_PrayerOfHealthSkillDefinition_Dst_Fire: skill_PrayerOfHealthSkillDefinition_Dst_Fire.skill using common
-    skill_PrayerOfHealthSkillDefinition_DamageModifier: skill_PrayerOfHealthSkillDefinition_DamageModifier.skill using common
+    skill_PrayerOfHealthSkillDefinition_DamageModifier: skill_PrayerOfHealthSkillDefinition_DamageModifier.skill using skill_PrayerOfHealthSkillDefinition_DamageModifier
     skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier: skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_CooldownModifier: skill_PrayerOfHealthSkillDefinition_CooldownModifier.skill using common
     skill_PrayerOfHealthSkillDefinition_ChargesModifier: skill_PrayerOfHealthSkillDefinition_ChargesModifier.skill using common
@@ -790,7 +1033,7 @@ pack "hellclock" {
     skill_PrayerOfVengeanceSkillDefinition_Dst_Plague: skill_PrayerOfVengeanceSkillDefinition_Dst_Plague.skill using common
     skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire: skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire.skill using common
     skill_PrayerOfVengeanceSkillDefinition_Dst_Fire: skill_PrayerOfVengeanceSkillDefinition_Dst_Fire.skill using common
-    skill_PrayerOfVengeanceSkillDefinition_DamageModifier: skill_PrayerOfVengeanceSkillDefinition_DamageModifier.skill using common
+    skill_PrayerOfVengeanceSkillDefinition_DamageModifier: skill_PrayerOfVengeanceSkillDefinition_DamageModifier.skill using skill_PrayerOfVengeanceSkillDefinition_DamageModifier
     skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier: skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_CooldownModifier: skill_PrayerOfVengeanceSkillDefinition_CooldownModifier.skill using common
     skill_PrayerOfVengeanceSkillDefinition_ChargesModifier: skill_PrayerOfVengeanceSkillDefinition_ChargesModifier.skill using common
@@ -820,7 +1063,7 @@ pack "hellclock" {
     skill_TheOldBellSkillDefinition_Dst_Plague: skill_TheOldBellSkillDefinition_Dst_Plague.skill using common
     skill_TheOldBellSkillDefinition_Dmg_Fire: skill_TheOldBellSkillDefinition_Dmg_Fire.skill using common
     skill_TheOldBellSkillDefinition_Dst_Fire: skill_TheOldBellSkillDefinition_Dst_Fire.skill using common
-    skill_TheOldBellSkillDefinition_DamageModifier: skill_TheOldBellSkillDefinition_DamageModifier.skill using common
+    skill_TheOldBellSkillDefinition_DamageModifier: skill_TheOldBellSkillDefinition_DamageModifier.skill using skill_TheOldBellSkillDefinition_DamageModifier
     skill_TheOldBellSkillDefinition_SkillSpeedModifier: skill_TheOldBellSkillDefinition_SkillSpeedModifier.skill using common
     skill_TheOldBellSkillDefinition_CooldownModifier: skill_TheOldBellSkillDefinition_CooldownModifier.skill using common
     skill_TheOldBellSkillDefinition_ChargesModifier: skill_TheOldBellSkillDefinition_ChargesModifier.skill using common
@@ -850,7 +1093,7 @@ pack "hellclock" {
     skill_JudgementDefinition_Dst_Plague: skill_JudgementDefinition_Dst_Plague.skill using common
     skill_JudgementDefinition_Dmg_Fire: skill_JudgementDefinition_Dmg_Fire.skill using common
     skill_JudgementDefinition_Dst_Fire: skill_JudgementDefinition_Dst_Fire.skill using common
-    skill_JudgementDefinition_DamageModifier: skill_JudgementDefinition_DamageModifier.skill using common
+    skill_JudgementDefinition_DamageModifier: skill_JudgementDefinition_DamageModifier.skill using skill_JudgementDefinition_DamageModifier
     skill_JudgementDefinition_SkillSpeedModifier: skill_JudgementDefinition_SkillSpeedModifier.skill using common
     skill_JudgementDefinition_CooldownModifier: skill_JudgementDefinition_CooldownModifier.skill using common
     skill_JudgementDefinition_ChargesModifier: skill_JudgementDefinition_ChargesModifier.skill using common
@@ -886,7 +1129,7 @@ pack "hellclock" {
     skill_DoubleKnivesSkillDefinition_Dst_Plague: skill_DoubleKnivesSkillDefinition_Dst_Plague.skill using common
     skill_DoubleKnivesSkillDefinition_Dmg_Fire: skill_DoubleKnivesSkillDefinition_Dmg_Fire.skill using common
     skill_DoubleKnivesSkillDefinition_Dst_Fire: skill_DoubleKnivesSkillDefinition_Dst_Fire.skill using common
-    skill_DoubleKnivesSkillDefinition_DamageModifier: skill_DoubleKnivesSkillDefinition_DamageModifier.skill using common
+    skill_DoubleKnivesSkillDefinition_DamageModifier: skill_DoubleKnivesSkillDefinition_DamageModifier.skill using skill_DoubleKnivesSkillDefinition_DamageModifier
     skill_DoubleKnivesSkillDefinition_SkillSpeedModifier: skill_DoubleKnivesSkillDefinition_SkillSpeedModifier.skill using common
     skill_DoubleKnivesSkillDefinition_CooldownModifier: skill_DoubleKnivesSkillDefinition_CooldownModifier.skill using common
     skill_DoubleKnivesSkillDefinition_ChargesModifier: skill_DoubleKnivesSkillDefinition_ChargesModifier.skill using common
@@ -919,7 +1162,7 @@ pack "hellclock" {
     skill_PassageSkillDefinition_Dst_Plague: skill_PassageSkillDefinition_Dst_Plague.skill using common
     skill_PassageSkillDefinition_Dmg_Fire: skill_PassageSkillDefinition_Dmg_Fire.skill using common
     skill_PassageSkillDefinition_Dst_Fire: skill_PassageSkillDefinition_Dst_Fire.skill using common
-    skill_PassageSkillDefinition_DamageModifier: skill_PassageSkillDefinition_DamageModifier.skill using common
+    skill_PassageSkillDefinition_DamageModifier: skill_PassageSkillDefinition_DamageModifier.skill using skill_PassageSkillDefinition_DamageModifier
     skill_PassageSkillDefinition_SkillSpeedModifier: skill_PassageSkillDefinition_SkillSpeedModifier.skill using common
     skill_PassageSkillDefinition_CooldownModifier: skill_PassageSkillDefinition_CooldownModifier.skill using common
     skill_PassageSkillDefinition_ChargesModifier: skill_PassageSkillDefinition_ChargesModifier.skill using common
@@ -959,7 +1202,7 @@ pack "hellclock" {
     skill_LassoSkillDefinition_Dst_Plague: skill_LassoSkillDefinition_Dst_Plague.skill using common
     skill_LassoSkillDefinition_Dmg_Fire: skill_LassoSkillDefinition_Dmg_Fire.skill using common
     skill_LassoSkillDefinition_Dst_Fire: skill_LassoSkillDefinition_Dst_Fire.skill using common
-    skill_LassoSkillDefinition_DamageModifier: skill_LassoSkillDefinition_DamageModifier.skill using common
+    skill_LassoSkillDefinition_DamageModifier: skill_LassoSkillDefinition_DamageModifier.skill using skill_LassoSkillDefinition_DamageModifier
     skill_LassoSkillDefinition_SkillSpeedModifier: skill_LassoSkillDefinition_SkillSpeedModifier.skill using common
     skill_LassoSkillDefinition_CooldownModifier: skill_LassoSkillDefinition_CooldownModifier.skill using common
     skill_LassoSkillDefinition_ChargesModifier: skill_LassoSkillDefinition_ChargesModifier.skill using common
@@ -993,7 +1236,7 @@ pack "hellclock" {
     skill_FeitorsLashSkillDefinition_Dst_Plague: skill_FeitorsLashSkillDefinition_Dst_Plague.skill using common
     skill_FeitorsLashSkillDefinition_Dmg_Fire: skill_FeitorsLashSkillDefinition_Dmg_Fire.skill using common
     skill_FeitorsLashSkillDefinition_Dst_Fire: skill_FeitorsLashSkillDefinition_Dst_Fire.skill using common
-    skill_FeitorsLashSkillDefinition_DamageModifier: skill_FeitorsLashSkillDefinition_DamageModifier.skill using common
+    skill_FeitorsLashSkillDefinition_DamageModifier: skill_FeitorsLashSkillDefinition_DamageModifier.skill using skill_FeitorsLashSkillDefinition_DamageModifier
     skill_FeitorsLashSkillDefinition_SkillSpeedModifier: skill_FeitorsLashSkillDefinition_SkillSpeedModifier.skill using common
     skill_FeitorsLashSkillDefinition_CooldownModifier: skill_FeitorsLashSkillDefinition_CooldownModifier.skill using common
     skill_FeitorsLashSkillDefinition_ChargesModifier: skill_FeitorsLashSkillDefinition_ChargesModifier.skill using common
@@ -1023,7 +1266,7 @@ pack "hellclock" {
     skill_SlowTimeSkillDefinition_Dst_Plague: skill_SlowTimeSkillDefinition_Dst_Plague.skill using common
     skill_SlowTimeSkillDefinition_Dmg_Fire: skill_SlowTimeSkillDefinition_Dmg_Fire.skill using common
     skill_SlowTimeSkillDefinition_Dst_Fire: skill_SlowTimeSkillDefinition_Dst_Fire.skill using common
-    skill_SlowTimeSkillDefinition_DamageModifier: skill_SlowTimeSkillDefinition_DamageModifier.skill using common
+    skill_SlowTimeSkillDefinition_DamageModifier: skill_SlowTimeSkillDefinition_DamageModifier.skill using skill_SlowTimeSkillDefinition_DamageModifier
     skill_SlowTimeSkillDefinition_SkillSpeedModifier: skill_SlowTimeSkillDefinition_SkillSpeedModifier.skill using common
     skill_SlowTimeSkillDefinition_CooldownModifier: skill_SlowTimeSkillDefinition_CooldownModifier.skill using common
     skill_SlowTimeSkillDefinition_ChargesModifier: skill_SlowTimeSkillDefinition_ChargesModifier.skill using common
@@ -1059,7 +1302,7 @@ pack "hellclock" {
     skill_UsePotionSkillDefinition_Dst_Plague: skill_UsePotionSkillDefinition_Dst_Plague.skill using common
     skill_UsePotionSkillDefinition_Dmg_Fire: skill_UsePotionSkillDefinition_Dmg_Fire.skill using common
     skill_UsePotionSkillDefinition_Dst_Fire: skill_UsePotionSkillDefinition_Dst_Fire.skill using common
-    skill_UsePotionSkillDefinition_DamageModifier: skill_UsePotionSkillDefinition_DamageModifier.skill using common
+    skill_UsePotionSkillDefinition_DamageModifier: skill_UsePotionSkillDefinition_DamageModifier.skill using skill_UsePotionSkillDefinition_DamageModifier
     skill_UsePotionSkillDefinition_SkillSpeedModifier: skill_UsePotionSkillDefinition_SkillSpeedModifier.skill using common
     skill_UsePotionSkillDefinition_CooldownModifier: skill_UsePotionSkillDefinition_CooldownModifier.skill using common
     skill_UsePotionSkillDefinition_ChargesModifier: skill_UsePotionSkillDefinition_ChargesModifier.skill using common
@@ -1092,7 +1335,7 @@ pack "hellclock" {
     skill_ClosedBodySkillDefinition_Dst_Plague: skill_ClosedBodySkillDefinition_Dst_Plague.skill using common
     skill_ClosedBodySkillDefinition_Dmg_Fire: skill_ClosedBodySkillDefinition_Dmg_Fire.skill using common
     skill_ClosedBodySkillDefinition_Dst_Fire: skill_ClosedBodySkillDefinition_Dst_Fire.skill using common
-    skill_ClosedBodySkillDefinition_DamageModifier: skill_ClosedBodySkillDefinition_DamageModifier.skill using common
+    skill_ClosedBodySkillDefinition_DamageModifier: skill_ClosedBodySkillDefinition_DamageModifier.skill using skill_ClosedBodySkillDefinition_DamageModifier
     skill_ClosedBodySkillDefinition_SkillSpeedModifier: skill_ClosedBodySkillDefinition_SkillSpeedModifier.skill using common
     skill_ClosedBodySkillDefinition_CooldownModifier: skill_ClosedBodySkillDefinition_CooldownModifier.skill using common
     skill_ClosedBodySkillDefinition_ChargesModifier: skill_ClosedBodySkillDefinition_ChargesModifier.skill using common
@@ -1133,7 +1376,7 @@ pack "hellclock" {
     skill_BombardmentSkillDefinition_Dst_Plague: skill_BombardmentSkillDefinition_Dst_Plague.skill using common
     skill_BombardmentSkillDefinition_Dmg_Fire: skill_BombardmentSkillDefinition_Dmg_Fire.skill using common
     skill_BombardmentSkillDefinition_Dst_Fire: skill_BombardmentSkillDefinition_Dst_Fire.skill using common
-    skill_BombardmentSkillDefinition_DamageModifier: skill_BombardmentSkillDefinition_DamageModifier.skill using common
+    skill_BombardmentSkillDefinition_DamageModifier: skill_BombardmentSkillDefinition_DamageModifier.skill using skill_BombardmentSkillDefinition_DamageModifier
     skill_BombardmentSkillDefinition_SkillSpeedModifier: skill_BombardmentSkillDefinition_SkillSpeedModifier.skill using common
     skill_BombardmentSkillDefinition_CooldownModifier: skill_BombardmentSkillDefinition_CooldownModifier.skill using common
     skill_BombardmentSkillDefinition_ChargesModifier: skill_BombardmentSkillDefinition_ChargesModifier.skill using common
@@ -1177,7 +1420,7 @@ pack "hellclock" {
     skill_SummonTheGuardSkillDefinition_Dst_Plague: skill_SummonTheGuardSkillDefinition_Dst_Plague.skill using common
     skill_SummonTheGuardSkillDefinition_Dmg_Fire: skill_SummonTheGuardSkillDefinition_Dmg_Fire.skill using common
     skill_SummonTheGuardSkillDefinition_Dst_Fire: skill_SummonTheGuardSkillDefinition_Dst_Fire.skill using common
-    skill_SummonTheGuardSkillDefinition_DamageModifier: skill_SummonTheGuardSkillDefinition_DamageModifier.skill using common
+    skill_SummonTheGuardSkillDefinition_DamageModifier: skill_SummonTheGuardSkillDefinition_DamageModifier.skill using skill_SummonTheGuardSkillDefinition_DamageModifier
     skill_SummonTheGuardSkillDefinition_SkillSpeedModifier: skill_SummonTheGuardSkillDefinition_SkillSpeedModifier.skill using common
     skill_SummonTheGuardSkillDefinition_CooldownModifier: skill_SummonTheGuardSkillDefinition_CooldownModifier.skill using common
     skill_SummonTheGuardSkillDefinition_ChargesModifier: skill_SummonTheGuardSkillDefinition_ChargesModifier.skill using common
@@ -1214,7 +1457,7 @@ pack "hellclock" {
     skill_MatadeiraSkillDefinition_Dst_Plague: skill_MatadeiraSkillDefinition_Dst_Plague.skill using common
     skill_MatadeiraSkillDefinition_Dmg_Fire: skill_MatadeiraSkillDefinition_Dmg_Fire.skill using common
     skill_MatadeiraSkillDefinition_Dst_Fire: skill_MatadeiraSkillDefinition_Dst_Fire.skill using common
-    skill_MatadeiraSkillDefinition_DamageModifier: skill_MatadeiraSkillDefinition_DamageModifier.skill using common
+    skill_MatadeiraSkillDefinition_DamageModifier: skill_MatadeiraSkillDefinition_DamageModifier.skill using skill_MatadeiraSkillDefinition_DamageModifier
     skill_MatadeiraSkillDefinition_SkillSpeedModifier: skill_MatadeiraSkillDefinition_SkillSpeedModifier.skill using common
     skill_MatadeiraSkillDefinition_CooldownModifier: skill_MatadeiraSkillDefinition_CooldownModifier.skill using common
     skill_MatadeiraSkillDefinition_ChargesModifier: skill_MatadeiraSkillDefinition_ChargesModifier.skill using common
@@ -1259,7 +1502,7 @@ pack "hellclock" {
     skill_HolyRosarySkillDefinition_Dst_Plague: skill_HolyRosarySkillDefinition_Dst_Plague.skill using common
     skill_HolyRosarySkillDefinition_Dmg_Fire: skill_HolyRosarySkillDefinition_Dmg_Fire.skill using common
     skill_HolyRosarySkillDefinition_Dst_Fire: skill_HolyRosarySkillDefinition_Dst_Fire.skill using common
-    skill_HolyRosarySkillDefinition_DamageModifier: skill_HolyRosarySkillDefinition_DamageModifier.skill using common
+    skill_HolyRosarySkillDefinition_DamageModifier: skill_HolyRosarySkillDefinition_DamageModifier.skill using skill_HolyRosarySkillDefinition_DamageModifier
     skill_HolyRosarySkillDefinition_SkillSpeedModifier: skill_HolyRosarySkillDefinition_SkillSpeedModifier.skill using common
     skill_HolyRosarySkillDefinition_CooldownModifier: skill_HolyRosarySkillDefinition_CooldownModifier.skill using common
     skill_HolyRosarySkillDefinition_ChargesModifier: skill_HolyRosarySkillDefinition_ChargesModifier.skill using common
@@ -1297,7 +1540,7 @@ pack "hellclock" {
     skill_VeilofQuilsSkillDefinition_Dst_Plague: skill_VeilofQuilsSkillDefinition_Dst_Plague.skill using common
     skill_VeilofQuilsSkillDefinition_Dmg_Fire: skill_VeilofQuilsSkillDefinition_Dmg_Fire.skill using common
     skill_VeilofQuilsSkillDefinition_Dst_Fire: skill_VeilofQuilsSkillDefinition_Dst_Fire.skill using common
-    skill_VeilofQuilsSkillDefinition_DamageModifier: skill_VeilofQuilsSkillDefinition_DamageModifier.skill using common
+    skill_VeilofQuilsSkillDefinition_DamageModifier: skill_VeilofQuilsSkillDefinition_DamageModifier.skill using skill_VeilofQuilsSkillDefinition_DamageModifier
     skill_VeilofQuilsSkillDefinition_SkillSpeedModifier: skill_VeilofQuilsSkillDefinition_SkillSpeedModifier.skill using common
     skill_VeilofQuilsSkillDefinition_CooldownModifier: skill_VeilofQuilsSkillDefinition_CooldownModifier.skill using common
     skill_VeilofQuilsSkillDefinition_ChargesModifier: skill_VeilofQuilsSkillDefinition_ChargesModifier.skill using common
@@ -1331,7 +1574,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_Dst_Plague: skill_SummonBruteSkillDefinition_Dst_Plague.skill using common
     skill_SummonBruteSkillDefinition_Dmg_Fire: skill_SummonBruteSkillDefinition_Dmg_Fire.skill using common
     skill_SummonBruteSkillDefinition_Dst_Fire: skill_SummonBruteSkillDefinition_Dst_Fire.skill using common
-    skill_SummonBruteSkillDefinition_DamageModifier: skill_SummonBruteSkillDefinition_DamageModifier.skill using common
+    skill_SummonBruteSkillDefinition_DamageModifier: skill_SummonBruteSkillDefinition_DamageModifier.skill using skill_SummonBruteSkillDefinition_DamageModifier
     skill_SummonBruteSkillDefinition_SkillSpeedModifier: skill_SummonBruteSkillDefinition_SkillSpeedModifier.skill using common
     skill_SummonBruteSkillDefinition_CooldownModifier: skill_SummonBruteSkillDefinition_CooldownModifier.skill using common
     skill_SummonBruteSkillDefinition_ChargesModifier: skill_SummonBruteSkillDefinition_ChargesModifier.skill using common
@@ -1405,6 +1648,7 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier: skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier.skill using common
   }
   formulas {
+    Barrier = MaxBarrier - CurrentBarrier
     // =====================================
     // BasicAttackDefinition CONVERSION FORMULA
     // =====================================
@@ -1418,6 +1662,7 @@ pack "hellclock" {
     skill_BasicAttackDefinition_Dmg_Fire = damage_flow("BasicAttackDefinition", "FireDamage")
     skill_BasicAttackDefinition_Dst_Fire = damage_flow("BasicAttackDefinition", "FireDistribution")
     skill_BasicAttackDefinition_CurrentManaCost = skill_BasicAttackDefinition_ManaCostModifier * SkillManaCost
+    skill_BasicAttackDefinition_NonIgnorableCooldown = max(skill_BasicAttackDefinition_CooldownModifier, 0)
     // =====================================
     // SplitshotDefinition CONVERSION FORMULA
     // =====================================
@@ -1431,6 +1676,7 @@ pack "hellclock" {
     skill_SplitshotDefinition_Dmg_Fire = damage_flow("SplitshotDefinition", "FireDamage")
     skill_SplitshotDefinition_Dst_Fire = damage_flow("SplitshotDefinition", "FireDistribution")
     skill_SplitshotDefinition_CurrentManaCost = skill_SplitshotDefinition_ManaCostModifier * SkillManaCost
+    skill_SplitshotDefinition_NonIgnorableCooldown = max(skill_SplitshotDefinition_CooldownModifier, 0)
     // =====================================
     // ShadowDashDefinition CONVERSION FORMULA
     // =====================================
@@ -1444,6 +1690,7 @@ pack "hellclock" {
     skill_ShadowDashDefinition_Dmg_Fire = damage_flow("ShadowDashDefinition", "FireDamage")
     skill_ShadowDashDefinition_Dst_Fire = damage_flow("ShadowDashDefinition", "FireDistribution")
     skill_ShadowDashDefinition_CurrentManaCost = skill_ShadowDashDefinition_ManaCostModifier * SkillManaCost
+    skill_ShadowDashDefinition_NonIgnorableCooldown = max(skill_ShadowDashDefinition_CooldownModifier, 0.15)
     // =====================================
     // RepeaterDefinition CONVERSION FORMULA
     // =====================================
@@ -1457,6 +1704,7 @@ pack "hellclock" {
     skill_RepeaterDefinition_Dmg_Fire = damage_flow("RepeaterDefinition", "FireDamage")
     skill_RepeaterDefinition_Dst_Fire = damage_flow("RepeaterDefinition", "FireDistribution")
     skill_RepeaterDefinition_CurrentManaCost = skill_RepeaterDefinition_ManaCostModifier * SkillManaCost
+    skill_RepeaterDefinition_NonIgnorableCooldown = max(skill_RepeaterDefinition_CooldownModifier, 0)
     // =====================================
     // ReflexesDefinition CONVERSION FORMULA
     // =====================================
@@ -1470,6 +1718,7 @@ pack "hellclock" {
     skill_ReflexesDefinition_Dmg_Fire = damage_flow("ReflexesDefinition", "FireDamage")
     skill_ReflexesDefinition_Dst_Fire = damage_flow("ReflexesDefinition", "FireDistribution")
     skill_ReflexesDefinition_CurrentManaCost = skill_ReflexesDefinition_ManaCostModifier * SkillManaCost
+    skill_ReflexesDefinition_NonIgnorableCooldown = max(skill_ReflexesDefinition_CooldownModifier, 0.5)
     // =====================================
     // PrayerOfHealthSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1483,6 +1732,7 @@ pack "hellclock" {
     skill_PrayerOfHealthSkillDefinition_Dmg_Fire = damage_flow("PrayerOfHealthSkillDefinition", "FireDamage")
     skill_PrayerOfHealthSkillDefinition_Dst_Fire = damage_flow("PrayerOfHealthSkillDefinition", "FireDistribution")
     skill_PrayerOfHealthSkillDefinition_CurrentManaCost = skill_PrayerOfHealthSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_PrayerOfHealthSkillDefinition_NonIgnorableCooldown = max(skill_PrayerOfHealthSkillDefinition_CooldownModifier, 0.5)
     // =====================================
     // PrayerOfVengeanceSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1496,6 +1746,7 @@ pack "hellclock" {
     skill_PrayerOfVengeanceSkillDefinition_Dmg_Fire = damage_flow("PrayerOfVengeanceSkillDefinition", "FireDamage")
     skill_PrayerOfVengeanceSkillDefinition_Dst_Fire = damage_flow("PrayerOfVengeanceSkillDefinition", "FireDistribution")
     skill_PrayerOfVengeanceSkillDefinition_CurrentManaCost = skill_PrayerOfVengeanceSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_PrayerOfVengeanceSkillDefinition_NonIgnorableCooldown = max(skill_PrayerOfVengeanceSkillDefinition_CooldownModifier, 0.5)
     // =====================================
     // TheOldBellSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1509,6 +1760,7 @@ pack "hellclock" {
     skill_TheOldBellSkillDefinition_Dmg_Fire = damage_flow("TheOldBellSkillDefinition", "FireDamage")
     skill_TheOldBellSkillDefinition_Dst_Fire = damage_flow("TheOldBellSkillDefinition", "FireDistribution")
     skill_TheOldBellSkillDefinition_CurrentManaCost = skill_TheOldBellSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_TheOldBellSkillDefinition_NonIgnorableCooldown = max(skill_TheOldBellSkillDefinition_CooldownModifier, 0)
     // =====================================
     // JudgementDefinition CONVERSION FORMULA
     // =====================================
@@ -1522,6 +1774,7 @@ pack "hellclock" {
     skill_JudgementDefinition_Dmg_Fire = damage_flow("JudgementDefinition", "FireDamage")
     skill_JudgementDefinition_Dst_Fire = damage_flow("JudgementDefinition", "FireDistribution")
     skill_JudgementDefinition_CurrentManaCost = skill_JudgementDefinition_ManaCostModifier * SkillManaCost
+    skill_JudgementDefinition_NonIgnorableCooldown = max(skill_JudgementDefinition_CooldownModifier, 0.3)
     // =====================================
     // DoubleKnivesSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1535,6 +1788,7 @@ pack "hellclock" {
     skill_DoubleKnivesSkillDefinition_Dmg_Fire = damage_flow("DoubleKnivesSkillDefinition", "FireDamage")
     skill_DoubleKnivesSkillDefinition_Dst_Fire = damage_flow("DoubleKnivesSkillDefinition", "FireDistribution")
     skill_DoubleKnivesSkillDefinition_CurrentManaCost = skill_DoubleKnivesSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_DoubleKnivesSkillDefinition_NonIgnorableCooldown = max(skill_DoubleKnivesSkillDefinition_CooldownModifier, 0)
     // =====================================
     // PassageSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1548,6 +1802,7 @@ pack "hellclock" {
     skill_PassageSkillDefinition_Dmg_Fire = damage_flow("PassageSkillDefinition", "FireDamage")
     skill_PassageSkillDefinition_Dst_Fire = damage_flow("PassageSkillDefinition", "FireDistribution")
     skill_PassageSkillDefinition_CurrentManaCost = skill_PassageSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_PassageSkillDefinition_NonIgnorableCooldown = max(skill_PassageSkillDefinition_CooldownModifier, 0.4)
     // =====================================
     // LassoSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1561,6 +1816,7 @@ pack "hellclock" {
     skill_LassoSkillDefinition_Dmg_Fire = damage_flow("LassoSkillDefinition", "FireDamage")
     skill_LassoSkillDefinition_Dst_Fire = damage_flow("LassoSkillDefinition", "FireDistribution")
     skill_LassoSkillDefinition_CurrentManaCost = skill_LassoSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_LassoSkillDefinition_NonIgnorableCooldown = max(skill_LassoSkillDefinition_CooldownModifier, 0.1)
     // =====================================
     // FeitorsLashSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1574,6 +1830,7 @@ pack "hellclock" {
     skill_FeitorsLashSkillDefinition_Dmg_Fire = damage_flow("FeitorsLashSkillDefinition", "FireDamage")
     skill_FeitorsLashSkillDefinition_Dst_Fire = damage_flow("FeitorsLashSkillDefinition", "FireDistribution")
     skill_FeitorsLashSkillDefinition_CurrentManaCost = skill_FeitorsLashSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_FeitorsLashSkillDefinition_NonIgnorableCooldown = max(skill_FeitorsLashSkillDefinition_CooldownModifier, 0)
     // =====================================
     // SlowTimeSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1587,6 +1844,7 @@ pack "hellclock" {
     skill_SlowTimeSkillDefinition_Dmg_Fire = damage_flow("SlowTimeSkillDefinition", "FireDamage")
     skill_SlowTimeSkillDefinition_Dst_Fire = damage_flow("SlowTimeSkillDefinition", "FireDistribution")
     skill_SlowTimeSkillDefinition_CurrentManaCost = skill_SlowTimeSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_SlowTimeSkillDefinition_NonIgnorableCooldown = max(skill_SlowTimeSkillDefinition_CooldownModifier, 0.2)
     // =====================================
     // UsePotionSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1600,6 +1858,7 @@ pack "hellclock" {
     skill_UsePotionSkillDefinition_Dmg_Fire = damage_flow("UsePotionSkillDefinition", "FireDamage")
     skill_UsePotionSkillDefinition_Dst_Fire = damage_flow("UsePotionSkillDefinition", "FireDistribution")
     skill_UsePotionSkillDefinition_CurrentManaCost = skill_UsePotionSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_UsePotionSkillDefinition_NonIgnorableCooldown = max(skill_UsePotionSkillDefinition_CooldownModifier, 0.05)
     // =====================================
     // ClosedBodySkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1613,6 +1872,7 @@ pack "hellclock" {
     skill_ClosedBodySkillDefinition_Dmg_Fire = damage_flow("ClosedBodySkillDefinition", "FireDamage")
     skill_ClosedBodySkillDefinition_Dst_Fire = damage_flow("ClosedBodySkillDefinition", "FireDistribution")
     skill_ClosedBodySkillDefinition_CurrentManaCost = skill_ClosedBodySkillDefinition_ManaCostModifier * SkillManaCost
+    skill_ClosedBodySkillDefinition_NonIgnorableCooldown = max(skill_ClosedBodySkillDefinition_CooldownModifier, 1)
     // =====================================
     // BombardmentSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1626,6 +1886,7 @@ pack "hellclock" {
     skill_BombardmentSkillDefinition_Dmg_Fire = damage_flow("BombardmentSkillDefinition", "FireDamage")
     skill_BombardmentSkillDefinition_Dst_Fire = damage_flow("BombardmentSkillDefinition", "FireDistribution")
     skill_BombardmentSkillDefinition_CurrentManaCost = skill_BombardmentSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_BombardmentSkillDefinition_NonIgnorableCooldown = max(skill_BombardmentSkillDefinition_CooldownModifier, 1)
     // =====================================
     // SummonTheGuardSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1639,6 +1900,7 @@ pack "hellclock" {
     skill_SummonTheGuardSkillDefinition_Dmg_Fire = damage_flow("SummonTheGuardSkillDefinition", "FireDamage")
     skill_SummonTheGuardSkillDefinition_Dst_Fire = damage_flow("SummonTheGuardSkillDefinition", "FireDistribution")
     skill_SummonTheGuardSkillDefinition_CurrentManaCost = skill_SummonTheGuardSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_SummonTheGuardSkillDefinition_NonIgnorableCooldown = max(skill_SummonTheGuardSkillDefinition_CooldownModifier, 0.3)
     // =====================================
     // MatadeiraSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1652,6 +1914,7 @@ pack "hellclock" {
     skill_MatadeiraSkillDefinition_Dmg_Fire = damage_flow("MatadeiraSkillDefinition", "FireDamage")
     skill_MatadeiraSkillDefinition_Dst_Fire = damage_flow("MatadeiraSkillDefinition", "FireDistribution")
     skill_MatadeiraSkillDefinition_CurrentManaCost = skill_MatadeiraSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_MatadeiraSkillDefinition_NonIgnorableCooldown = max(skill_MatadeiraSkillDefinition_CooldownModifier, 1)
     // =====================================
     // HolyRosarySkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1665,6 +1928,7 @@ pack "hellclock" {
     skill_HolyRosarySkillDefinition_Dmg_Fire = damage_flow("HolyRosarySkillDefinition", "FireDamage")
     skill_HolyRosarySkillDefinition_Dst_Fire = damage_flow("HolyRosarySkillDefinition", "FireDistribution")
     skill_HolyRosarySkillDefinition_CurrentManaCost = skill_HolyRosarySkillDefinition_ManaCostModifier * SkillManaCost
+    skill_HolyRosarySkillDefinition_NonIgnorableCooldown = max(skill_HolyRosarySkillDefinition_CooldownModifier, 0)
     // =====================================
     // VeilofQuilsSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1678,6 +1942,7 @@ pack "hellclock" {
     skill_VeilofQuilsSkillDefinition_Dmg_Fire = damage_flow("VeilofQuilsSkillDefinition", "FireDamage")
     skill_VeilofQuilsSkillDefinition_Dst_Fire = damage_flow("VeilofQuilsSkillDefinition", "FireDistribution")
     skill_VeilofQuilsSkillDefinition_CurrentManaCost = skill_VeilofQuilsSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_VeilofQuilsSkillDefinition_NonIgnorableCooldown = max(skill_VeilofQuilsSkillDefinition_CooldownModifier, 0)
     // =====================================
     // SummonBruteSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1691,6 +1956,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_Dmg_Fire = damage_flow("SummonBruteSkillDefinition", "FireDamage")
     skill_SummonBruteSkillDefinition_Dst_Fire = damage_flow("SummonBruteSkillDefinition", "FireDistribution")
     skill_SummonBruteSkillDefinition_CurrentManaCost = skill_SummonBruteSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_SummonBruteSkillDefinition_NonIgnorableCooldown = max(skill_SummonBruteSkillDefinition_CooldownModifier, 0.3)
     // =====================================
     // SummonMarksmenSkillDefinition CONVERSION FORMULA
     // =====================================
@@ -1704,6 +1970,7 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_Dmg_Fire = damage_flow("SummonMarksmenSkillDefinition", "FireDamage")
     skill_SummonMarksmenSkillDefinition_Dst_Fire = damage_flow("SummonMarksmenSkillDefinition", "FireDistribution")
     skill_SummonMarksmenSkillDefinition_CurrentManaCost = skill_SummonMarksmenSkillDefinition_ManaCostModifier * SkillManaCost
+    skill_SummonMarksmenSkillDefinition_NonIgnorableCooldown = max(skill_SummonMarksmenSkillDefinition_CooldownModifier, 0.3)
   }
   damage_flows {
     BasicAttackDefinition {
