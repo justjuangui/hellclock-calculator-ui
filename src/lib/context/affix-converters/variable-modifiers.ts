@@ -49,7 +49,7 @@ export const VARIABLE_MODIFIER_STAT_MAP: Record<
   },
   MultiplyBySkillDamage: {
     modifier: "MultiplyBySkillDamage",
-    statReference: "SkillDamage",
+    statReference: "{skill}DamageModifier",
     operation: "multiply",
   },
   MultiplyByStatusStacks: {
@@ -75,6 +75,11 @@ export const VARIABLE_MODIFIER_STAT_MAP: Record<
   MultiplyByBarrier: {
     modifier: "MultiplyByBarrier",
     statReference: "Barrier",
+    operation: "multiply",
+  },
+  MultiplyBySkillNonIgnorableCooldown: {
+    modifier: "MultiplyBySkillNonIgnorableCooldown",
+    statReference: "{skill}NonIgnorableCooldown",
     operation: "multiply",
   },
 };
