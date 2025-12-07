@@ -131,12 +131,14 @@
   });
 </script>
 
-<button
+<div
   class="flex items-center gap-3 p-4 cursor-pointer transition-colors {expanded
     ? 'bg-primary/10 border-b border-primary/30 hover:bg-primary/15'
     : 'hover:bg-base-200'}"
   onclick={onToggle}
-  type="button"
+  onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle?.(); } }}
+  role="button"
+  tabindex="0"
 >
   <!-- Skill Icon -->
   <div class="avatar">
@@ -217,4 +219,4 @@
   <div class="btn btn-sm btn-ghost btn-circle">
     {expanded ? "▼" : "▶"}
   </div>
-</button>
+</div>
