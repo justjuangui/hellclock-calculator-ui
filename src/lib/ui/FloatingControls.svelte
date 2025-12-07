@@ -1,5 +1,6 @@
 <script lang="ts">
   import { useConstellationEquipped } from "$lib/context/constellationequipped.svelte";
+  import { spriteUrl } from "$lib/hellclock/utils";
 
   let {
     onRespec,
@@ -38,8 +39,8 @@
         onclick={onRespec}
         disabled={totalDevotionSpent === 0}
       >
-        <span>⚡</span>
         <span>RESPEC</span>
+        <img src={spriteUrl("Icon_Soulstone_Base")} alt="Soulstone" class="w-4 h-4" style="filter: brightness(0.5) sepia(1) hue-rotate(230deg) saturate(3);" />
         <span class="text-xs opacity-70">400</span>
       </button>
     {/if}
