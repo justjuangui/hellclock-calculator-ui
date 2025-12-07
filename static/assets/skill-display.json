@@ -143,6 +143,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -536,6 +546,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -971,6 +991,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -1354,6 +1384,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -1758,6 +1798,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -2222,6 +2272,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -2707,6 +2767,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -3071,6 +3141,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -3434,6 +3514,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -3859,6 +3949,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -4252,6 +4352,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -4717,6 +4827,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -5121,6 +5241,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -5484,6 +5614,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -5909,6 +6049,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -6302,6 +6452,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -6776,6 +6936,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -7281,6 +7451,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -7714,6 +7894,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -8229,6 +8419,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -8673,6 +8873,16 @@
               "displayName": "Skill Info",
               "rows": [
                 {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
+                {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
@@ -9076,6 +9286,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
@@ -9640,6 +9860,16 @@
               "id": "skillInfo",
               "displayName": "Skill Info",
               "rows": [
+                {
+                  "id": "TotalDamage",
+                  "displayName": "Total Damage",
+                  "valueType": "evaluate",
+                  "value": "Dmg_Total",
+                  "format": {
+                    "type": "decimal",
+                    "decimals": 2
+                  }
+                },
                 {
                   "id": "CurrentManaCost",
                   "displayName": "Current Mana Cost",
