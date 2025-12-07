@@ -1648,7 +1648,7 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier: skill_SummonMarksmenSkillDefinition_MarksmenShotBounceAmountModifier.skill using common
   }
   formulas {
-    Barrier = MaxBarrier - CurrentBarrier
+    Barrier = flag("using_custom_barrier") ? CurrentBarrier : (Mana * MaxBarrier)
     // =====================================
     // BasicAttackDefinition CONVERSION FORMULA
     // =====================================
