@@ -494,39 +494,46 @@
     if (!viewport) return;
 
     const constellations = constellationsHelper.getAllConstellations();
-    const index = constellations.find(
+    const constellationDetails = constellations.find(
       (c) => c.definition.id === target.constellation.id,
     );
-    if (!index) return;
+    if (!constellationDetails) return;
+
+    // Use same defaults as drawEdges/drawNodes
+    const nodeViewPosition: [number, number, number] = [0, 0, 0];
+    const nodeViewScale: [number, number, number] = [1, 1, 1];
 
     // Calculate constellation position
     const pos = calculatePositionInViewport(
-      index.position,
-      index.nodeViewPosition,
-      index.nodeViewScale,
+      constellationDetails.position,
+      nodeViewPosition,
+      nodeViewScale,
     );
     const constellationX = pos[0];
     const constellationY = pos[1];
 
-    let targetX = constellationX + index.width / 2;
+    let targetX = constellationX;
     let targetY = constellationY;
 
-    // If specific node, adjust to node position
-    if (target.node) {
+    // If specific node, navigate to node position
+    if (target.node?.Position) {
       const nodePos = calculateNodePositionInViewport(
         target.node.Position,
-        index.nodeViewPosition,
-        index.nodeViewScale,
+        nodeViewPosition,
+        nodeViewScale,
       );
       targetX += nodePos[0];
       targetY += nodePos[1];
+    } else {
+      // No node specified - center on constellation
+      targetX += constellationDetails.width / 2;
     }
 
     // Animate pan to target
     viewport.animate({
       time: 500,
       position: { x: targetX, y: targetY },
-      scale: 1.2,
+      scale: 0.8,
     });
   }
 
