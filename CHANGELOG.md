@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.1.0](https://github.com/justjuangui/hellclock-calculator-ui/compare/v1.0.0...v1.1.0) (2025-12-07)
+
+
+### Features
+
+* Add fromSkillTagApi valueType for JSON-driven skill cards ([ff7ff62](https://github.com/justjuangui/hellclock-calculator-ui/commit/ff7ff62088d068e167b82fa3e4e2ac3e209e1181))
+* Add LimitToValue support in affix converters ([8872620](https://github.com/justjuangui/hellclock-calculator-ui/commit/88726205f4eb4a4a7bfe51e998f59a4b7181e713))
+* Add MultiplyBySkillNonIgnorableCooldown modifier and fix SkillDamage reference ([0c661a4](https://github.com/justjuangui/hellclock-calculator-ui/commit/0c661a4ecc8e3bc33b3215b2066dac2227d811e2))
+* Add SkillTagEvaluation context API ([8c1c740](https://github.com/justjuangui/hellclock-calculator-ui/commit/8c1c740713e0e742422c3b449212a770bf9b16ce))
+* **assets:** Add Total Damage row to skill info sections ([677941c](https://github.com/justjuangui/hellclock-calculator-ui/commit/677941c65d97fd54736319e95347cc282610c72c))
+* **export:** Add binary export format with base64 encoding ([57b103a](https://github.com/justjuangui/hellclock-calculator-ui/commit/57b103a73d61e9d8ca1788b0073e8d9aac34e46f))
+* **import:** Add build code import support ([d22aa67](https://github.com/justjuangui/hellclock-calculator-ui/commit/d22aa678d7a26c32c6a31d8791fb8dcda2733d3e))
+* Integrate SkillTagEvaluation into evaluation pipeline ([37c7d77](https://github.com/justjuangui/hellclock-calculator-ui/commit/37c7d775d0b0a303e5cbf12cabacbd1680cdfb50))
+* **ui:** Add dark tooltip background and rarity border color support ([5998e85](https://github.com/justjuangui/hellclock-calculator-ui/commit/5998e85a0096a91ba334c91555e2a04438946b3d))
+* **ui:** Add export dialog with copy functionality ([0b954a1](https://github.com/justjuangui/hellclock-calculator-ui/commit/0b954a1fe6240ae041f07363aa77d776176d83a3))
+* **ui:** Update Respec button with Soulstone icon ([dbdf75c](https://github.com/justjuangui/hellclock-calculator-ui/commit/dbdf75c1789b9919cb8e876713fded405d94a635))
+
+
+### Bug Fixes
+
+* **engine:** Fix damage conversion calculation ([7fedb4b](https://github.com/justjuangui/hellclock-calculator-ui/commit/7fedb4b1b6d13a99a32a1a8dc82cf7cbfd772d55))
+* **import:** Add $state to fileInput for reactivity ([9f08698](https://github.com/justjuangui/hellclock-calculator-ui/commit/9f08698f910db8bce87efdcc1be8d13118203f7e))
+* Resolve invalid button nesting in SkillCardHeader ([40519d5](https://github.com/justjuangui/hellclock-calculator-ui/commit/40519d5196fb533f0534a1f46cea661f7ad0deae))
+* Set rollVariableName to 'Roll' for constellation affixes ([e7562b7](https://github.com/justjuangui/hellclock-calculator-ui/commit/e7562b77a88749fbdf4328483cfac2ae91d7259c))
+* **ui:** Fix constellation search navigation crash ([6835ddc](https://github.com/justjuangui/hellclock-calculator-ui/commit/6835ddcb706c12857c78c06ac4bea44ecf3fc4c1))
+* **ui:** Improve constellation view contrast and reduce artwork opacity ([7388fa5](https://github.com/justjuangui/hellclock-calculator-ui/commit/7388fa5bdec015ed1bf53e1e64d11786897239de))
+* Use rollVariableName to find correct format in relic affix ([dbfc63e](https://github.com/justjuangui/hellclock-calculator-ui/commit/dbfc63efdc8c685772543b76a246f1df7c4a7fa2))
+
 ## 1.0.0 (2025-12-05)
 
 
