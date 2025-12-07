@@ -1010,6 +1010,13 @@ export class RelicsHelper {
       this.getRelicRarityColor(relic.rarity as RelicRarity),
     );
 
+    // Add tooltip border with rarity color
+    lines.push({
+      text: "",
+      type: "tooltipBorder",
+      color: rarityColor,
+    });
+
     // Relic name with rarity color
     lines.push({
       text: relic.name,

@@ -174,9 +174,9 @@ export function spriteUrl(sprite?: string): string | undefined {
 
 export interface TooltipLine {
   text: string;
-  color?: string;
-  borderColor?: string;
-  bgColor?: string;
+  color?: string;           // for future per-line text color
+  borderColor?: string;     // for future per-line border
+  bgColor?: string;         // for future per-line background
   icon?: string;
-  type: "header" | "info" | "divider" | "affix" | "affixCol";
+  type: "header" | "info" | "divider" | "affix" | "affixCol" | "tooltipBorder";
 }

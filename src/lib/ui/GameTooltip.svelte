@@ -11,7 +11,9 @@
 
 <div class="tooltip-content">
   {#each lines as line, i (i)}
-    {#if line.type === "header"}
+    {#if line.type === "tooltipBorder"}
+      <!-- Config-only line, not rendered -->
+    {:else if line.type === "header"}
       <p
         class="text-sm text-center font-semibold mb-1"
         style={line.color ? `color: ${line.color}` : ""}

@@ -235,16 +235,19 @@
   </div>
 
   <!-- Mouse-following tooltip portal -->
-  <MouseTooltip
-    visible={!!activeTooltip}
-    mouseX={activeTooltip?.state.mouseX ?? 0}
-    mouseY={activeTooltip?.state.mouseY ?? 0}
-    placement="right"
-  >
-    {#if activeTooltip}
-      <GameTooltip lines={relicsHelper.getTooltipLines(activeTooltip.relic, lang, statsHelper, skillsHelper)} />
-    {/if}
-  </MouseTooltip>
+  {#if activeTooltip}
+    {@const lines = relicsHelper.getTooltipLines(activeTooltip.relic, lang, statsHelper, skillsHelper)}
+    {@const borderColor = lines.find(l => l.type === "tooltipBorder")?.color}
+    <MouseTooltip
+      visible={true}
+      mouseX={activeTooltip.state.mouseX}
+      mouseY={activeTooltip.state.mouseY}
+      placement="right"
+      {borderColor}
+    >
+      <GameTooltip {lines} />
+    </MouseTooltip>
+  {/if}
 </div>
 
 <style>

@@ -17,6 +17,8 @@
     edgeMargin?: number;
     /** Custom width class (default: w-64) */
     widthClass?: string;
+    /** Custom border color CSS value (e.g., "#ff0000", "rgb(255,0,0)") */
+    borderColor?: string;
     /** Tooltip content */
     children: Snippet;
   }
@@ -29,6 +31,7 @@
     offset = 12,
     edgeMargin = 8,
     widthClass = "w-64",
+    borderColor,
     children,
   }: Props = $props();
 
@@ -61,7 +64,7 @@
     style="left: {position.x}px; top: {position.y}px;"
     role="tooltip"
   >
-    <div class="bg-base-100 border border-base-300 rounded-lg shadow-xl p-3">
+    <div class="bg-black border rounded-lg shadow-xl p-3" style={borderColor ? `border-color: ${borderColor}` : ""}>
       {@render children()}
     </div>
   </div>
