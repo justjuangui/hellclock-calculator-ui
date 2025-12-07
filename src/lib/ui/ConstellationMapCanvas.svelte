@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, getContext } from "svelte";
-  import { Application, Assets, Container, Graphics, Sprite } from "pixi.js";
+  import { Application, Assets, Container, Graphics, Sprite, TextureSource } from "pixi.js";
   import { Viewport } from "pixi-viewport";
   import type {
     ConstellationDetails,
@@ -73,6 +73,10 @@
           throw new Error("Asset loading timeout");
         }
       }
+
+      // Set default texture options for better quality when zoomed out
+      TextureSource.defaultOptions.scaleMode = 'linear';
+      TextureSource.defaultOptions.autoGenerateMipmaps = true;
 
       // Create Pixi application
       app = new Application();
@@ -232,14 +236,14 @@
 
           // Verify texture is valid before creating sprite
           const sprite = Sprite.from(texture);
-          sprite.alpha = 0.6;
+          sprite.alpha = 0.15;  // Subtle - nodes should be the visual focus
 
           if (currentDevotionPoints === totalNodes) {
             const spriteColors = parseRGBA01ToPixiHex(
               config.illustrationMasteredColor,
             );
             sprite.tint = spriteColors.color;
-            sprite.alpha = spriteColors.alpha;
+            sprite.alpha = Math.min(spriteColors.alpha, 0.4);  // Cap mastered alpha
           }
 
           constellationContainer.addChild(sprite);
@@ -335,9 +339,9 @@
         edgesGraphics.moveTo(startX, startY);
         edgesGraphics.lineTo(endX, endY);
         edgesGraphics.stroke({
-          width: 2,
+          width: isAllocated ? 3 : 2,
           color,
-          alpha,
+          alpha: Math.max(alpha, 0.4),  // Minimum alpha for visibility
         });
       }
     }
@@ -376,28 +380,29 @@
       ).canAllocate;
 
       // Determine node color using devotion config
-      let fillColor = 0x1a1a2e;
-      let glowColor = 0x44444;
-      let strokeColor = 0x888888;
+      let fillColor = 0x2a2a3e;  // Slightly brighter base for better visibility
+      let glowColor = 0x444444;
+      let strokeColor = 0x666666;
       let strokeWidth = 2;
-      let glowAlpha = 0.2;
+      let glowAlpha = 0.3;
 
       if (isAllocated) {
         // Selected nodes: use nodeColor fill with appliedConnectionColor border
         fillColor = nodeColor.color;
         glowColor = appliedColor.color;
-        // strokeColor = appliedColor.color;
+        strokeColor = appliedColor.color;
         strokeWidth = 3;
         glowAlpha = 0.8;
       } else if (canAllocate) {
+        // Selectable nodes: more visible glow
         glowColor = nodeColor.color;
         strokeColor = nodeColor.color;
-        glowAlpha = 0.4;
+        glowAlpha = 0.5;
       }
 
-      // Outer glow
+      // Outer glow - larger radius for better visibility
       const glow = new Graphics();
-      glow.circle(0, 0, NODE_SIZE / 2 + 4);
+      glow.circle(0, 0, NODE_SIZE / 2 + 6);
       glow.fill({ color: glowColor, alpha: glowAlpha });
       nodeContainer.addChild(glow);
 
