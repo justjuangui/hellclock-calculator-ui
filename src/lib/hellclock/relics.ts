@@ -1291,12 +1291,16 @@ export class RelicsHelper {
           }
         }
 
+        const rollFormat = affix.behaviorData!.variables.variables.find(
+          (v) => v.name === affix.rollVariableName
+        );
+
+
         return formatIndexed(
           formatHCStyle(desc),
           formatSkillEffectVariableModNumber(
             value,
-            affix.behaviorData!.variables.variables[0]
-              .eSkillEffectVariableFormat,
+            rollFormat!.eSkillEffectVariableFormat
           ),
           ...extraParams,
         );
