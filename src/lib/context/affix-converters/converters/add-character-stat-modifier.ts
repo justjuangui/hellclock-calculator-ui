@@ -1,6 +1,7 @@
 import type {
   AddCharacterStatModifierSkillEffectData,
   SkillEffectStatModifierDefinition,
+  SkillEffectVariableReference,
 } from "$lib/hellclock/relics";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import type {
@@ -11,7 +12,11 @@ import type {
   AnyModMeta,
 } from "../types";
 import { buildModMeta, buildSourceLabel } from "../types";
-import { getBaseValue, buildCalculationExpression } from "../variable-modifiers";
+import {
+  getBaseValue,
+  buildCalculationExpression,
+  hasLimitToValue,
+} from "../variable-modifiers";
 import { getLayerFromModifierType, normalizeStatName } from "../layer-mapping";
 
 /**
@@ -93,7 +98,22 @@ function convertStatModifier(
   );
 
   // Build calculation expression if there are dynamic modifiers
-  const calculation = buildCalculationExpression(statModifier.value);
+  let calculation = buildCalculationExpression(statModifier.value);
+
+  // If modifier have LimitToValue then
+  if (hasLimitToValue(statModifier.value.eSkillEffectVariableModifier)) {
+    const limitValueRef: Partial<SkillEffectVariableReference> = {
+      valueOrName: statModifier.value.supportVariableValueOrName,
+    };
+    const limitValue = getBaseValue(
+      limitValueRef,
+      variables,
+      rollVariableName,
+      affixValue,
+    );
+
+    calculation = `min(${calculation}, ${limitValue})`;
+  }
 
   // Build system-specific metadata
   const meta = buildModMeta(context, effectiveValue);

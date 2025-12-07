@@ -1,6 +1,7 @@
 import type {
   AddSkillValueModifierSkillEffectData,
   SkillEffectSkillModifierDefinition,
+  SkillEffectVariableReference,
 } from "$lib/hellclock/relics";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import type {
@@ -15,6 +16,7 @@ import { buildModMeta, buildSourceLabel } from "../types";
 import {
   getBaseValue,
   buildCalculationExpression,
+  hasLimitToValue,
 } from "../variable-modifiers";
 import { getLayerFromModifierType } from "../layer-mapping";
 
@@ -51,7 +53,22 @@ function buildDirectSkillMod(
   );
 
   // Build calculation expression if there are dynamic modifiers
-  const calculation = buildCalculationExpression(modifier.value);
+  let calculation = buildCalculationExpression(modifier.value);
+
+  // If modifier have LimitToValue then
+  if (hasLimitToValue(modifier.value.eSkillEffectVariableModifier)) {
+    const limitValueRef: Partial<SkillEffectVariableReference> = {
+      valueOrName: modifier.value.supportVariableValueOrName,
+    };
+    const limitValue = getBaseValue(
+      limitValueRef,
+      variables,
+      rollVariableName,
+      affixValue,
+    );
+
+    calculation = `min(${calculation}, ${limitValue})`;
+  }
 
   // Build system-specific metadata
   const meta = buildModMeta(context, valueToUse);
@@ -97,7 +114,22 @@ function buildBroadcast(
   );
 
   // Build calculation expression if there are dynamic modifiers
-  const calculation = buildCalculationExpression(modifier.value);
+  let calculation = buildCalculationExpression(modifier.value);
+
+  // If modifier have LimitToValue then
+  if (hasLimitToValue(modifier.value.eSkillEffectVariableModifier)) {
+    const limitValueRef: Partial<SkillEffectVariableReference> = {
+      valueOrName: modifier.value.supportVariableValueOrName,
+    };
+    const limitValue = getBaseValue(
+      limitValueRef,
+      variables,
+      rollVariableName,
+      affixValue,
+    );
+
+    calculation = `min(${calculation}, ${limitValue})`;
+  }
 
   // Build meta as string record for broadcast
   const meta: Record<string, string> = {};

@@ -117,7 +117,7 @@ export function hasDynamicModifiers(
  * Get base value from variable reference, resolving variable names
  */
 export function getBaseValue(
-  variableRef: SkillEffectVariableReference,
+  variableRef: Partial<SkillEffectVariableReference>,
   variables: SkillEffectVariable[],
   rollVariableName: string,
   rollValue: number,
@@ -174,7 +174,7 @@ export function buildCalculationExpression(
         expression = `((${expression}) - 1) * ${mapping.statReference} + 1`;
       }
     }
-    // Other modifiers like LimitToValue, UseMultipliedModifier are handled elsewhere or ignored
+    // Other modifiers like LimitToValue are handled elsewhere or ignored
   }
 
   return hasStatModifier ? expression : null;
