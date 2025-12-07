@@ -12,6 +12,7 @@
   import { ESingType, formatStatNumber } from "$lib/hellclock/formats";
   import type { WorldTiersHelper } from "$lib/hellclock/worldtiers";
   import ImportDialog from "$lib/ui/ImportDialog.svelte";
+  import ExportDialog from "$lib/ui/ExportDialog.svelte";
 
   let { activeSection = $bindable("home") } = $props<{
     activeSection: string;
@@ -73,8 +74,9 @@
     Object.values(skillEquipped.skillsEquipped).filter((s) => s !== null),
   );
 
-  // Import dialog ref
+  // Dialog refs
   let importDialog: ReturnType<typeof ImportDialog>;
+  let exportDialog: ReturnType<typeof ExportDialog>;
 
   function navigateTo(section: string) {
     activeSection = section;
@@ -82,6 +84,10 @@
 
   function openImportDialog() {
     importDialog?.open();
+  }
+
+  function openExportDialog() {
+    exportDialog?.open();
   }
 
   function formatStat(value: number | null, statName: string): string {
@@ -115,7 +121,7 @@
       <button class="btn btn-outline btn-sm" onclick={openImportDialog}
         >Import Build</button
       >
-      <button class="btn btn-primary btn-sm" disabled>Export Build</button>
+      <button class="btn btn-primary btn-sm" onclick={openExportDialog}>Export Build</button>
     </div>
   </div>
 
@@ -402,3 +408,6 @@
 
 <!-- Import Dialog -->
 <ImportDialog bind:this={importDialog} />
+
+<!-- Export Dialog -->
+<ExportDialog bind:this={exportDialog} />
