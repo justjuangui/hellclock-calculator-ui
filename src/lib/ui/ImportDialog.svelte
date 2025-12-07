@@ -20,6 +20,9 @@
     type ImportResult,
   } from "$lib/import";
 
+  // Import mode types
+  type ImportMode = "file" | "code";
+
   // Get helpers from context
   const skillsHelper = getContext<SkillsHelper>("skillsHelper");
   const relicsHelper = getContext<RelicsHelper>("relicsHelper");
@@ -41,6 +44,10 @@
   // Dialog ref
   let dialog: HTMLDialogElement;
   let fileInput: HTMLInputElement | null = null;
+
+  // Import mode
+  let importMode = $state<ImportMode>("file");
+  let codeInput = $state("");
 
   // State
   let saveData: unknown = $state(null);
@@ -100,6 +107,8 @@
     if (fileInput) {
       fileInput.value = "";
     }
+    importMode = "file";
+    codeInput = "";
     saveData = null;
     fileName = "";
     preview = null;
@@ -114,6 +123,57 @@
     importBells = true;
     importing = false;
     importResult = null;
+  }
+
+  function handleCodeInput() {
+    if (!codeInput.trim() || !orchestrator) {
+      preview = null;
+      saveData = null;
+      return;
+    }
+
+    importResult = null;
+    fileName = "";
+
+    try {
+      // Pass the code string directly - CodeAdapter will handle it
+      saveData = codeInput.trim();
+
+      // Get preview
+      preview = orchestrator.preview(saveData);
+      loadouts = preview.relicLoadouts;
+      gearLoadouts = preview.gearLoadouts;
+
+      // For code imports, always use index 0 (there's only one "loadout")
+      selectedLoadoutIndex = 0;
+      selectedGearLoadoutIndex = 0;
+    } catch (err) {
+      preview = {
+        skills: [],
+        relicLoadouts: [],
+        gearLoadouts: [],
+        constellations: [],
+        bells: [],
+        worldTierKey: "Normal",
+        errors: [
+          {
+            system: "skills",
+            message: `Failed to parse code: ${err instanceof Error ? err.message : "Unknown error"}`,
+          },
+        ],
+        warnings: [],
+      };
+    }
+  }
+
+  async function handlePasteCode() {
+    try {
+      const text = await navigator.clipboard.readText();
+      codeInput = text;
+      handleCodeInput();
+    } catch (err) {
+      console.error("Failed to read clipboard:", err);
+    }
   }
 
   async function handleFileSelect(e: Event) {
@@ -222,46 +282,100 @@
       (importSkills || importRelics || importConstellations || importGear || importBells) &&
       !hasErrors,
   );
+  const isCodeMode = $derived(importMode === "code");
+  // Code imports only have one loadout, so hide loadout selectors
+  const showLoadoutSelectors = $derived(!isCodeMode && loadouts.length > 1);
+  const showGearLoadoutSelectors = $derived(!isCodeMode && gearLoadouts.length > 1);
 </script>
 
 <dialog bind:this={dialog} class="modal">
   <div class="modal-box max-w-lg">
-    <h3 class="font-bold text-lg mb-4">Import Build from Save File</h3>
+    <h3 class="font-bold text-lg mb-4">Import Build</h3>
 
-    <!-- File Input -->
-    <div class="form-control mb-4">
-      <label class="label" for="save-file-input">
-        <span class="label-text">Select your save data</span>
-      </label>
-      <div class="flex items-center gap-2 mb-2">
-        <code class="text-xs opacity-70 bg-base-200 px-2 py-1 rounded">
-          %USERPROFILE%\AppData\LocalLow\Rogue Snail\Hell Clock
-        </code>
-        <button
-          type="button"
-          class="btn btn-xs btn-ghost"
-          onclick={() =>
-            navigator.clipboard.writeText(
-              "%USERPROFILE%\\AppData\\LocalLow\\Rogue Snail\\Hell Clock",
-            )}
-        >
-          Copy
-        </button>
-      </div>
-      <input
-        bind:this={fileInput}
-        id="save-file-input"
-        type="file"
-        accept=".json"
-        class="file-input file-input-bordered w-full"
-        onchange={handleFileSelect}
-      />
-      {#if fileName}
-        <div class="label">
-          <span class="label-text-alt text-success">{fileName}</span>
-        </div>
-      {/if}
+    <!-- Mode Tabs -->
+    <div role="tablist" class="tabs tabs-boxed mb-4">
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={importMode === "file"}
+        onclick={() => { importMode = "file"; preview = null; saveData = null; }}
+      >
+        Save File
+      </button>
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={importMode === "code"}
+        onclick={() => { importMode = "code"; preview = null; saveData = null; }}
+      >
+        Build Code
+      </button>
     </div>
+
+    {#if importMode === "file"}
+      <!-- File Input -->
+      <div class="form-control mb-4">
+        <label class="label" for="save-file-input">
+          <span class="label-text">Select your save data</span>
+        </label>
+        <div class="flex items-center gap-2 mb-2">
+          <code class="text-xs opacity-70 bg-base-200 px-2 py-1 rounded">
+            %USERPROFILE%\AppData\LocalLow\Rogue Snail\Hell Clock
+          </code>
+          <button
+            type="button"
+            class="btn btn-xs btn-ghost"
+            onclick={() =>
+              navigator.clipboard.writeText(
+                "%USERPROFILE%\\AppData\\LocalLow\\Rogue Snail\\Hell Clock",
+              )}
+          >
+            Copy
+          </button>
+        </div>
+        <input
+          bind:this={fileInput}
+          id="save-file-input"
+          type="file"
+          accept=".json"
+          class="file-input file-input-bordered w-full"
+          onchange={handleFileSelect}
+        />
+        {#if fileName}
+          <div class="label">
+            <span class="label-text-alt text-success">{fileName}</span>
+          </div>
+        {/if}
+      </div>
+    {:else}
+      <!-- Code Input -->
+      <div class="form-control mb-4">
+        <label class="label" for="code-input">
+          <span class="label-text">Paste your build code</span>
+        </label>
+        <div class="relative">
+          <textarea
+            id="code-input"
+            class="textarea textarea-bordered w-full font-mono text-xs h-24 resize-none pr-16"
+            placeholder="Paste build code here..."
+            bind:value={codeInput}
+            oninput={handleCodeInput}
+          ></textarea>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary absolute top-2 right-2"
+            onclick={handlePasteCode}
+          >
+            Paste
+          </button>
+        </div>
+        {#if codeInput && !preview?.errors.length}
+          <div class="label">
+            <span class="label-text-alt text-success">Code loaded</span>
+          </div>
+        {/if}
+      </div>
+    {/if}
 
     {#if preview}
       <!-- Import Options -->
@@ -279,7 +393,7 @@
           <span class="label-text">Import Blessed Gear</span>
         </label>
 
-        {#if importGear && gearLoadouts.length > 0}
+        {#if importGear && showGearLoadoutSelectors}
           <div class="ml-8 mt-2 mb-2">
             <span class="label-text text-sm opacity-70">Select Loadout:</span>
             <div class="flex flex-wrap gap-2 mt-1">
@@ -330,7 +444,7 @@
           <span class="label-text">Import Relics</span>
         </label>
 
-        {#if importRelics && loadouts.length > 0}
+        {#if importRelics && showLoadoutSelectors}
           <div class="ml-8 mt-2 mb-2">
             <span class="label-text text-sm opacity-70">Select Loadout:</span>
             <div class="flex flex-wrap gap-2 mt-1">

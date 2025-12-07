@@ -18,6 +18,7 @@ import type { BellEquippedAPI } from "$lib/context/bellequipped.svelte";
 
 import type { ImportAdapter } from "./adapters/base";
 import { V1Adapter } from "./adapters/v1.adapter";
+import { CodeAdapter } from "./adapters/code.adapter";
 import { ImportValidator } from "./validator";
 import { ImportApplier } from "./applier";
 import type {
@@ -59,7 +60,8 @@ export class ImportOrchestrator {
     private bellsHelper?: BellsHelper,
   ) {
     // Register adapters (add new versions here)
-    this.adapters = [new V1Adapter()];
+    // CodeAdapter first to handle base64 export codes
+    this.adapters = [new CodeAdapter(), new V1Adapter()];
 
     // Initialize validator and applier
     this.validator = new ImportValidator(
