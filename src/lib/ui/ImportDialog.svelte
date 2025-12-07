@@ -43,7 +43,7 @@
 
   // Dialog ref
   let dialog: HTMLDialogElement;
-  let fileInput: HTMLInputElement | null = null;
+  let fileInput = $state<HTMLInputElement | null>(null);
 
   // Import mode
   let importMode = $state<ImportMode>("file");
