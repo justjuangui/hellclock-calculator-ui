@@ -149,16 +149,24 @@ export function collectRelics(api: RelicInventoryAPI): SerializableRelicInventor
     relics: [],
   };
 
+  // Get grid height for Y coordinate flipping
+  // Export uses bottom-up Y (like save files), UI uses top-down
+  const gridShape = api.getCurrentShape();
+  const gridHeight = gridShape?.height || 6;
+
   // Get unique relics (not duplicated across grid cells)
   const uniqueRelics = api.getUniqueRelics();
 
   for (const relic of uniqueRelics) {
     const rarityValue = RARITY_MAP[relic.rarity] ?? 0;
 
+    // Flip Y coordinate to match save file convention (bottom-up)
+    const flippedY = gridHeight - relic.position.y - relic.height;
+
     const serializedRelic: SerializableRelic = {
       baseId: parseInt(relic.id.split("-")[1]) || 0, // Extract base ID from generated ID
       x: relic.position.x,
-      y: relic.position.y,
+      y: flippedY,
       tier: relic.tier,
       rank: relic.rank,
       rarity: rarityValue,
