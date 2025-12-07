@@ -60,6 +60,7 @@ export type GearDefinition = {
 export type GearRoot = { Gear: GearDefinition[] };
 export type GearItem = {
   defId: number;
+  variantIndex: number;
   slot: GearSlot;
   tier: number;
   visualTier: number;
@@ -216,6 +217,7 @@ export class GearsHelper {
 
     return {
       defId: gd.id,
+      variantIndex,
       slot: gd.slot,
       tier: gd.tier,
       visualTier: gd.visualTier ?? gd.tier,
@@ -261,6 +263,7 @@ export class GearsHelper {
             // If the gear definition has no variants, we create a default item with no mods
             items.push({
               defId: gd.id,
+              variantIndex: 0,
               slot: gd.slot,
               tier: gd.tier,
               visualTier: gd.visualTier ?? gd.tier,
@@ -288,7 +291,7 @@ export class GearsHelper {
           }
           return;
         }
-        gd.variants.forEach((variant) => {
+        gd.variants.forEach((variant, variantIdx) => {
           const rarity = blessed
             ? this.gearRarity.blessedGearRarity
             : undefined;
@@ -303,6 +306,7 @@ export class GearsHelper {
           });
           items.push({
             defId: gd.id,
+            variantIndex: variantIdx,
             slot: gd.slot,
             tier: gd.tier,
             visualTier: gd.visualTier ?? gd.tier,

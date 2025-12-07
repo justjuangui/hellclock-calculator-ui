@@ -29,15 +29,21 @@ import { GEAR_SLOT_MAP, SKILL_SLOT_MAP, RARITY_MAP } from "./format";
 // ============================================================================
 
 /**
- * Find the variant index for a gear item by matching its properties
+ * Get the variant index for a gear item
+ * Uses stored variantIndex, with fallback to sprite matching for backwards compatibility
  */
 function findVariantIndex(gearItem: GearItem, gearsHelper: GearsHelper): number {
+  // Use stored variant index if available
+  if (gearItem.variantIndex !== undefined) {
+    return gearItem.variantIndex;
+  }
+
+  // Fallback to sprite matching for backwards compatibility
   const def = gearsHelper.getGearDefinitionById(gearItem.defId);
   if (!def || !def.variants || def.variants.length === 0) {
     return 0;
   }
 
-  // Try to match by sprite
   if (gearItem.sprite) {
     for (let i = 0; i < def.variants.length; i++) {
       if (def.variants[i].value.sprite === gearItem.sprite) {
@@ -46,7 +52,6 @@ function findVariantIndex(gearItem: GearItem, gearsHelper: GearsHelper): number 
     }
   }
 
-  // Default to first variant
   return 0;
 }
 
