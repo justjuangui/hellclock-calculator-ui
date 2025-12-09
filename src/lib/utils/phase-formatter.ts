@@ -6,15 +6,19 @@ export type PhaseType =
   | "phase_override";
 
 /**
- * Extract the phase type from a node type string.
- * e.g., "phase_add" -> "phase_add", "phase_mult_something" -> "phase_mult"
+ * Extract the phase type from a node type or name string.
+ * Handles both prefixed ("phase_add") and unprefixed ("add") formats.
+ * e.g., "phase_add" -> "phase_add", "add" -> "phase_add", "mult" -> "phase_mult"
  */
 export function extractPhaseType(nodeType: string): PhaseType | null {
-  if (nodeType.startsWith("phase_base")) return "phase_base";
-  if (nodeType.startsWith("phase_add")) return "phase_add";
-  if (nodeType.startsWith("phase_multadd")) return "phase_multadd";
-  if (nodeType.startsWith("phase_mult")) return "phase_mult";
-  if (nodeType.startsWith("phase_override")) return "phase_override";
+  const normalized = nodeType.toLowerCase();
+  // Check with prefix first, then without
+  // Order matters: multadd must come before mult to avoid false matches
+  if (normalized === "base" || normalized.startsWith("phase_base")) return "phase_base";
+  if (normalized === "add" || normalized.startsWith("phase_add")) return "phase_add";
+  if (normalized === "multadd" || normalized.startsWith("phase_multadd")) return "phase_multadd";
+  if (normalized === "mult" || normalized.startsWith("phase_mult")) return "phase_mult";
+  if (normalized === "override" || normalized.startsWith("phase_override")) return "phase_override";
   return null;
 }
 
@@ -161,4 +165,115 @@ export function formatNodeName(name: string | undefined): string {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+// ============================================================================
+// Layer-specific Utilities
+// ============================================================================
+
+/**
+ * Get DaisyUI badge color class for contribution layer.
+ */
+export function getLayerBadgeColor(layer: string): string {
+  const colors: Record<string, string> = {
+    base: "badge-primary",
+    add: "badge-success",
+    mult: "badge-warning",
+    multadd: "badge-info",
+    final: "badge-error",
+  };
+  return colors[layer] ?? "badge-neutral";
+}
+
+/**
+ * Get background color class for contribution layer.
+ */
+export function getLayerBackgroundColor(layer: string): string {
+  const colors: Record<string, string> = {
+    base: "bg-primary/10",
+    add: "bg-success/10",
+    mult: "bg-warning/10",
+    multadd: "bg-info/10",
+    final: "bg-error/10",
+  };
+  return colors[layer] ?? "bg-base-200";
+}
+
+/**
+ * Get human-readable name for contribution layer.
+ */
+export function getLayerDisplayName(layer: string): string {
+  const names: Record<string, string> = {
+    base: "Base",
+    add: "Additive",
+    mult: "Multiplicative",
+    multadd: "Mult. Additive",
+    final: "Final",
+  };
+  return names[layer] ?? layer;
+}
+
+// ============================================================================
+// Damage Type Utilities
+// ============================================================================
+
+/**
+ * Get background color class for damage type.
+ */
+export function getDamageTypeColor(damageType: string): string {
+  const colors: Record<string, string> = {
+    Physical: "bg-neutral text-neutral-content",
+    Fire: "bg-warning text-warning-content",
+    Cold: "bg-info text-info-content",
+    Lightning: "bg-accent text-accent-content",
+    Plague: "bg-success text-success-content",
+    Chaos: "bg-error text-error-content",
+    Void: "bg-secondary text-secondary-content",
+  };
+  return colors[damageType] ?? "bg-base-300 text-base-content";
+}
+
+/**
+ * Get badge color class for damage type.
+ */
+export function getDamageTypeBadgeColor(damageType: string): string {
+  const colors: Record<string, string> = {
+    Physical: "badge-neutral",
+    Fire: "badge-warning",
+    Cold: "badge-info",
+    Lightning: "badge-accent",
+    Plague: "badge-success",
+    Chaos: "badge-error",
+    Void: "badge-secondary",
+  };
+  return colors[damageType] ?? "badge-ghost";
+}
+
+// ============================================================================
+// Expression Formatting
+// ============================================================================
+
+/**
+ * Format a condition expression for display (shortened form).
+ */
+export function formatConditionExpression(condition: string): string {
+  return condition
+    .replace(/flag\("([^"]+)"\)/g, "flag:$1")
+    .replace(/stat\("([^"]+)"\)/g, "$1")
+    .trim();
+}
+
+/**
+ * Format a calculation expression for display.
+ */
+export function formatCalculationExpression(calculation: string): string {
+  return calculation.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Truncate a string if it exceeds max length.
+ */
+export function truncateExpression(expr: string, maxLength: number = 40): string {
+  if (expr.length <= maxLength) return expr;
+  return expr.slice(0, maxLength - 3) + "...";
 }

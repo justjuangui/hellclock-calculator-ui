@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PhaseInfo } from "./types";
+  import type { PhaseInfo, ContributionInfo } from "./types";
   import { getValueColorClass, formatNumber } from "$lib/utils/phase-formatter";
   import { getContributionCount } from "./phase-parser";
 
@@ -21,10 +21,10 @@
   }
 
   function formatMeta(
-    meta: Record<string, string | number> | undefined
+    metadata: Record<string, unknown> | undefined
   ): Array<[string, string]> {
-    if (!meta) return [];
-    return Object.entries(meta)
+    if (!metadata) return [];
+    return Object.entries(metadata)
       .filter(
         ([key]) =>
           !["contribution_count", "filter_group", "filter_layer", "filter_who"].includes(key)
@@ -141,13 +141,13 @@
                                         {contrib.displayName}
                                       </td>
                                       <td
-                                        class="text-right font-mono {getValueColorClass(contrib.absoluteValue)}"
+                                        class="text-right font-mono {getValueColorClass(contrib.originalValue)}"
                                       >
                                         {contrib.formattedValue}
                                       </td>
                                       <td>
                                         <div class="flex flex-wrap gap-1">
-                                          {#each formatMeta(contrib.meta) as [key, value] (key)}
+                                          {#each formatMeta(contrib.metadata) as [key, value] (key)}
                                             <span class="badge badge-ghost badge-xs">
                                               {key}: {value}
                                             </span>
@@ -166,13 +166,13 @@
                         <tr class="hover">
                           <td>{processed.contribution.displayName}</td>
                           <td
-                            class="text-right font-mono {getValueColorClass(processed.contribution.absoluteValue)}"
+                            class="text-right font-mono {getValueColorClass(processed.contribution.originalValue)}"
                           >
                             {processed.contribution.formattedValue}
                           </td>
                           <td>
                             <div class="flex flex-wrap gap-1">
-                              {#each formatMeta(processed.contribution.meta) as [key, value] (key)}
+                              {#each formatMeta(processed.contribution.metadata) as [key, value] (key)}
                                 <span class="badge badge-ghost badge-xs">
                                   {key}: {value}
                                 </span>
