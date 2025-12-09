@@ -7,7 +7,7 @@ import type {
 } from "$lib/hellclock/constellations";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import type { StatusHelper } from "$lib/hellclock/status";
-import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, ContributionDelta, TrackedBroadcastContribution } from "$lib/context/evaluation-types";
 import {
   getValueFromMultiplier,
   formatStatModNumber,
@@ -24,6 +24,10 @@ import {
   type ConstellationConverterContext,
   type BroadcastContribution,
 } from "$lib/context/affix-converters";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type ConstellationModSource = {
   source: string;
@@ -60,8 +64,14 @@ export type ConstellationFlagCollection = Record<
 >;
 
 export type ConstellationEvaluationAPI = {
-  // Get unified contribution for evaluation
+  // Get unified contribution for evaluation (legacy)
   getContribution: () => EvaluationContribution;
+
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
 
   // Check if constellations have changed (for cache invalidation)
   get constellationHash(): string;
@@ -77,18 +87,24 @@ export function provideConstellationEvaluation(
 ): ConstellationEvaluationAPI {
   const constellationEquippedApi = useConstellationEquipped();
   const statusEvaluationApi = useStatusEvaluation();
+  const tracker = new ContributionTracker();
 
   // Store broadcasts collected during the last getConstellationMods call
   let lastCollectedBroadcasts: BroadcastContribution[] = [];
 
-  function getConstellationMods(): ConstellationModCollection {
-    const mods: ConstellationModCollection = {};
-    const broadcasts: BroadcastContribution[] = [];
+  /**
+   * Build tracked state with consumer_ids for all contributions
+   */
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
+    const broadcasts: TrackedBroadcastContribution[] = [];
 
     if (!constellationsHelper) {
       lastCollectedBroadcasts = [];
-      return mods;
+      return state;
     }
+
+    let affixCounter = 0; // Global counter for unique IDs within skill behavior affixes
 
     for (const [
       _key,
@@ -111,19 +127,19 @@ export function provideConstellationEvaluation(
       const nodeName = translate(node.nameLocalizationKey, lang);
 
       // Process each affix in the node
-      for (const affix of node.affixes) {
+      for (let affixIndex = 0; affixIndex < node.affixes.length; affixIndex++) {
+        const affix = node.affixes[affixIndex];
         if (affix.type === "StatModifierNodeAffixDefinition") {
           const statAffix = affix as StatModifierNodeAffixDefinition;
 
           // Map the stat to the format expected by the engine
           const statKey = normalizeStatName(statAffix.eStatDefinition);
 
-          if (!(statKey in mods)) {
-            mods[statKey] = [];
+          if (!(statKey in state.mods)) {
+            state.mods[statKey] = [];
           }
 
           // Calculate the effective value
-          // Some nodes may have their values multiplied by level
           const effectiveValue = getValueFromMultiplier(
             statAffix.value,
             statAffix.statModifierType,
@@ -158,9 +174,13 @@ export function provideConstellationEvaluation(
             }
           }
 
-          mods[statKey].push({
+          // Consumer ID pattern: const:{constId}:{nodeId}:{affixIndex}
+          const consumerId = `const:${allocated.constellationId}:${allocated.nodeId}:${affixIndex}`;
+
+          state.mods[statKey].push({
+            consumer_id: consumerId,
             source: `${constellationName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}${affixDescription ? `: ${affixDescription}` : ""}`,
-            amount: effectiveValue * allocated.level, // Multiply by level if multi-level nodes
+            amount: effectiveValue * allocated.level,
             layer: layer,
             meta: {
               type: "constellation",
@@ -171,178 +191,20 @@ export function provideConstellationEvaluation(
             },
           });
         } else if (affix.type === "SkillBehaviorNodeAffixDefinition") {
-          processSkillBehaviorAffix(
+          affixCounter = processSkillBehaviorAffixTracked(
             affix as SkillBehaviorNodeAffixDefinition,
             constellationName,
             nodeName,
             allocated.constellationId,
             allocated.nodeId,
             allocated.level,
-            mods,
+            affixIndex,
+            state,
             broadcasts,
+            affixCounter,
           );
-        }
-        // TODO: Handle other affix types:
-        // - UnlockSkillNodeAffixDefinition
-        // - SkillModifierNodeAffixDefinition
-        // - AttributeNodeAffixDefinition
-      }
-    }
-
-    // Add devotion point stats
-    // Map category colors to stat names
-    const devotionStatMap: Record<string, string> = {
-      Red: "FuryPoints",
-      Green: "DisciplinePoints",
-      Blue: "FaithPoints",
-    };
-
-    for (const [category, statName] of Object.entries(devotionStatMap)) {
-      const points =
-        constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
-      mods[statName] = [
-        {
-          source: `Devotion (${statName})`,
-          amount: points,
-          layer: "simple",
-          meta: {
-            type: "constellation",
-            constellationId: "devotion",
-            nodeId: category,
-            level: "1",
-            value: String(points),
-          },
-        },
-      ];
-    }
-
-    // Store broadcasts for getConstellationBroadcasts
-    lastCollectedBroadcasts = broadcasts;
-
-    return mods;
-  }
-
-  function getContribution(): EvaluationContribution {
-    const constellationMods = getConstellationMods();
-    const constellationFlags = getConstellationFlags();
-
-    // Convert mods to unified type
-    const mods: EvaluationContribution["mods"] = {};
-    for (const [statName, sources] of Object.entries(constellationMods)) {
-      mods[statName] = sources.map((s) => ({
-        source: s.source,
-        amount: s.amount,
-        layer: s.layer,
-        meta: { ...s.meta },
-      }));
-    }
-
-    // Convert flags to unified type
-    const flags: EvaluationContribution["flags"] = {};
-    for (const [flagName, sources] of Object.entries(constellationFlags)) {
-      flags[flagName] = sources.map((s) => ({
-        source: s.source,
-        enabled: s.enabled,
-        meta: { ...s.meta },
-      }));
-    }
-
-    return { mods, flags, broadcasts: lastCollectedBroadcasts };
-  }
-
-  function processSkillBehaviorAffix(
-    affix: SkillBehaviorNodeAffixDefinition,
-    constellationName: string,
-    nodeName: string,
-    constellationId: number,
-    nodeId: string,
-    nodeLevel: number,
-    mods: ConstellationModCollection,
-    broadcasts: BroadcastContribution[],
-  ): void {
-    if (!affix.behaviorData) {
-      console.warn(
-        `Affix behavior data missing for ${constellationName} - ${nodeName} - ${nodeId}`,
-      );
-      return;
-    }
-    // Calculate value based on level
-    const affixValue = affix.valuePerLevel * nodeLevel;
-
-    const context: ConstellationConverterContext = {
-      system: "constellation",
-      sourceName: `${constellationName} - ${nodeName}`,
-      sourceType: "node",
-      constellationId: String(constellationId),
-      nodeId,
-      nodeLevel,
-      affixId: 0, // Constellation affixes don't have IDs like relics
-      affixValue,
-      variables: affix.behaviorData.variables?.variables || [],
-      rollVariableName: "Roll",
-      skillName: affix.behaviorData.skillDefinition.name || "",
-      // Add behavior data for multi-skill targeting
-      behaviorData: {
-        affectMultipleSkills: affix.behaviorData.affectMultipleSkills || false,
-        useListOfSkills: String(affix.behaviorData.useListOfSkills || ""),
-        listOfSkills: affix.behaviorData.listOfSkills || [],
-        skillTagFilter: affix.behaviorData.skillTagFilter || "",
-      },
-    };
-
-    for (const effect of affix.behaviorData.effects || []) {
-      // Cast to SkillEffect since constellation and relic effect types are structurally compatible
-      const conversionResult = effectConverterRegistry.convert(
-        effect as any,
-        context,
-      );
-      if (conversionResult) {
-        // Collect mods
-        for (const { statName, modSource } of conversionResult.mods) {
-          if (!(statName in mods)) {
-            mods[statName] = [];
-          }
-          mods[statName].push(modSource as ConstellationModSource);
-        }
-        // Collect broadcasts
-        if (conversionResult.broadcasts) {
-          for (const broadcast of conversionResult.broadcasts) {
-            broadcasts.push(broadcast);
-          }
-        }
-      }
-    }
-  }
-
-  function getConstellationFlags(): ConstellationFlagCollection {
-    const flags: ConstellationFlagCollection = {};
-
-    if (!constellationsHelper) {
-      return flags;
-    }
-
-    for (const [
-      _key,
-      allocated,
-    ] of constellationEquippedApi.allocatedNodes.entries()) {
-      if (allocated.level === 0) continue;
-
-      const node = constellationsHelper.getNodeById(
-        allocated.constellationId,
-        allocated.nodeId,
-      );
-      if (!node) continue;
-
-      const constellation = constellationsHelper.getConstellationById(
-        allocated.constellationId,
-      );
-      if (!constellation) continue;
-
-      const constellationName = translate(constellation.nameKey, lang);
-      const nodeName = translate(node.nameLocalizationKey, lang);
-
-      for (const affix of node.affixes) {
-        if (affix.type === "StatProxyModifierNodeAffixDefinition") {
+        } else if (affix.type === "StatProxyModifierNodeAffixDefinition") {
+          // Process proxy flags
           const proxyAffix = affix as StatProxyModifierNodeAffixDefinition;
           const flagKey = createProxyFlagName(
             proxyAffix.sourceStat,
@@ -363,11 +225,15 @@ export function provideConstellationEvaluation(
             affixDescription = `${sourceLabel} → ${targetLabel}`;
           }
 
-          if (!(flagKey in flags)) {
-            flags[flagKey] = [];
+          if (!(flagKey in state.flags)) {
+            state.flags[flagKey] = [];
           }
 
-          flags[flagKey].push({
+          // Consumer ID pattern: const:{constId}:{nodeId}:flag:{affixIndex}
+          const flagConsumerId = `const:${allocated.constellationId}:${allocated.nodeId}:flag:${affixIndex}`;
+
+          state.flags[flagKey].push({
+            consumer_id: flagConsumerId,
             source: `${constellationName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}${affixDescription ? `: ${affixDescription}` : ""}`,
             enabled: true,
             meta: {
@@ -381,7 +247,169 @@ export function provideConstellationEvaluation(
       }
     }
 
-    return flags;
+    // Add devotion point stats
+    const devotionStatMap: Record<string, string> = {
+      Red: "FuryPoints",
+      Green: "DisciplinePoints",
+      Blue: "FaithPoints",
+    };
+
+    for (const [category, statName] of Object.entries(devotionStatMap)) {
+      const points =
+        constellationEquippedApi.getCurrentDevotionCategoryPoints(category);
+
+      // Consumer ID pattern: const:devotion:{category}
+      const consumerId = `const:devotion:${category}`;
+
+      state.mods[statName] = [
+        {
+          consumer_id: consumerId,
+          source: `Devotion (${statName})`,
+          amount: points,
+          layer: "simple",
+          meta: {
+            type: "constellation",
+            constellationId: "devotion",
+            nodeId: category,
+            level: "1",
+            value: String(points),
+          },
+        },
+      ];
+    }
+
+    // Store broadcasts
+    state.broadcasts = broadcasts;
+    lastCollectedBroadcasts = broadcasts;
+
+    return state;
+  }
+
+  /**
+   * Process skill behavior affix and add to tracked state with consumer_ids
+   */
+  function processSkillBehaviorAffixTracked(
+    affix: SkillBehaviorNodeAffixDefinition,
+    constellationName: string,
+    nodeName: string,
+    constellationId: number,
+    nodeId: string,
+    nodeLevel: number,
+    affixIndex: number,
+    state: TrackedState,
+    broadcasts: TrackedBroadcastContribution[],
+    effectCounter: number,
+  ): number {
+    if (!affix.behaviorData) {
+      console.warn(
+        `Affix behavior data missing for ${constellationName} - ${nodeName} - ${nodeId}`,
+      );
+      return effectCounter;
+    }
+
+    const affixValue = affix.valuePerLevel * nodeLevel;
+
+    const context: ConstellationConverterContext = {
+      system: "constellation",
+      sourceName: `${constellationName} - ${nodeName}`,
+      sourceType: "node",
+      constellationId: String(constellationId),
+      nodeId,
+      nodeLevel,
+      affixId: 0,
+      affixValue,
+      variables: affix.behaviorData.variables?.variables || [],
+      rollVariableName: "Roll",
+      skillName: affix.behaviorData.skillDefinition.name || "",
+      behaviorData: {
+        affectMultipleSkills: affix.behaviorData.affectMultipleSkills || false,
+        useListOfSkills: String(affix.behaviorData.useListOfSkills || ""),
+        listOfSkills: affix.behaviorData.listOfSkills || [],
+        skillTagFilter: affix.behaviorData.skillTagFilter || "",
+      },
+    };
+
+    for (const effect of affix.behaviorData.effects || []) {
+      const conversionResult = effectConverterRegistry.convert(
+        effect as any,
+        context,
+      );
+      if (conversionResult) {
+        // Collect mods with consumer_ids
+        for (let modIdx = 0; modIdx < conversionResult.mods.length; modIdx++) {
+          const { statName, modSource } = conversionResult.mods[modIdx];
+          if (!(statName in state.mods)) {
+            state.mods[statName] = [];
+          }
+          // Consumer ID pattern: const:{constId}:{nodeId}:effect:{effectCounter}:{modIdx}
+          const consumerId = `const:${constellationId}:${nodeId}:effect:${effectCounter}:${modIdx}`;
+          state.mods[statName].push({
+            ...modSource,
+            consumer_id: consumerId,
+          } as any);
+        }
+        // Collect broadcasts with consumer_ids
+        if (conversionResult.broadcasts) {
+          for (let bcIdx = 0; bcIdx < conversionResult.broadcasts.length; bcIdx++) {
+            const broadcast = conversionResult.broadcasts[bcIdx];
+            // Consumer ID pattern: bc:const:{constId}:{nodeId}:{effectCounter}:{bcIdx}
+            const bcConsumerId = `bc:const:${constellationId}:${nodeId}:${effectCounter}:${bcIdx}`;
+            broadcasts.push({
+              ...broadcast,
+              consumer_id: bcConsumerId,
+            });
+          }
+        }
+      }
+      effectCounter++;
+    }
+    return effectCounter;
+  }
+
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
+  }
+
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
+  function getContribution(): EvaluationContribution {
+    const state = buildTrackedState();
+
+    // Convert to unified type
+    const mods: EvaluationContribution["mods"] = {};
+    for (const [statName, sources] of Object.entries(state.mods)) {
+      mods[statName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
+        source: s.source,
+        amount: s.amount,
+        layer: s.layer,
+        meta: { ...s.meta },
+      }));
+    }
+
+    const flags: EvaluationContribution["flags"] = {};
+    for (const [flagName, sources] of Object.entries(state.flags)) {
+      flags[flagName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
+        source: s.source,
+        enabled: s.enabled,
+        meta: { ...s.meta },
+      }));
+    }
+
+    return { mods, flags, broadcasts: lastCollectedBroadcasts };
   }
 
   // Sync status effects from constellation nodes to StatusEvaluation
@@ -455,6 +483,8 @@ export function provideConstellationEvaluation(
 
   const api: ConstellationEvaluationAPI = {
     getContribution,
+    getDelta,
+    resetTracker,
 
     get constellationHash() {
       // Create a hash of allocated constellation nodes for cache invalidation

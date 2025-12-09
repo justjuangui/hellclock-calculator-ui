@@ -5,7 +5,11 @@ import type {
   StatusHelper,
   StatModifierStatusDefinition,
 } from "$lib/hellclock/status";
-import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, ContributionDelta } from "$lib/context/evaluation-types";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type StatusModSource = {
   source: string;
@@ -39,8 +43,14 @@ export type StatusEvaluationAPI = {
   // Get all active statuses
   getActiveStatuses: () => ActiveStatus[];
 
-  // Get unified contribution for evaluation
+  // Get unified contribution for evaluation (legacy)
   getContribution: () => EvaluationContribution;
+
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
 
   // Get hash for cache invalidation
   get statusHash(): string;
@@ -54,6 +64,7 @@ export function provideStatusEvaluation(
   // Store active statuses using a reactive map
   // Key: `${source}:${statusId}` to allow same status from different sources
   const activeStatuses = new SvelteMap<string, ActiveStatus>();
+  const tracker = new ContributionTracker();
 
   function addStatus(status: ActiveStatus): void {
     const key = `${status.source}:${status.statusId}`;
@@ -81,12 +92,15 @@ export function provideStatusEvaluation(
     return Array.from(activeStatuses.values());
   }
 
-  function getStatusMods(): StatusModCollection {
-    if (!statusHelper) {
-      return {};
-    }
+  /**
+   * Build tracked state with consumer_ids for all contributions
+   */
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
 
-    const mods: StatusModCollection = {};
+    if (!statusHelper) {
+      return state;
+    }
 
     for (const activeStatus of activeStatuses.values()) {
       // Get the status definition
@@ -114,14 +128,19 @@ export function provideStatusEvaluation(
       );
 
       // Add each stat mod to the collection
-      for (const statMod of statMods) {
+      for (let modIndex = 0; modIndex < statMods.length; modIndex++) {
+        const statMod = statMods[modIndex];
         const statName = statMod.eStatDefinition;
 
-        if (!(statName in mods)) {
-          mods[statName] = [];
+        if (!(statName in state.mods)) {
+          state.mods[statName] = [];
         }
 
-        mods[statName].push({
+        // Consumer ID pattern: status:{source}:{statusId}:{modIndex}
+        const consumerId = `status:${activeStatus.source}:${activeStatus.statusId}:${modIndex}`;
+
+        state.mods[statName].push({
+          consumer_id: consumerId,
           source: activeStatus.source,
           amount: statMod.value,
           layer: statMod.layer,
@@ -138,16 +157,35 @@ export function provideStatusEvaluation(
       }
     }
 
-    return mods;
+    return state;
   }
 
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
+  }
+
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
   function getContribution(): EvaluationContribution {
-    const statusMods = getStatusMods();
+    const state = buildTrackedState();
 
     // Convert to unified type
     const mods: EvaluationContribution["mods"] = {};
-    for (const [statName, sources] of Object.entries(statusMods)) {
+    for (const [statName, sources] of Object.entries(state.mods)) {
       mods[statName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
         source: s.source,
         amount: s.amount,
         layer: s.layer,
@@ -165,6 +203,8 @@ export function provideStatusEvaluation(
     clearAll,
     getActiveStatuses,
     getContribution,
+    getDelta,
+    resetTracker,
 
     get statusHash() {
       // Create a hash of active statuses for cache invalidation

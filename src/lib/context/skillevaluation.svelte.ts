@@ -1,9 +1,13 @@
 import type { SkillsHelper, SkillUpgradeModifier } from "$lib/hellclock/skills";
-import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, ContributionDelta } from "$lib/context/evaluation-types";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type SkillModSource = {
   source: string;
@@ -23,8 +27,14 @@ export type SkillModSource = {
 export type SkillModCollection = Record<string, SkillModSource[]>;
 
 export type SkillEvaluationAPI = {
-  // Get unified contribution for evaluation
+  // Get unified contribution for evaluation (legacy)
   getContribution: () => EvaluationContribution;
+
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
 
   // Check if skills have changed (for cache invalidation)
   get skillHash(): string;
@@ -37,6 +47,7 @@ export function provideSkillEvaluation(
   lang = "en",
 ): SkillEvaluationAPI {
   const skillSlotsApi = useSkillEquipped();
+  const tracker = new ContributionTracker();
 
   function mapSkillModForEval(mod: SkillUpgradeModifier): string {
     let statName = mod.skillValueModifierKey.replaceAll(" ", "");
@@ -51,38 +62,50 @@ export function provideSkillEvaluation(
     return statName;
   }
 
-  function getSkillMods(): SkillModCollection {
-    const mods: SkillModCollection = {};
+  /**
+   * Build tracked state with consumer_ids for all contributions
+   */
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
 
     Object.entries(skillSlotsApi.skillsEquipped).forEach(([slot, skill]) => {
       if (!skill) return;
 
-      // Add skill level stat
-      const skillLevelStatName = `skill_${skill.skill.name.replaceAll(" ", "")}_Level`;
+      const normalizedSkillName = skill.skill.name.replaceAll(" ", "");
+      const skillLevelStatName = `skill_${normalizedSkillName}_Level`;
 
-      mods[skillLevelStatName] = [
-        {
-          source: `Skill ${translate(skill.skill.localizedName, lang)} Level`,
-          amount: skill.selectedLevel,
-          layer: "simple",
-          meta: {
-            type: "skill",
-            id: String(skill.skill.id),
-            slot: slot,
-            value: String(skill.selectedLevel),
-          },
+      // Add skill level stat
+      // Consumer ID pattern: skill:{slot}:{skillId}:level
+      const levelConsumerId = `skill:${slot}:${skill.skill.id}:level`;
+
+      if (!(skillLevelStatName in state.mods)) {
+        state.mods[skillLevelStatName] = [];
+      }
+      state.mods[skillLevelStatName].push({
+        consumer_id: levelConsumerId,
+        source: `Skill ${translate(skill.skill.localizedName, lang)} Level`,
+        amount: skill.selectedLevel,
+        layer: "simple",
+        meta: {
+          type: "skill",
+          id: String(skill.skill.id),
+          slot: slot,
+          value: String(skill.selectedLevel),
         },
-      ];
+      });
 
       // If the skill contain summoned entities add in mods
-      // for now only check for summonAmount
       const summonAmount = (skill.skill as any).summonAmount ?? 0;
       if (summonAmount > 0) {
         const currentSummonsStatName = `CurrentSummonAmount`;
-        if (!(currentSummonsStatName in mods)) {
-          mods[currentSummonsStatName] = [];
+        // Consumer ID pattern: skill:{slot}:{skillId}:summon
+        const summonConsumerId = `skill:${slot}:${skill.skill.id}:summon`;
+
+        if (!(currentSummonsStatName in state.mods)) {
+          state.mods[currentSummonsStatName] = [];
         }
-        mods[currentSummonsStatName].push({
+        state.mods[currentSummonsStatName].push({
+          consumer_id: summonConsumerId,
           source: `Skill ${translate(skill.skill.localizedName, lang)} Summons`,
           amount: summonAmount,
           layer: "simple",
@@ -105,14 +128,16 @@ export function provideSkillEvaluation(
         return;
       }
 
-      for (const baseValMod of baseValMods) {
+      for (let baseIndex = 0; baseIndex < baseValMods.length; baseIndex++) {
+        const baseValMod = baseValMods[baseIndex];
         if (baseValMod.value.startsWith("IGNORE")) {
           continue;
         }
         const skillGroup =
           `skill_${skill.skill.name}_${baseValMod.id}`.replaceAll(" ", "");
-        if (!(skillGroup in mods)) {
-          mods[skillGroup] = [];
+
+        if (!(skillGroup in state.mods)) {
+          state.mods[skillGroup] = [];
         }
 
         let amount = 0;
@@ -134,7 +159,12 @@ export function provideSkillEvaluation(
         } else {
           amount = Number((skill.skill as any)[baseValMod.value]) ?? 0;
         }
-        mods[skillGroup].push({
+
+        // Consumer ID pattern: skill:{slot}:{skillId}:base:{baseIndex}
+        const baseConsumerId = `skill:${slot}:${skill.skill.id}:base:${baseIndex}`;
+
+        state.mods[skillGroup].push({
+          consumer_id: baseConsumerId,
           source: `Skill ${translate(skill.skill.localizedName, lang)}`,
           amount: amount,
           layer: "base",
@@ -152,7 +182,8 @@ export function provideSkillEvaluation(
       for (const [levelKey, levelModifiers] of Object.entries(
         skill.skill.modifiersPerLevel,
       )) {
-        for (const modifier of levelModifiers) {
+        for (let modIndex = 0; modIndex < levelModifiers.length; modIndex++) {
+          const modifier = levelModifiers[modIndex];
           // Skip status modifiers
           if (modifier.skillValueModifierKey.includes("!Status")) {
             continue;
@@ -164,11 +195,15 @@ export function provideSkillEvaluation(
             "",
           );
 
-          if (!(statName in mods)) {
-            mods[statName] = [];
+          if (!(statName in state.mods)) {
+            state.mods[statName] = [];
           }
 
-          mods[statName].push({
+          // Consumer ID pattern: skill:{slot}:{skillId}:mod:{levelKey}:{modIndex}
+          const modConsumerId = `skill:${slot}:${skill.skill.id}:mod:${levelKey}:${modIndex}`;
+
+          state.mods[statName].push({
+            consumer_id: modConsumerId,
             source: `Skill ${translate(skill.skill.localizedName, lang)} Level ${levelKey}`,
             amount: getValueFromMultiplier(
               modifier.value,
@@ -191,16 +226,35 @@ export function provideSkillEvaluation(
       }
     });
 
-    return mods;
+    return state;
   }
 
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
+  }
+
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
   function getContribution(): EvaluationContribution {
-    const skillMods = getSkillMods();
+    const state = buildTrackedState();
 
     // Convert to unified type
     const mods: EvaluationContribution["mods"] = {};
-    for (const [statName, sources] of Object.entries(skillMods)) {
+    for (const [statName, sources] of Object.entries(state.mods)) {
       mods[statName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
         source: s.source,
         amount: s.amount,
         layer: s.layer,
@@ -214,6 +268,8 @@ export function provideSkillEvaluation(
 
   const api: SkillEvaluationAPI = {
     getContribution,
+    getDelta,
+    resetTracker,
 
     get skillHash() {
       // Create a hash of equipped skills for cache invalidation

@@ -1,11 +1,15 @@
 import type { GearItem, GearSlot, GearsHelper } from "$lib/hellclock/gears";
 import type { StatsHelper, StatMod } from "$lib/hellclock/stats";
-import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, ContributionDelta } from "$lib/context/evaluation-types";
 import { getValueFromMultiplier } from "$lib/hellclock/formats";
 import { fmtValue } from "$lib/hellclock/utils";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useEquipped, ESlotsType } from "$lib/context/equipped.svelte";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type GearModSource = {
   source: string;
@@ -22,8 +26,14 @@ export type GearModSource = {
 export type GearModCollection = Record<string, GearModSource[]>;
 
 export type GearEvaluationAPI = {
-  // Get unified contribution for evaluation
+  // Get unified contribution for evaluation (legacy)
   getContribution: () => EvaluationContribution;
+
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
 
   // Check if gear has changed (for cache invalidation)
   get gearHash(): string;
@@ -38,6 +48,7 @@ export function provideGearEvaluation(
 ): GearEvaluationAPI {
   const blessedSlotsApi = useEquipped(ESlotsType.BlessedGear);
   const trinketSlotsApi = useEquipped(ESlotsType.TrinkedGear);
+  const tracker = new ContributionTracker();
 
   function mapModForEval(mod: StatMod): string {
     let statName = mod.eStatDefinition;
@@ -52,20 +63,50 @@ export function provideGearEvaluation(
     return statName;
   }
 
-  function mapModSource(
+  /**
+   * Build tracked state with consumer_ids for all contributions
+   */
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
+
+    // Process blessed gear
+    Object.entries(blessedSlotsApi.equipped).forEach(([slot, item]) => {
+      if (item) {
+        addItemToState(item, "blessed", slot as GearSlot, state);
+      }
+    });
+
+    // Process trinket gear
+    Object.entries(trinketSlotsApi.equipped).forEach(([slot, item]) => {
+      if (item) {
+        addItemToState(item, "trinket", slot as GearSlot, state);
+      }
+    });
+
+    return state;
+  }
+
+  function addItemToState(
     item: GearItem,
-    sourceType: string,
+    gearType: "blessed" | "trinket",
     slot: GearSlot,
-    mods: GearModCollection,
+    state: TrackedState,
   ): void {
-    for (const mod of item.mods) {
+    for (let modIndex = 0; modIndex < item.mods.length; modIndex++) {
+      const mod = item.mods[modIndex];
       const statInfo = mapModForEval(mod);
       const [statName, layer] = statInfo.split(".");
 
-      if (!(statName in mods)) {
-        mods[statName] = [];
+      if (!(statName in state.mods)) {
+        state.mods[statName] = [];
       }
-      mods[statName].push({
+
+      // Consumer ID pattern: gear:{gearType}:{slot}:{defId}:{modIndex}
+      const consumerId = `gear:${gearType}:${slot}:${item.defId}:${modIndex}`;
+      const sourceType = gearType === "blessed" ? "Blessed Gear" : "Trinket Gear";
+
+      state.mods[statName].push({
+        consumer_id: consumerId,
         source: `Equipped ${translate(item.prefixLocalizedName, lang)} ${translate(item.localizedName, lang)}`,
         amount: getValueFromMultiplier(
           mod.value,
@@ -91,33 +132,32 @@ export function provideGearEvaluation(
     }
   }
 
-  function getGearMods(): GearModCollection {
-    const mods: GearModCollection = {};
-
-    // Process blessed gear
-    Object.entries(blessedSlotsApi.equipped).forEach(([key, item]) => {
-      if (item) {
-        mapModSource(item, "Blessed Gear", key as GearSlot, mods);
-      }
-    });
-
-    // Process trinket gear
-    Object.entries(trinketSlotsApi.equipped).forEach(([key, item]) => {
-      if (item) {
-        mapModSource(item, "Trinket Gear", key as GearSlot, mods);
-      }
-    });
-
-    return mods;
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
   }
 
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
   function getContribution(): EvaluationContribution {
-    const gearMods = getGearMods();
+    const state = buildTrackedState();
 
     // Convert to unified type
     const mods: EvaluationContribution["mods"] = {};
-    for (const [statName, sources] of Object.entries(gearMods)) {
+    for (const [statName, sources] of Object.entries(state.mods)) {
       mods[statName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
         source: s.source,
         amount: s.amount,
         layer: s.layer,
@@ -130,6 +170,8 @@ export function provideGearEvaluation(
 
   const api: GearEvaluationAPI = {
     getContribution,
+    getDelta,
+    resetTracker,
 
     get gearHash() {
       // Create a hash of equipped gear for cache invalidation

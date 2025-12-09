@@ -5,11 +5,15 @@ import type {
   StatusNodeAffixDefinition,
 } from "$lib/hellclock/constellations";
 import type { StatusHelper } from "$lib/hellclock/status";
-import type { EvaluationContribution } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, ContributionDelta } from "$lib/context/evaluation-types";
 import { translate } from "$lib/hellclock/lang";
 import { getContext, setContext } from "svelte";
 import { useBellEquipped } from "$lib/context/bellequipped.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type BellModSource = {
   source: string;
@@ -27,8 +31,14 @@ export type BellModSource = {
 export type BellModCollection = Record<string, BellModSource[]>;
 
 export type BellEvaluationAPI = {
-  // Get unified contribution for evaluation (only active bell)
+  // Get unified contribution for evaluation (only active bell) - legacy
   getContribution: () => EvaluationContribution;
+
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
 
   // Check if bells have changed (for cache invalidation)
   get bellHash(): string;
@@ -43,18 +53,22 @@ export function provideBellEvaluation(
 ): BellEvaluationAPI {
   const bellEquippedApi = useBellEquipped();
   const statusEvaluationApi = useStatusEvaluation();
+  const tracker = new ContributionTracker();
 
-  function getBellMods(): BellModCollection {
-    const mods: BellModCollection = {};
+  /**
+   * Build tracked state with consumer_ids for all contributions
+   */
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
 
     if (!bellsHelper) {
-      return mods;
+      return state;
     }
 
     const activeBellId = bellEquippedApi.activeBellId;
     const bell = bellsHelper.getBellById(activeBellId);
     if (!bell) {
-      return mods;
+      return state;
     }
 
     const bellType = BELL_TYPES_BY_ID[activeBellId];
@@ -75,15 +89,16 @@ export function provideBellEvaluation(
       const nodeName = translate(node.nameLocalizationKey, lang);
 
       // Process each affix in the node
-      for (const affix of node.affixes) {
+      for (let affixIndex = 0; affixIndex < node.affixes.length; affixIndex++) {
+        const affix = node.affixes[affixIndex];
         if (affix.type === "StatModifierNodeAffixDefinition") {
           const statAffix = affix as StatModifierNodeAffixDefinition;
 
           // Map the stat to the format expected by the engine
           const statKey = statAffix.eStatDefinition.replaceAll(" ", "");
 
-          if (!(statKey in mods)) {
-            mods[statKey] = [];
+          if (!(statKey in state.mods)) {
+            state.mods[statKey] = [];
           }
 
           // Calculate the effective value
@@ -104,7 +119,11 @@ export function provideBellEvaluation(
             layer = "multadd";
           }
 
-          mods[statKey].push({
+          // Consumer ID pattern: bell:{bellId}:{nodeId}:{affixIndex}
+          const consumerId = `bell:${activeBellId}:${allocated.nodeId}:${affixIndex}`;
+
+          state.mods[statKey].push({
+            consumer_id: consumerId,
             source: `${bellName} - ${nodeName}${allocated.level > 1 ? ` (x${allocated.level})` : ""}`,
             amount: effectiveValue,
             layer: layer,
@@ -120,7 +139,7 @@ export function provideBellEvaluation(
       }
     }
 
-    return mods;
+    return state;
   }
 
   // Sync status effects from bell nodes to StatusEvaluation
@@ -190,13 +209,32 @@ export function provideBellEvaluation(
     syncBellStatusEffects();
   });
 
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
+  }
+
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
   function getContribution(): EvaluationContribution {
-    const bellMods = getBellMods();
+    const state = buildTrackedState();
 
     // Convert to unified type
     const mods: EvaluationContribution["mods"] = {};
-    for (const [statName, sources] of Object.entries(bellMods)) {
+    for (const [statName, sources] of Object.entries(state.mods)) {
       mods[statName] = sources.map((s) => ({
+        consumer_id: s.consumer_id,
         source: s.source,
         amount: s.amount,
         layer: s.layer,
@@ -209,6 +247,8 @@ export function provideBellEvaluation(
 
   const api: BellEvaluationAPI = {
     getContribution,
+    getDelta,
+    resetTracker,
 
     get bellHash() {
       // Include active bell ID in hash since switching bells changes evaluation

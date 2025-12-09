@@ -1,6 +1,10 @@
 import { getContext, setContext } from "svelte";
 import { useSkillEquipped } from "$lib/context/skillequipped.svelte";
-import type { EvaluationContribution, EvaluationFlagCollection, EvaluationFlagSource } from "$lib/context/evaluation-types";
+import type { EvaluationContribution, EvaluationFlagCollection, EvaluationFlagSource, ContributionDelta } from "$lib/context/evaluation-types";
+import {
+  ContributionTracker,
+  type TrackedState,
+} from "./contribution-tracker";
 
 export type SkillTagFlagSource = EvaluationFlagSource & {
   meta: {
@@ -13,6 +17,10 @@ export type SkillTagFlagSource = EvaluationFlagSource & {
 export type SkillTagEvaluationAPI = {
   // Evaluation integration (base tags only → flags)
   getContribution: () => EvaluationContribution;
+  // Get delta for incremental updates (new)
+  getDelta: () => ContributionDelta;
+  // Reset tracker state (for full rebuild)
+  resetTracker: () => void;
   get skillTagHash(): string;
 
   // UI utilities (for SkillCardHeader display)
@@ -61,14 +69,13 @@ function normalizeTag(tag: string): string {
 
 export function provideSkillTagEvaluation(): SkillTagEvaluationAPI {
   const skillEquippedApi = useSkillEquipped();
+  const tracker = new ContributionTracker();
 
   /**
-   * Get base tags from skillTags field and create evaluation flags.
-   * Excludes damage type tags (those come from damage distribution).
-   * Only base tags are sent to the evaluation engine.
+   * Build tracked state with consumer_ids for all flags
    */
-  function getSkillTagFlags(): EvaluationFlagCollection {
-    const flags: EvaluationFlagCollection = {};
+  function buildTrackedState(): TrackedState {
+    const state: TrackedState = { mods: {}, flags: {}, broadcasts: [] };
     const activeSkills = skillEquippedApi.activeSkills;
 
     for (const skillSelected of activeSkills) {
@@ -79,10 +86,14 @@ export function provideSkillTagEvaluation(): SkillTagEvaluationAPI {
 
       // Add _everything tag for all skills (always enabled)
       const everythingFlagKey = `skill_${normalizedSkillName}_tag_everything`;
-      if (!(everythingFlagKey in flags)) {
-        flags[everythingFlagKey] = [];
+      // Consumer ID pattern: tag:{skillName}:{tag}
+      const everythingConsumerId = `tag:${normalizedSkillName}:everything`;
+
+      if (!(everythingFlagKey in state.flags)) {
+        state.flags[everythingFlagKey] = [];
       }
-      flags[everythingFlagKey].push({
+      state.flags[everythingFlagKey].push({
+        consumer_id: everythingConsumerId,
         source: `Skill Tag - ${skill.localizedName || skillName}`,
         enabled: true,
         meta: {
@@ -98,12 +109,15 @@ export function provideSkillTagEvaluation(): SkillTagEvaluationAPI {
 
         const normalizedTag = normalizeTag(tag);
         const flagKey = `skill_${normalizedSkillName}_tag_${normalizedTag}`;
+        // Consumer ID pattern: tag:{skillName}:{tag}
+        const consumerId = `tag:${normalizedSkillName}:${normalizedTag}`;
 
-        if (!(flagKey in flags)) {
-          flags[flagKey] = [];
+        if (!(flagKey in state.flags)) {
+          state.flags[flagKey] = [];
         }
 
-        flags[flagKey].push({
+        state.flags[flagKey].push({
+          consumer_id: consumerId,
           source: `Skill Tag - ${skill.localizedName || skillName}`,
           enabled: true,
           meta: {
@@ -115,12 +129,30 @@ export function provideSkillTagEvaluation(): SkillTagEvaluationAPI {
       }
     }
 
-    return flags;
+    return state;
   }
 
+  /**
+   * Get delta for incremental updates (new API)
+   */
+  function getDelta(): ContributionDelta {
+    const currentState = buildTrackedState();
+    return tracker.getDelta(currentState);
+  }
+
+  /**
+   * Reset tracker state (for full rebuild scenarios)
+   */
+  function resetTracker(): void {
+    tracker.reset();
+  }
+
+  /**
+   * Get unified contribution for evaluation (legacy API)
+   */
   function getContribution(): EvaluationContribution {
-    const flags = getSkillTagFlags();
-    return { mods: {}, flags, broadcasts: [] };
+    const state = buildTrackedState();
+    return { mods: {}, flags: state.flags, broadcasts: [] };
   }
 
   /**
@@ -178,6 +210,8 @@ export function provideSkillTagEvaluation(): SkillTagEvaluationAPI {
 
   const api: SkillTagEvaluationAPI = {
     getContribution,
+    getDelta,
+    resetTracker,
 
     get skillTagHash() {
       // Create a hash of equipped skills' tags for cache invalidation
