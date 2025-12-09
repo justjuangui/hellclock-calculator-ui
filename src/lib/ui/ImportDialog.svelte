@@ -20,6 +20,9 @@
     type ImportResult,
   } from "$lib/import";
 
+  // Props
+  let { onBeforeImport }: { onBeforeImport?: () => void } = $props();
+
   // Import mode types
   type ImportMode = "file" | "code";
 
@@ -224,6 +227,10 @@
 
     importing = true;
     importResult = null;
+
+    // Invalidate evaluation cache BEFORE applying changes
+    // This ensures trackers start fresh and BuildGraph is called
+    onBeforeImport?.();
 
     try {
       importResult = await orchestrator.import(

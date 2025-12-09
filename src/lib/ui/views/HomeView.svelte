@@ -407,7 +407,10 @@
 </div>
 
 <!-- Import Dialog -->
-<ImportDialog bind:this={importDialog} />
+<ImportDialog
+  bind:this={importDialog}
+  onBeforeImport={() => evaluationManager.invalidateCache()}
+/>
 
 <!-- Export Dialog -->
 <ExportDialog bind:this={exportDialog} />
