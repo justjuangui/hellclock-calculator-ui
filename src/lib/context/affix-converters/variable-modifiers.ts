@@ -34,7 +34,7 @@ export const VARIABLE_MODIFIER_STAT_MAP: Record<
   },
   MultiplyByCurrentMana: {
     modifier: "MultiplyByCurrentMana",
-    statReference: "Mana",
+    statReference: "ActualMana",
     operation: "multiply",
   },
   MultiplyByMissingLife: {
