@@ -673,6 +673,8 @@ pack "hellclock" {
     FaithPoints: FaithPoints.Stats using simple
     CurrentSummonAmount: CurrentSummonAmount.Stats using simple
     CurrentBarrier: Barrier.Stats using simple
+    CurrentMana: Mana.Stats using simple
+    CurrentLife: Life.Stats using simple
     BaseDamage: BaseDamage.DEFAULT using common
     CriticalChance: CriticalChance.PERCENTAGE using common
     CriticalDamage: CriticalDamage.PERCENTAGE using common
@@ -1649,6 +1651,12 @@ pack "hellclock" {
   }
   formulas {
     Barrier = flag("using_custom_barrier") ? CurrentBarrier : (Mana * MaxBarrier)
+    ActualMana = flag("using_custom_mana") ? CurrentMana : Mana
+    ActualLife = flag("using_custom_life") ? CurrentLife : Life
+    MissingMana = Mana -  ActualMana
+    MissingLife = Life - ActualLife
+    MissingManaRatio = MissingMana / Mana
+    MissingLifeRatio = MissingLife / Life
     // =====================================
     // BasicAttackDefinition CONVERSION FORMULA
     // =====================================
