@@ -52,11 +52,11 @@ export const VARIABLE_MODIFIER_STAT_MAP: Record<
     statReference: "{skill}DamageModifier",
     operation: "multiply",
   },
-  MultiplyByStatusStacks: {
-    modifier: "MultiplyByStatusStacks",
-    statReference: "StatusStacks",
-    operation: "multiply",
-  },
+  // MultiplyByStatusStacks: {
+  //   modifier: "MultiplyByStatusStacks",
+  //   statReference: "StatusStacks",
+  //   operation: "multiply",
+  // },
   MultiplyByTargetStatusStacks: {
     modifier: "MultiplyByTargetStatusStacks",
     statReference: "TargetStatusStacks",
