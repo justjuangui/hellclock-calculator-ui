@@ -1,5 +1,5 @@
 import type { Engine } from "$lib/engine";
-import type { GamePack, ExplainPayload } from "$lib/engine/types";
+import type { GamePack, ExplainPayload, EvaluateRequest } from "$lib/engine/types";
 import type { StatsHelper } from "$lib/hellclock/stats";
 import type { GearsHelper } from "$lib/hellclock/gears";
 import type { SkillsHelper } from "$lib/hellclock/skills";
@@ -12,7 +12,7 @@ import { useBellEvaluation } from "$lib/context/bellevaluation.svelte";
 import { useStatusEvaluation } from "$lib/context/statusevaluation.svelte";
 import { useWorldTierEvaluation } from "$lib/context/worldtierevaluation.svelte";
 import { useSkillTagEvaluation } from "$lib/context/skilltagevaluation.svelte";
-import { mergeContributions } from "$lib/context/evaluation-types";
+import { mergeDeltas, type ContributionDelta } from "$lib/context/evaluation-types";
 
 export type EvaluationResult = {
   values: Record<string, any>;
@@ -63,7 +63,8 @@ export function provideEvaluationManager(
   let actorBuilt = $state(false);
   let sheet = $state<any>(null);
 
-  // Cache tracking
+  // Hash tracking for reactive change detection
+  // (providers track their own deltas, but we still need to detect when to re-evaluate)
   let lastGearHash = $state<string>("");
   let lastSkillHash = $state<string>("");
   let lastRelicHash = $state<string>("");
@@ -134,6 +135,7 @@ export function provideEvaluationManager(
   });
 
   // Reactive evaluation when gear, skills, relics, constellations, statuses, world tier, or skill tags change
+  // Uses incremental delta-based updates - BuildGraph is only called once at startup
   $effect(() => {
     if (
       !gearEvaluationAPI ||
@@ -157,7 +159,7 @@ export function provideEvaluationManager(
     const currentWorldTierHash = worldTierEvaluationAPI.worldTierHash;
     const currentSkillTagHash = skillTagEvaluationAPI.skillTagHash;
 
-    // Check if equipment, status effects, world tier, or skill tags have changed
+    // Check if any provider has changed
     if (
       currentGearHash !== lastGearHash ||
       currentSkillHash !== lastSkillHash ||
@@ -177,8 +179,8 @@ export function provideEvaluationManager(
       lastWorldTierHash = currentWorldTierHash;
       lastSkillTagHash = currentSkillTagHash;
 
-      // Invalidate actor cache and trigger evaluation
-      actorBuilt = false;
+      // NOTE: We no longer set actorBuilt = false here
+      // BuildGraph is only called once at startup, subsequent changes use Evaluate with deltas
 
       // Auto-evaluate if not already loading
       if (!statEvaluation.loading) {
@@ -224,30 +226,31 @@ export function provideEvaluationManager(
       );
     }
 
+    // Build actor only once at startup
     await buildActor();
 
-    // Collect all contributions using the unified API
-    const contribution = mergeContributions(
-      gearEvaluationAPI.getContribution(),
-      skillEvaluationAPI.getContribution(),
-      relicEvaluationAPI.getContribution(),
-      constellationEvaluationAPI.getContribution(),
-      bellEvaluationAPI.getContribution(),
-      statusEvaluationAPI.getContribution(),
-      worldTierEvaluationAPI.getContribution(),
-      skillTagEvaluationAPI.getContribution(),
+    // Collect deltas from all providers (incremental updates)
+    const delta = mergeDeltas(
+      gearEvaluationAPI.getDelta(),
+      skillEvaluationAPI.getDelta(),
+      relicEvaluationAPI.getDelta(),
+      constellationEvaluationAPI.getDelta(),
+      bellEvaluationAPI.getDelta(),
+      statusEvaluationAPI.getDelta(),
+      worldTierEvaluationAPI.getDelta(),
+      skillTagEvaluationAPI.getDelta(),
     );
 
-    // TODO: From now Only Player stats is setted, need to add target stats if any and Summons
-    const payload: {
-      setEntity: Record<string, { stats: typeof contribution.mods; flags: typeof contribution.flags }>;
-      broadcast?: Record<string, typeof contribution.broadcasts>;
-      outputs: Record<string, string[]>;
-    } = {
+    // Build the payload using new API format with removeStats/removeFlags
+    const payload: EvaluateRequest = {
       setEntity: {
         player: {
-          stats: contribution.mods,
-          flags: contribution.flags,
+          // Remove old contributions first
+          removeStats: delta.removeStats,
+          removeFlags: delta.removeFlags,
+          // Add new contributions
+          stats: delta.stats,
+          flags: delta.flags,
         },
       },
       outputs: {
@@ -258,14 +261,22 @@ export function provideEvaluationManager(
       },
     };
 
-    // Add broadcasts if any exist
-    if (contribution.broadcasts.length > 0) {
+    // Add broadcasts if any exist (with remove + add)
+    if (delta.broadcasts.length > 0 || delta.removeBroadcasts.length > 0) {
       payload.broadcast = {
-        player: contribution.broadcasts,
+        player: {
+          remove: delta.removeBroadcasts,
+          add: delta.broadcasts.map((bc) => ({
+            consumer_id: bc.consumer_id,
+            flag_suffix: bc.flag_suffix,
+            stat_suffix: bc.stat_suffix,
+            contribution: bc.contribution,
+          })),
+        },
       };
     }
 
-    console.debug("Evaluating stats with payload:", payload);
+    console.debug("Evaluating stats with delta payload:", payload);
 
     const result = await engine.eval(payload, { timeoutMs: 5000 });
 
@@ -353,12 +364,33 @@ export function provideEvaluationManager(
   }
 
   function invalidateCache(): void {
+    // Reset actor state - will trigger BuildGraph on next evaluation
     actorBuilt = false;
     statEvaluation = {
       result: null,
       loading: false,
       error: null,
     };
+
+    // Reset all provider trackers (for full rebuild scenarios like character switch or import)
+    gearEvaluationAPI?.resetTracker();
+    skillEvaluationAPI?.resetTracker();
+    relicEvaluationAPI?.resetTracker();
+    constellationEvaluationAPI?.resetTracker();
+    bellEvaluationAPI?.resetTracker();
+    statusEvaluationAPI?.resetTracker();
+    worldTierEvaluationAPI?.resetTracker();
+    skillTagEvaluationAPI?.resetTracker();
+
+    // Reset hash tracking
+    lastGearHash = "";
+    lastSkillHash = "";
+    lastRelicHash = "";
+    lastConstellationHash = "";
+    lastBellHash = "";
+    lastStatusHash = "";
+    lastWorldTierHash = "";
+    lastSkillTagHash = "";
   }
 
   const api: EvaluationManagerAPI = {
