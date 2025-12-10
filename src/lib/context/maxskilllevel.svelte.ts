@@ -68,8 +68,8 @@ export function provideMaxSkillLevel(
     },
 
     get maxSkillLevel() {
-      // Max skill level comes only from bell nodes
-      return this.bellBonus;
+      // Base level 1 + bell bonus (skills start at level 1)
+      return 1 + this.bellBonus;
     },
   };
 
