@@ -57,11 +57,14 @@ export function parseExplanation(root: EvaluationNode): ParsedExplanation {
   // Handle output wrapper node
   let actualRoot = root;
   let rootType: "stat" | "formula" | "damage_flow" = "formula";
+  let isExplicitFormula = false;
 
   if (isOutputNode(root)) {
     const outputDetails = root.details as { type?: string } | undefined;
     if (outputDetails?.type === "stat") {
       rootType = "stat";
+    } else if (outputDetails?.type === "formula") {
+      isExplicitFormula = true;
     }
     // Unwrap to first child
     actualRoot = root.children?.[0] ?? root;
@@ -92,16 +95,18 @@ export function parseExplanation(root: EvaluationNode): ParsedExplanation {
     }
   }
 
-  // Check for pipeline (stat with phases)
-  const pipelineNode = findPipelineNode(actualRoot);
-  if (pipelineNode) {
-    return {
-      rootType: "stat",
-      rootNode: actualRoot,
-      name: actualRoot.name,
-      value: actualRoot.value,
-      pipeline: parsePipeline(pipelineNode),
-    };
+  // Check for pipeline (stat with phases) - but only if not explicitly a formula
+  if (!isExplicitFormula) {
+    const pipelineNode = findPipelineNode(actualRoot);
+    if (pipelineNode) {
+      return {
+        rootType: "stat",
+        rootNode: actualRoot,
+        name: actualRoot.name,
+        value: actualRoot.value,
+        pipeline: parsePipeline(pipelineNode),
+      };
+    }
   }
 
   // Default: formula/expression
