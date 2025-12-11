@@ -212,9 +212,6 @@ export class StatusHelper {
         case "MultiplicativeAdditive":
           layer = "multadd";
           break;
-        case "Base":
-          layer = "base";
-          break;
         default:
           layer = "add"; // Default to additive
           break;
