@@ -101,6 +101,7 @@
         evaluationResult={evaluation?.result || {}}
         globalDefaults={displayConfig.defaults}
         {loading}
+        {onOpenExplain}
       />
     {/if}
 
