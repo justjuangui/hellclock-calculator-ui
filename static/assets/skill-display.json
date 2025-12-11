@@ -42,6 +42,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -57,37 +61,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -157,16 +149,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -446,6 +428,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -461,37 +447,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -561,16 +535,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -890,6 +854,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -905,37 +873,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -1005,16 +961,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -1284,6 +1230,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -1299,37 +1249,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -1399,16 +1337,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -1698,6 +1626,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -1713,37 +1645,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -1813,16 +1733,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -2172,6 +2082,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -2187,37 +2101,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -2287,16 +2189,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -2666,6 +2558,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -2681,37 +2577,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -2781,16 +2665,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -3040,6 +2914,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -3055,37 +2933,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -3155,16 +3021,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -3414,6 +3270,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -3429,37 +3289,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -3529,16 +3377,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -3848,6 +3686,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -3863,37 +3705,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -3963,16 +3793,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -4252,6 +4072,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -4267,37 +4091,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -4367,16 +4179,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -4726,6 +4528,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -4741,37 +4547,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -4841,16 +4635,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -5140,6 +4924,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -5155,37 +4943,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -5255,16 +5031,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -5514,6 +5280,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -5529,37 +5299,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -5629,16 +5387,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -5948,6 +5696,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -5963,37 +5715,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -6063,16 +5803,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -6352,6 +6082,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -6367,37 +6101,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -6467,16 +6189,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -6836,6 +6548,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -6851,37 +6567,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -6951,16 +6655,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -7350,6 +7044,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -7365,37 +7063,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -7465,16 +7151,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -7794,6 +7470,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -7809,37 +7489,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -7909,16 +7577,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -8318,6 +7976,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -8333,37 +7995,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -8433,16 +8083,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -8772,6 +8412,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -8787,37 +8431,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -8887,16 +8519,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -9186,6 +8808,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -9201,37 +8827,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -9301,16 +8915,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
@@ -9760,6 +9364,10 @@
         },
         "summary": {
           "defaults": {
+            "format": {
+              "type": "decimal",
+              "decimals": 2
+            },
             "style": {
               "valueWeight": "bold",
               "valueSize": "lg",
@@ -9775,37 +9383,25 @@
               "id": "damage",
               "displayName": "Damage",
               "valueType": "evaluate",
-              "value": "Dmg_Total",
-              "style": {
-                "valueColor": "error"
-              }
+              "value": "Dmg_Total"
             },
             {
               "id": "dps",
               "displayName": "DPS",
               "valueType": "evaluate",
-              "value": "DPS",
-              "style": {
-                "valueColor": "success"
-              }
+              "value": "DPS"
             },
             {
               "id": "mana",
               "displayName": "Mana",
               "valueType": "evaluate",
-              "value": "CurrentManaCost",
-              "style": {
-                "valueColor": "warning"
-              }
+              "value": "CurrentManaCost"
             },
             {
               "id": "speed",
-              "displayName": "Speed",
-              "valueType": "computed",
-              "value": "attackSpeedOrCooldown",
-              "style": {
-                "valueColor": "info"
-              }
+              "displayName": "APS",
+              "valueType": "evaluate",
+              "value": "APS"
             }
           ]
         },
@@ -9875,16 +9471,6 @@
                   "displayName": "Current Mana Cost",
                   "valueType": "evaluate",
                   "value": "CurrentManaCost",
-                  "format": {
-                    "type": "decimal",
-                    "decimals": 2
-                  }
-                },
-                {
-                  "id": "nonIgnorableCooldown",
-                  "displayName": "Non Ignorable Cooldown",
-                  "valueType": "evaluate",
-                  "value": "NonIgnorableCooldown",
                   "format": {
                     "type": "decimal",
                     "decimals": 2
