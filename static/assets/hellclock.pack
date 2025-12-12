@@ -1495,7 +1495,7 @@ pack "hellclock" {
     skill_ShadowDashDefinition_Dst_Fire = damage_flow("ShadowDashDefinition", "FireDistribution")
     skill_ShadowDashDefinition_CurrentManaCost = skill_ShadowDashDefinition_ManaCostModifier * SkillManaCost
     skill_ShadowDashDefinition_NonIgnorableCooldown = max(skill_ShadowDashDefinition_CooldownModifier, 0.15)
-    skill_ShadowDashDefinition_PREVAPS = skill_ShadowDashDefinition_IgnoreCooldownModifier ? 0.15 : skill_ShadowDashDefinition_CooldownModifier / skill_ShadowDashDefinition_SkillSpeedModifier
+    skill_ShadowDashDefinition_PREVAPS = (skill_ShadowDashDefinition_IgnoreCooldownModifier ? 0.15 : skill_ShadowDashDefinition_CooldownModifier) / skill_ShadowDashDefinition_SkillSpeedModifier
     skill_ShadowDashDefinition_APS = 1 / (skill_ShadowDashDefinition_PREVAPS ? skill_ShadowDashDefinition_PREVAPS : 1)
     skill_ShadowDashDefinition_DPS = skill_ShadowDashDefinition_Dmg_Total * skill_ShadowDashDefinition_APS
     // =====================================
@@ -1528,7 +1528,7 @@ pack "hellclock" {
     skill_ReflexesDefinition_Dst_Fire = damage_flow("ReflexesDefinition", "FireDistribution")
     skill_ReflexesDefinition_CurrentManaCost = skill_ReflexesDefinition_ManaCostModifier * SkillManaCost
     skill_ReflexesDefinition_NonIgnorableCooldown = max(skill_ReflexesDefinition_CooldownModifier, 0.5)
-    skill_ReflexesDefinition_PREVAPS = skill_ReflexesDefinition_IgnoreCooldownModifier ? 0.5 : skill_ReflexesDefinition_CooldownModifier / skill_ReflexesDefinition_SkillSpeedModifier
+    skill_ReflexesDefinition_PREVAPS = (skill_ReflexesDefinition_IgnoreCooldownModifier ? 0.5 : skill_ReflexesDefinition_CooldownModifier) / skill_ReflexesDefinition_SkillSpeedModifier
     skill_ReflexesDefinition_APS = 1 / (skill_ReflexesDefinition_PREVAPS ? skill_ReflexesDefinition_PREVAPS : 1)
     skill_ReflexesDefinition_DPS = skill_ReflexesDefinition_Dmg_Total * skill_ReflexesDefinition_APS
     // =====================================
@@ -1545,7 +1545,7 @@ pack "hellclock" {
     skill_PrayerOfHealthSkillDefinition_Dst_Fire = damage_flow("PrayerOfHealthSkillDefinition", "FireDistribution")
     skill_PrayerOfHealthSkillDefinition_CurrentManaCost = skill_PrayerOfHealthSkillDefinition_ManaCostModifier * SkillManaCost
     skill_PrayerOfHealthSkillDefinition_NonIgnorableCooldown = max(skill_PrayerOfHealthSkillDefinition_CooldownModifier, 0.5)
-    skill_PrayerOfHealthSkillDefinition_PREVAPS = skill_PrayerOfHealthSkillDefinition_IgnoreCooldownModifier ? 0.5 : skill_PrayerOfHealthSkillDefinition_CooldownModifier / skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier
+    skill_PrayerOfHealthSkillDefinition_PREVAPS = (skill_PrayerOfHealthSkillDefinition_IgnoreCooldownModifier ? 0.5 : skill_PrayerOfHealthSkillDefinition_CooldownModifier) / skill_PrayerOfHealthSkillDefinition_SkillSpeedModifier
     skill_PrayerOfHealthSkillDefinition_APS = 1 / (skill_PrayerOfHealthSkillDefinition_PREVAPS ? skill_PrayerOfHealthSkillDefinition_PREVAPS : 1)
     skill_PrayerOfHealthSkillDefinition_DPS = skill_PrayerOfHealthSkillDefinition_Dmg_Total * skill_PrayerOfHealthSkillDefinition_APS
     // =====================================
@@ -1562,7 +1562,7 @@ pack "hellclock" {
     skill_PrayerOfVengeanceSkillDefinition_Dst_Fire = damage_flow("PrayerOfVengeanceSkillDefinition", "FireDistribution")
     skill_PrayerOfVengeanceSkillDefinition_CurrentManaCost = skill_PrayerOfVengeanceSkillDefinition_ManaCostModifier * SkillManaCost
     skill_PrayerOfVengeanceSkillDefinition_NonIgnorableCooldown = max(skill_PrayerOfVengeanceSkillDefinition_CooldownModifier, 0.5)
-    skill_PrayerOfVengeanceSkillDefinition_PREVAPS = skill_PrayerOfVengeanceSkillDefinition_IgnoreCooldownModifier ? 0.5 : skill_PrayerOfVengeanceSkillDefinition_CooldownModifier / skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier
+    skill_PrayerOfVengeanceSkillDefinition_PREVAPS = (skill_PrayerOfVengeanceSkillDefinition_IgnoreCooldownModifier ? 0.5 : skill_PrayerOfVengeanceSkillDefinition_CooldownModifier) / skill_PrayerOfVengeanceSkillDefinition_SkillSpeedModifier
     skill_PrayerOfVengeanceSkillDefinition_APS = 1 / (skill_PrayerOfVengeanceSkillDefinition_PREVAPS ? skill_PrayerOfVengeanceSkillDefinition_PREVAPS : 1)
     skill_PrayerOfVengeanceSkillDefinition_DPS = skill_PrayerOfVengeanceSkillDefinition_Dmg_Total * skill_PrayerOfVengeanceSkillDefinition_APS
     // =====================================
@@ -1579,7 +1579,7 @@ pack "hellclock" {
     skill_TheOldBellSkillDefinition_Dst_Fire = damage_flow("TheOldBellSkillDefinition", "FireDistribution")
     skill_TheOldBellSkillDefinition_CurrentManaCost = skill_TheOldBellSkillDefinition_ManaCostModifier * SkillManaCost
     skill_TheOldBellSkillDefinition_NonIgnorableCooldown = max(skill_TheOldBellSkillDefinition_CooldownModifier, 0)
-    skill_TheOldBellSkillDefinition_PREVAPS = skill_TheOldBellSkillDefinition_IgnoreCooldownModifier ? 0 : skill_TheOldBellSkillDefinition_CooldownModifier / skill_TheOldBellSkillDefinition_SkillSpeedModifier
+    skill_TheOldBellSkillDefinition_PREVAPS = (skill_TheOldBellSkillDefinition_IgnoreCooldownModifier ? 0 : skill_TheOldBellSkillDefinition_CooldownModifier) / skill_TheOldBellSkillDefinition_SkillSpeedModifier
     skill_TheOldBellSkillDefinition_APS = 1 / (skill_TheOldBellSkillDefinition_PREVAPS ? skill_TheOldBellSkillDefinition_PREVAPS : 1)
     skill_TheOldBellSkillDefinition_DPS = skill_TheOldBellSkillDefinition_Dmg_Total * skill_TheOldBellSkillDefinition_APS
     // =====================================
@@ -1596,7 +1596,7 @@ pack "hellclock" {
     skill_JudgementDefinition_Dst_Fire = damage_flow("JudgementDefinition", "FireDistribution")
     skill_JudgementDefinition_CurrentManaCost = skill_JudgementDefinition_ManaCostModifier * SkillManaCost
     skill_JudgementDefinition_NonIgnorableCooldown = max(skill_JudgementDefinition_CooldownModifier, 0.3)
-    skill_JudgementDefinition_PREVAPS = skill_JudgementDefinition_IgnoreCooldownModifier ? 0.3 : skill_JudgementDefinition_CooldownModifier / skill_JudgementDefinition_SkillSpeedModifier
+    skill_JudgementDefinition_PREVAPS = (skill_JudgementDefinition_IgnoreCooldownModifier ? 0.3 : skill_JudgementDefinition_CooldownModifier) / skill_JudgementDefinition_SkillSpeedModifier
     skill_JudgementDefinition_APS = 1 / (skill_JudgementDefinition_PREVAPS ? skill_JudgementDefinition_PREVAPS : 1)
     skill_JudgementDefinition_DPS = skill_JudgementDefinition_Dmg_Total * skill_JudgementDefinition_APS
     // =====================================
@@ -1629,7 +1629,7 @@ pack "hellclock" {
     skill_PassageSkillDefinition_Dst_Fire = damage_flow("PassageSkillDefinition", "FireDistribution")
     skill_PassageSkillDefinition_CurrentManaCost = skill_PassageSkillDefinition_ManaCostModifier * SkillManaCost
     skill_PassageSkillDefinition_NonIgnorableCooldown = max(skill_PassageSkillDefinition_CooldownModifier, 0.4)
-    skill_PassageSkillDefinition_PREVAPS = skill_PassageSkillDefinition_IgnoreCooldownModifier ? 0.4 : skill_PassageSkillDefinition_CooldownModifier / skill_PassageSkillDefinition_SkillSpeedModifier
+    skill_PassageSkillDefinition_PREVAPS = (skill_PassageSkillDefinition_IgnoreCooldownModifier ? 0.4 : skill_PassageSkillDefinition_CooldownModifier) / skill_PassageSkillDefinition_SkillSpeedModifier
     skill_PassageSkillDefinition_APS = 1 / (skill_PassageSkillDefinition_PREVAPS ? skill_PassageSkillDefinition_PREVAPS : 1)
     skill_PassageSkillDefinition_DPS = skill_PassageSkillDefinition_Dmg_Total * skill_PassageSkillDefinition_APS
     // =====================================
@@ -1646,7 +1646,7 @@ pack "hellclock" {
     skill_LassoSkillDefinition_Dst_Fire = damage_flow("LassoSkillDefinition", "FireDistribution")
     skill_LassoSkillDefinition_CurrentManaCost = skill_LassoSkillDefinition_ManaCostModifier * SkillManaCost
     skill_LassoSkillDefinition_NonIgnorableCooldown = max(skill_LassoSkillDefinition_CooldownModifier, 0.1)
-    skill_LassoSkillDefinition_PREVAPS = skill_LassoSkillDefinition_IgnoreCooldownModifier ? 0.1 : skill_LassoSkillDefinition_CooldownModifier / skill_LassoSkillDefinition_SkillSpeedModifier
+    skill_LassoSkillDefinition_PREVAPS = (skill_LassoSkillDefinition_IgnoreCooldownModifier ? 0.1 : skill_LassoSkillDefinition_CooldownModifier) / skill_LassoSkillDefinition_SkillSpeedModifier
     skill_LassoSkillDefinition_APS = 1 / (skill_LassoSkillDefinition_PREVAPS ? skill_LassoSkillDefinition_PREVAPS : 1)
     skill_LassoSkillDefinition_DPS = skill_LassoSkillDefinition_Dmg_Total * skill_LassoSkillDefinition_APS
     // =====================================
@@ -1679,7 +1679,7 @@ pack "hellclock" {
     skill_SlowTimeSkillDefinition_Dst_Fire = damage_flow("SlowTimeSkillDefinition", "FireDistribution")
     skill_SlowTimeSkillDefinition_CurrentManaCost = skill_SlowTimeSkillDefinition_ManaCostModifier * SkillManaCost
     skill_SlowTimeSkillDefinition_NonIgnorableCooldown = max(skill_SlowTimeSkillDefinition_CooldownModifier, 0.2)
-    skill_SlowTimeSkillDefinition_PREVAPS = skill_SlowTimeSkillDefinition_IgnoreCooldownModifier ? 0.2 : skill_SlowTimeSkillDefinition_CooldownModifier / skill_SlowTimeSkillDefinition_SkillSpeedModifier
+    skill_SlowTimeSkillDefinition_PREVAPS = (skill_SlowTimeSkillDefinition_IgnoreCooldownModifier ? 0.2 : skill_SlowTimeSkillDefinition_CooldownModifier) / skill_SlowTimeSkillDefinition_SkillSpeedModifier
     skill_SlowTimeSkillDefinition_APS = 1 / (skill_SlowTimeSkillDefinition_PREVAPS ? skill_SlowTimeSkillDefinition_PREVAPS : 1)
     skill_SlowTimeSkillDefinition_DPS = skill_SlowTimeSkillDefinition_Dmg_Total * skill_SlowTimeSkillDefinition_APS
     // =====================================
@@ -1696,7 +1696,7 @@ pack "hellclock" {
     skill_UsePotionSkillDefinition_Dst_Fire = damage_flow("UsePotionSkillDefinition", "FireDistribution")
     skill_UsePotionSkillDefinition_CurrentManaCost = skill_UsePotionSkillDefinition_ManaCostModifier * SkillManaCost
     skill_UsePotionSkillDefinition_NonIgnorableCooldown = max(skill_UsePotionSkillDefinition_CooldownModifier, 0.05)
-    skill_UsePotionSkillDefinition_PREVAPS = skill_UsePotionSkillDefinition_IgnoreCooldownModifier ? 0.05 : skill_UsePotionSkillDefinition_CooldownModifier / skill_UsePotionSkillDefinition_SkillSpeedModifier
+    skill_UsePotionSkillDefinition_PREVAPS = (skill_UsePotionSkillDefinition_IgnoreCooldownModifier ? 0.05 : skill_UsePotionSkillDefinition_CooldownModifier) / skill_UsePotionSkillDefinition_SkillSpeedModifier
     skill_UsePotionSkillDefinition_APS = 1 / (skill_UsePotionSkillDefinition_PREVAPS ? skill_UsePotionSkillDefinition_PREVAPS : 1)
     skill_UsePotionSkillDefinition_DPS = skill_UsePotionSkillDefinition_Dmg_Total * skill_UsePotionSkillDefinition_APS
     // =====================================
@@ -1713,7 +1713,7 @@ pack "hellclock" {
     skill_ClosedBodySkillDefinition_Dst_Fire = damage_flow("ClosedBodySkillDefinition", "FireDistribution")
     skill_ClosedBodySkillDefinition_CurrentManaCost = skill_ClosedBodySkillDefinition_ManaCostModifier * SkillManaCost
     skill_ClosedBodySkillDefinition_NonIgnorableCooldown = max(skill_ClosedBodySkillDefinition_CooldownModifier, 1)
-    skill_ClosedBodySkillDefinition_PREVAPS = skill_ClosedBodySkillDefinition_IgnoreCooldownModifier ? 1 : skill_ClosedBodySkillDefinition_CooldownModifier / skill_ClosedBodySkillDefinition_SkillSpeedModifier
+    skill_ClosedBodySkillDefinition_PREVAPS = (skill_ClosedBodySkillDefinition_IgnoreCooldownModifier ? 1 : skill_ClosedBodySkillDefinition_CooldownModifier) / skill_ClosedBodySkillDefinition_SkillSpeedModifier
     skill_ClosedBodySkillDefinition_APS = 1 / (skill_ClosedBodySkillDefinition_PREVAPS ? skill_ClosedBodySkillDefinition_PREVAPS : 1)
     skill_ClosedBodySkillDefinition_DPS = skill_ClosedBodySkillDefinition_Dmg_Total * skill_ClosedBodySkillDefinition_APS
     // =====================================
@@ -1730,7 +1730,7 @@ pack "hellclock" {
     skill_BombardmentSkillDefinition_Dst_Fire = damage_flow("BombardmentSkillDefinition", "FireDistribution")
     skill_BombardmentSkillDefinition_CurrentManaCost = skill_BombardmentSkillDefinition_ManaCostModifier * SkillManaCost
     skill_BombardmentSkillDefinition_NonIgnorableCooldown = max(skill_BombardmentSkillDefinition_CooldownModifier, 1)
-    skill_BombardmentSkillDefinition_PREVAPS = skill_BombardmentSkillDefinition_IgnoreCooldownModifier ? 1 : skill_BombardmentSkillDefinition_CooldownModifier / skill_BombardmentSkillDefinition_SkillSpeedModifier
+    skill_BombardmentSkillDefinition_PREVAPS = (skill_BombardmentSkillDefinition_IgnoreCooldownModifier ? 1 : skill_BombardmentSkillDefinition_CooldownModifier) / skill_BombardmentSkillDefinition_SkillSpeedModifier
     skill_BombardmentSkillDefinition_APS = 1 / (skill_BombardmentSkillDefinition_PREVAPS ? skill_BombardmentSkillDefinition_PREVAPS : 1)
     skill_BombardmentSkillDefinition_DPS = skill_BombardmentSkillDefinition_Dmg_Total * skill_BombardmentSkillDefinition_APS
     // =====================================
@@ -1747,7 +1747,7 @@ pack "hellclock" {
     skill_SummonTheGuardSkillDefinition_Dst_Fire = damage_flow("SummonTheGuardSkillDefinition", "FireDistribution")
     skill_SummonTheGuardSkillDefinition_CurrentManaCost = skill_SummonTheGuardSkillDefinition_ManaCostModifier * SkillManaCost
     skill_SummonTheGuardSkillDefinition_NonIgnorableCooldown = max(skill_SummonTheGuardSkillDefinition_CooldownModifier, 0.3)
-    skill_SummonTheGuardSkillDefinition_PREVAPS = skill_SummonTheGuardSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonTheGuardSkillDefinition_CooldownModifier / skill_SummonTheGuardSkillDefinition_SkillSpeedModifier
+    skill_SummonTheGuardSkillDefinition_PREVAPS = (skill_SummonTheGuardSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonTheGuardSkillDefinition_CooldownModifier) / skill_SummonTheGuardSkillDefinition_SkillSpeedModifier
     skill_SummonTheGuardSkillDefinition_APS = 1 / (skill_SummonTheGuardSkillDefinition_PREVAPS ? skill_SummonTheGuardSkillDefinition_PREVAPS : 1)
     skill_SummonTheGuardSkillDefinition_DPS = skill_SummonTheGuardSkillDefinition_Dmg_Total * skill_SummonTheGuardSkillDefinition_APS
     // =====================================
@@ -1764,7 +1764,7 @@ pack "hellclock" {
     skill_MatadeiraSkillDefinition_Dst_Fire = damage_flow("MatadeiraSkillDefinition", "FireDistribution")
     skill_MatadeiraSkillDefinition_CurrentManaCost = skill_MatadeiraSkillDefinition_ManaCostModifier * SkillManaCost
     skill_MatadeiraSkillDefinition_NonIgnorableCooldown = max(skill_MatadeiraSkillDefinition_CooldownModifier, 1)
-    skill_MatadeiraSkillDefinition_PREVAPS = skill_MatadeiraSkillDefinition_IgnoreCooldownModifier ? 1 : skill_MatadeiraSkillDefinition_CooldownModifier / skill_MatadeiraSkillDefinition_SkillSpeedModifier
+    skill_MatadeiraSkillDefinition_PREVAPS = (skill_MatadeiraSkillDefinition_IgnoreCooldownModifier ? 1 : skill_MatadeiraSkillDefinition_CooldownModifier) / skill_MatadeiraSkillDefinition_SkillSpeedModifier
     skill_MatadeiraSkillDefinition_APS = 1 / (skill_MatadeiraSkillDefinition_PREVAPS ? skill_MatadeiraSkillDefinition_PREVAPS : 1)
     skill_MatadeiraSkillDefinition_DPS = skill_MatadeiraSkillDefinition_Dmg_Total * skill_MatadeiraSkillDefinition_APS
     // =====================================
@@ -1781,7 +1781,7 @@ pack "hellclock" {
     skill_HolyRosarySkillDefinition_Dst_Fire = damage_flow("HolyRosarySkillDefinition", "FireDistribution")
     skill_HolyRosarySkillDefinition_CurrentManaCost = skill_HolyRosarySkillDefinition_ManaCostModifier * SkillManaCost
     skill_HolyRosarySkillDefinition_NonIgnorableCooldown = max(skill_HolyRosarySkillDefinition_CooldownModifier, 0)
-    skill_HolyRosarySkillDefinition_PREVAPS = skill_HolyRosarySkillDefinition_IgnoreCooldownModifier ? 0 : skill_HolyRosarySkillDefinition_CooldownModifier / skill_HolyRosarySkillDefinition_SkillSpeedModifier
+    skill_HolyRosarySkillDefinition_PREVAPS = (skill_HolyRosarySkillDefinition_IgnoreCooldownModifier ? 0 : skill_HolyRosarySkillDefinition_CooldownModifier) / skill_HolyRosarySkillDefinition_SkillSpeedModifier
     skill_HolyRosarySkillDefinition_APS = 1 / (skill_HolyRosarySkillDefinition_PREVAPS ? skill_HolyRosarySkillDefinition_PREVAPS : 1)
     skill_HolyRosarySkillDefinition_DPS = skill_HolyRosarySkillDefinition_Dmg_Total * skill_HolyRosarySkillDefinition_APS
     // =====================================
@@ -1798,7 +1798,7 @@ pack "hellclock" {
     skill_VeilofQuilsSkillDefinition_Dst_Fire = damage_flow("VeilofQuilsSkillDefinition", "FireDistribution")
     skill_VeilofQuilsSkillDefinition_CurrentManaCost = skill_VeilofQuilsSkillDefinition_ManaCostModifier * SkillManaCost
     skill_VeilofQuilsSkillDefinition_NonIgnorableCooldown = max(skill_VeilofQuilsSkillDefinition_CooldownModifier, 0)
-    skill_VeilofQuilsSkillDefinition_PREVAPS = skill_VeilofQuilsSkillDefinition_IgnoreCooldownModifier ? 0 : skill_VeilofQuilsSkillDefinition_CooldownModifier / skill_VeilofQuilsSkillDefinition_SkillSpeedModifier
+    skill_VeilofQuilsSkillDefinition_PREVAPS = (skill_VeilofQuilsSkillDefinition_IgnoreCooldownModifier ? 0 : skill_VeilofQuilsSkillDefinition_CooldownModifier) / skill_VeilofQuilsSkillDefinition_SkillSpeedModifier
     skill_VeilofQuilsSkillDefinition_APS = 1 / (skill_VeilofQuilsSkillDefinition_PREVAPS ? skill_VeilofQuilsSkillDefinition_PREVAPS : 1)
     skill_VeilofQuilsSkillDefinition_DPS = skill_VeilofQuilsSkillDefinition_Dmg_Total * skill_VeilofQuilsSkillDefinition_APS
     // =====================================
@@ -1815,7 +1815,7 @@ pack "hellclock" {
     skill_SummonBruteSkillDefinition_Dst_Fire = damage_flow("SummonBruteSkillDefinition", "FireDistribution")
     skill_SummonBruteSkillDefinition_CurrentManaCost = skill_SummonBruteSkillDefinition_ManaCostModifier * SkillManaCost
     skill_SummonBruteSkillDefinition_NonIgnorableCooldown = max(skill_SummonBruteSkillDefinition_CooldownModifier, 0.3)
-    skill_SummonBruteSkillDefinition_PREVAPS = skill_SummonBruteSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonBruteSkillDefinition_CooldownModifier / skill_SummonBruteSkillDefinition_SkillSpeedModifier
+    skill_SummonBruteSkillDefinition_PREVAPS = (skill_SummonBruteSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonBruteSkillDefinition_CooldownModifier) / skill_SummonBruteSkillDefinition_SkillSpeedModifier
     skill_SummonBruteSkillDefinition_APS = 1 / (skill_SummonBruteSkillDefinition_PREVAPS ? skill_SummonBruteSkillDefinition_PREVAPS : 1)
     skill_SummonBruteSkillDefinition_DPS = skill_SummonBruteSkillDefinition_Dmg_Total * skill_SummonBruteSkillDefinition_APS
     // =====================================
@@ -1832,7 +1832,7 @@ pack "hellclock" {
     skill_SummonMarksmenSkillDefinition_Dst_Fire = damage_flow("SummonMarksmenSkillDefinition", "FireDistribution")
     skill_SummonMarksmenSkillDefinition_CurrentManaCost = skill_SummonMarksmenSkillDefinition_ManaCostModifier * SkillManaCost
     skill_SummonMarksmenSkillDefinition_NonIgnorableCooldown = max(skill_SummonMarksmenSkillDefinition_CooldownModifier, 0.3)
-    skill_SummonMarksmenSkillDefinition_PREVAPS = skill_SummonMarksmenSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonMarksmenSkillDefinition_CooldownModifier / skill_SummonMarksmenSkillDefinition_SkillSpeedModifier
+    skill_SummonMarksmenSkillDefinition_PREVAPS = (skill_SummonMarksmenSkillDefinition_IgnoreCooldownModifier ? 0.3 : skill_SummonMarksmenSkillDefinition_CooldownModifier) / skill_SummonMarksmenSkillDefinition_SkillSpeedModifier
     skill_SummonMarksmenSkillDefinition_APS = 1 / (skill_SummonMarksmenSkillDefinition_PREVAPS ? skill_SummonMarksmenSkillDefinition_PREVAPS : 1)
     skill_SummonMarksmenSkillDefinition_DPS = skill_SummonMarksmenSkillDefinition_Dmg_Total * skill_SummonMarksmenSkillDefinition_APS
   }
