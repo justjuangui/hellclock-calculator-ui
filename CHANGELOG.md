@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.2.0](https://github.com/justjuangui/hellclock-calculator-ui/compare/v1.1.0...v1.2.0) (2025-12-12)
+
+
+### Features
+
+* **engine:** add consumer_id tracking types and contribution tracker ([58fe479](https://github.com/justjuangui/hellclock-calculator-ui/commit/58fe4790c386683735ac323b078021929a4ef970))
+* **evaluation:** migrate providers to incremental delta updates with consumer_id ([6e1e8f4](https://github.com/justjuangui/hellclock-calculator-ui/commit/6e1e8f4bd2846e11f9082ad9fc158423dd993440))
+* **evaluation:** update manager to use delta-based evaluation flow ([0f8d39d](https://github.com/justjuangui/hellclock-calculator-ui/commit/0f8d39de7ecdcf775f1e8ce5a1230a8e7ca82146))
+* **pack:** add CurrentMana/Life stats and missing mana/life formulas ([2bf38db](https://github.com/justjuangui/hellclock-calculator-ui/commit/2bf38db8602be98584c56903c4f17b28b2de486d))
+* **pack:** add skillspeed_attack and skillspeed_noattack stat templates ([d6f83a6](https://github.com/justjuangui/hellclock-calculator-ui/commit/d6f83a665156650b56a2e0ab94880f5de8079468))
+* **ui:** add explain icon to skill card summary section ([2d464ba](https://github.com/justjuangui/hellclock-calculator-ui/commit/2d464bafcddd88f96371fd8aab39f9817329e934))
+* **ui:** add structured explanation views for stats, formulas, and damage flows ([3735fbb](https://github.com/justjuangui/hellclock-calculator-ui/commit/3735fbbfc6c86708774f63ddba9be0bec292f169))
+
+
+### Bug Fixes
+
+* **affixes:** disable MultiplyByStatusStacks until orbit support is added ([b69a053](https://github.com/justjuangui/hellclock-calculator-ui/commit/b69a053ab863abb6b7daa8ecb33f1ba074c3e969))
+* **affixes:** use ActualMana for MultiplyByCurrentMana modifier ([65c1cec](https://github.com/justjuangui/hellclock-calculator-ui/commit/65c1cec7f8520baa2855ae51b01194d629d17f30))
+* **engine:** update WASM binary with cache fix for computed values and entity deletion ([f901037](https://github.com/justjuangui/hellclock-calculator-ui/commit/f901037e090c84a4b2e706f56e4fc4dfd8faf720))
+* **engine:** use AST tree instead of ByteCode for nested formulas ([d7c14c6](https://github.com/justjuangui/hellclock-calculator-ui/commit/d7c14c6c11b6c29acbf0c71451d65aef60c6890d))
+* **export:** Flip relic Y coordinate for correct import positioning ([720f7d7](https://github.com/justjuangui/hellclock-calculator-ui/commit/720f7d7589e0ed3d5d5e78279853f2bbc941c803))
+* **export:** Store variantIndex in GearItem for accurate export ([586e9a5](https://github.com/justjuangui/hellclock-calculator-ui/commit/586e9a5efbb338d9f51f82b87ba95018208477c2))
+* **import:** invalidate evaluation cache before import ([c86e26b](https://github.com/justjuangui/hellclock-calculator-ui/commit/c86e26bb40bb7813c758d4ee52634abf11f39346))
+* **pack:** correct operator precedence in skill PREVAPS calculations ([126ef5d](https://github.com/justjuangui/hellclock-calculator-ui/commit/126ef5db6fbbc6592edcab9971631c6afcf75500))
+* **parser:** respect explicit formula type in explanation parser ([aa04547](https://github.com/justjuangui/hellclock-calculator-ui/commit/aa045473979f36900cc891415faa7f6752d2d59b))
+* **skills:** add base level to maxSkillLevel calculation ([c9eaa99](https://github.com/justjuangui/hellclock-calculator-ui/commit/c9eaa99219e818efe5aa2d7fd278af9e81f9c7d3))
+* **status:** remove invalid Base modifierType case ([7d7e021](https://github.com/justjuangui/hellclock-calculator-ui/commit/7d7e02187db862c6f0e51276bba2673c08f7f15b))
+* **ui:** resolve Svelte 5 state_referenced_locally warning in PhaseView ([a56d193](https://github.com/justjuangui/hellclock-calculator-ui/commit/a56d193655576c2c630a3ddf76157f26bb1fdeb9))
+
 ## [1.1.0](https://github.com/justjuangui/hellclock-calculator-ui/compare/v1.0.0...v1.1.0) (2025-12-07)
 
 
