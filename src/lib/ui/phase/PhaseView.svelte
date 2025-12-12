@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import type { PhaseInfo } from "./types";
   import ContributionTable from "./ContributionTable.svelte";
   import PhaseView from "./PhaseView.svelte";
@@ -13,8 +14,8 @@
 
   const { phase, depth = 0, defaultExpanded = true }: Props = $props();
 
-  // Initial expanded state based on depth
-  let expanded = $state(depth === 0 && defaultExpanded);
+  // Initial expanded state based on depth (intentionally non-reactive)
+  let expanded = $state(untrack(() => depth === 0 && defaultExpanded));
   const contribCount = $derived(getContributionCount(phase));
   const hasContent = $derived(
     phase.contributions.length > 0 || phase.nestedGroups.length > 0
