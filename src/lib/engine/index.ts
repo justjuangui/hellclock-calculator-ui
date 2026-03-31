@@ -24,7 +24,7 @@ export class Engine {
   onPush?: (m: EngineWorkerMessage) => void; // for 'ready' or unsolicited pushes
 
   constructor() {
-    this.worker = new Worker("/workers/worker.js");
+    this.worker = new Worker("/workers/worker.js", { type: "module" });
 
     this.worker.onmessage = (e: MessageEvent<any>) => {
       const { id, type, payload } = e.data ?? {};

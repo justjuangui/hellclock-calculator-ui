@@ -1,13 +1,9 @@
-importScripts("/wasm_exec.js");
+import init, { LoadGamePack, BuildGraph, Evaluate, Explain } from "/wasm_bindings.js";
 
-const go = new Go();
 let ready = false;
 
 (async () => {
-  const r = await fetch("/engine.wasm");
-  const buf = await r.arrayBuffer();
-  const { instance } = await WebAssembly.instantiate(buf, go.importObject);
-  go.run(instance);
+  await init("/engine.wasm");
   ready = true;
   postMessage({ type: "ready" });
 })();
@@ -33,29 +29,29 @@ self.onmessage = async (e) => {
     }
   };
 
+  const processResult = (res) => {
+    if (res === null || res === undefined) return null;
+    if (res instanceof Uint8Array) return fromU8(res);
+    return res;
+  };
+
   if (!ready) {
     reply({ type: "error", payload: "worker not ready" });
     return;
   }
 
   if (type === "loadPack") {
-    const res = self.LoadGamePack(toU8(payload));
-    reply({ type: "loaded", payload: fromU8(res), request: payload });
+    const res = LoadGamePack(toU8(payload));
+    reply({ type: "loaded", payload: processResult(res), request: payload });
   } else if (type === "build") {
-    const res = self.BuildGraph(toU8(payload.entities));
-    reply({ type: "built", payload: fromU8(res) });
+    const res = BuildGraph(toU8(payload.entities));
+    reply({ type: "built", payload: processResult(res) });
   } else if (type === "eval") {
-    const res = self.Evaluate(toU8(payload));
-    reply({
-      type: "evaluated",
-      payload: fromU8(res),
-    });
+    const res = Evaluate(toU8(payload));
+    reply({ type: "evaluated", payload: processResult(res) });
   } else if (type === "explain") {
-    const res = self.Explain(payload.entityId, payload.output);
-    reply({
-      type: "explained",
-      payload: fromU8(res),
-    });
+    const res = Explain(payload.entityId, payload.output);
+    reply({ type: "explained", payload: processResult(res) });
   } else {
     reply({ type: "error", payload: "unknown message type " + type });
   }
